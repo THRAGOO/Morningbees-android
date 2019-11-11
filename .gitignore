@@ -6,4 +6,3 @@ local.properties
 build/
 captures/
 .externalNativeBuild
-/src/main/res/values/strings_secret.xml
