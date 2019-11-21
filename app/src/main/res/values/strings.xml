@@ -3,4 +3,5 @@
     <string name="google_server_client_id">507544410589-i91g22cbu6o6dpaukd8e4jo761k4js6v.apps.googleusercontent.com</string>
     <string name="naver_oauth_client_id">5ZQIXFnwSx2XDv1Xcvpz</string>
     <string name="naver_oauth_client_name">Morningbees</string>
+    <string name="baseUrl">http://www.API.com/api/v1/auth/sign_up</string>
 </resources>

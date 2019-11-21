@@ -42,6 +42,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         login_naver_sign_in_button.setOnClickListener(this)
     }
 
+
     private fun initNaverSignIn() {
         mOAuthLoginModule = OAuthLogin.getInstance()
         mOAuthLoginModule.init(
@@ -58,7 +59,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
             .requestEmail()
             .build()
 
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
 
         refreshIdToken()
 
@@ -85,7 +86,6 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
 
         //naver sign out
         mOAuthLoginModule.logout(this)
-
     }
 
     private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
@@ -147,7 +147,6 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
 
                     }
                 }
-
             })
         }
     }
