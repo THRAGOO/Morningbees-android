@@ -15,15 +15,33 @@ import kotlinx.android.synthetic.main.activity_login.*
 
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.tasks.Task
+
+import com.jasen.kimjaeseung.morningbees.data.SignInRequest
+import com.jasen.kimjaeseung.morningbees.data.SignUpResponse
 import com.jasen.kimjaeseung.morningbees.main.SignUpActivity
+import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
+
 import com.nhn.android.naverlogin.OAuthLogin
 import com.nhn.android.naverlogin.OAuthLoginHandler
 import com.nhn.android.naverlogin.data.OAuthLoginState
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.scalars.ScalarsConverterFactory
 
 
 class LoginActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var mGoogleSignInClient: GoogleSignInClient    //google sign in client
     private lateinit var mOAuthLoginModule: OAuthLogin  //naver sign in module
+    val retrofit = Retrofit.Builder()
+        .addConverterFactory(ScalarsConverterFactory.create())
+        .addConverterFactory(GsonConverterFactory.create())
+        .baseUrl("https://f553233b-4d4c-4d45-bf1e-d3999008d933.mock.pstmn.io")
+        .build()
+
+    val service = retrofit.create(MorningBeesService::class.java)
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,11 +54,12 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         initNaverSignIn()
     }
 
-    private fun initButtonListeners(){
+    private fun initButtonListeners() {
         // Button Listeners
         login_google_sign_in_button.setOnClickListener(this)
         login_google_sign_out_button.setOnClickListener(this)
         login_naver_sign_in_button.setOnClickListener(this)
+        login_goto_signup.setOnClickListener(this)
     }
 
 
@@ -96,7 +115,9 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
 
             Log.d(TAG, "Id Token : " + idToken)
 
-            // TODO(developer): send ID Token to server and validate
+            //모닝비즈서버에 엑세스토큰,프로바이더 전송
+//            signInMorningbeesServer(idToken.toString(), "google")
+            signUpMorningbeesServer(idToken.toString(), "google", "nick")
 
             //updateUI(account)
         } catch (e: ApiException) {
@@ -119,16 +140,16 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
             ) { task -> handleSignInResult(task) }
     }
 
-    private fun naverSignIn(){
-        if (mOAuthLoginModule.getState(this)==OAuthLoginState.OK){
-            Log.d(TAG,"Status don't need Naver Login")
+    private fun naverSignIn() {
+        if (mOAuthLoginModule.getState(this) == OAuthLoginState.OK) {
+            Log.d(TAG, "Status don't need Naver Login")
             //네이버 access token으로 앱 로그인
-        }else{
-            Log.d(TAG,"Status need login")
-            mOAuthLoginModule.startOauthLoginActivity(this,@SuppressLint("HandlerLeak")
-            object:OAuthLoginHandler(){
+        } else {
+            Log.d(TAG, "Status need login")
+            mOAuthLoginModule.startOauthLoginActivity(this, @SuppressLint("HandlerLeak")
+            object : OAuthLoginHandler() {
                 override fun run(success: Boolean) {
-                    if (success){
+                    if (success) {
                         val accessToken = mOAuthLoginModule.getAccessToken(this@LoginActivity)
                         val refreshToken = mOAuthLoginModule.getRefreshToken(this@LoginActivity)
                         val expiresAt = mOAuthLoginModule.getExpiresAt(this@LoginActivity)
@@ -137,18 +158,69 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                         Log.i(TAG, "naver Login refresh Token : $refreshToken")
                         Log.i(TAG, "naver Login expiresAt : $expiresAt")
                         Log.i(TAG, "naver Login Token Type : $tokenType")
-                        Log.i(TAG, "naver Login Module State : " +mOAuthLoginModule.getState(this@LoginActivity).toString())
+                        Log.i(
+                            TAG,
+                            "naver Login Module State : " + mOAuthLoginModule.getState(this@LoginActivity).toString()
+                        )
 
-                        //액티비티 이동
+                        //모닝비즈서버에 signin요청 및 액티비티 이동
+//                        val jsonObject = JSONObject()
+//                        jsonObject.put("socialAccessToken",accessToken)
+//                        jsonObject.put("provider","naver")
+//                        signInMorningbeesServer(jsonObject.toString())
+                        signInMorningbeesServer(SignInRequest(accessToken,"naver"))
 
-                    }else{
-                        val errorCode = mOAuthLoginModule.getLastErrorCode(this@LoginActivity).getCode()
+                    } else {
+                        val errorCode =
+                            mOAuthLoginModule.getLastErrorCode(this@LoginActivity).getCode()
                         val errorDesc = mOAuthLoginModule.getLastErrorDesc(this@LoginActivity)
+
                         Log.d(TAG,"errorCode:$errorCode, errorDesc:$errorDesc")
                     }
                 }
             })
         }
+    }
+
+    private fun signInMorningbeesServer(signInRequest: SignInRequest) {
+        service.signIn(signInRequest).enqueue(object : Callback<String> {
+            override fun onFailure(call: Call<String>, t: Throwable) {
+                Log.d(TAG, t.toString())
+            }
+
+            override fun onResponse(
+                call: Call<String>,
+                response: Response<String>
+            ) {
+                Log.d(TAG, response.body().toString())
+                //json parser
+            }
+        })
+    }
+
+    private fun signUpMorningbeesServer(
+        socialAccessToken: String,
+        provider: String,
+        nickname: String
+    ) {
+        service.signUp(socialAccessToken, provider, nickname)
+            .enqueue(object : Callback<SignUpResponse> {
+                override fun onFailure(call: Call<SignUpResponse>, t: Throwable) {
+                    Log.d(TAG, t.toString())
+                }
+
+                override fun onResponse(
+                    call: Call<SignUpResponse>,
+                    response: Response<SignUpResponse>
+                ) {
+                    Log.d(TAG, response.body().toString())
+                }
+            })
+    }
+
+    private fun gotoSignUp() {
+        val nextIntent = Intent(this, SignUpActivity::class.java)
+        startActivity(nextIntent)
     }
 
     override fun onClick(v: View) {
@@ -157,6 +229,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
             R.id.login_google_sign_in_button -> googleSignIn()
             R.id.login_google_sign_out_button -> signOut()
             R.id.login_naver_sign_in_button -> naverSignIn()
+            R.id.login_goto_signup -> gotoSignUp()
         }
     }
 
