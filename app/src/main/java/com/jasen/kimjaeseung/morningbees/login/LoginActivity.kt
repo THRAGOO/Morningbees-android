@@ -43,7 +43,6 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
 
     val service = retrofit.create(MorningBeesService::class.java)
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
