@@ -15,6 +15,7 @@ import kotlinx.android.synthetic.main.activity_login.*
 
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.tasks.Task
+import com.jasen.kimjaeseung.morningbees.main.SignUpActivity
 import com.nhn.android.naverlogin.OAuthLogin
 import com.nhn.android.naverlogin.OAuthLoginHandler
 import com.nhn.android.naverlogin.data.OAuthLoginState
@@ -144,7 +145,6 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                         val errorCode = mOAuthLoginModule.getLastErrorCode(this@LoginActivity).getCode()
                         val errorDesc = mOAuthLoginModule.getLastErrorDesc(this@LoginActivity)
                         Log.d(TAG,"errorCode:$errorCode, errorDesc:$errorDesc")
-
                     }
                 }
             })

@@ -1,5 +1,6 @@
 package com.jasen.kimjaeseung.morningbees
 
+import com.google.gson.JsonObject
 import retrofit2.Call
 import retrofit2.http.*
 import retrofit2.http.GET
@@ -8,11 +9,14 @@ data class ResponseDTO(var result:String? = null)
 
 interface MorningBeesService {
 
-    @GET("/nickname")
-    fun getRequest(@Query("nickname") nickname: String): Call<ResponseDTO>
+    @GET("/name"    )
+    fun getRequest(@Query("name") nickname: String): Call<ResponseDTO>
+
+    @GET("30")
+    fun read(@Path("no") no: String): Call<JsonObject>
 
     @FormUrlEncoded
-    @PUT("/nickname")
+    @PUT("/name")
     fun putRequest(@Field("nickname")nickname:String):Call<ResponseDTO>
 
     /*
