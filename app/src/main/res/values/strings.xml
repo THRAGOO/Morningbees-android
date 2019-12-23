@@ -6,4 +6,8 @@
     <string name="baseUrl">http://www.API.com/api/v1/auth/sign_up</string>
     <string name="signup_start_button_text">시작하기</string>
     <string name="signup_nickname_check_button_text">중복확인</string>
+    <string name="network_error_message">네트워크를 확인해 주세요</string>
+    <string name="validnickname_duplicate">중복된 닉네임입니다</string>
+    <string name="google">google</string>
+    <string name="naver">naver</string>
 </resources>
