@@ -61,7 +61,7 @@
             android:id="@+id/signup_nickname_text"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="30dp" />
+            android:layout_marginStart="30dp"/>
 
         <Button
             android:id="@+id/signup_nickname_check_button"
