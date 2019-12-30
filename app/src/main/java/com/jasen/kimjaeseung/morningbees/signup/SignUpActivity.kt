@@ -151,11 +151,7 @@ class SignUpActivity : AppCompatActivity() {
 
                     when(response.code()){
                         200 ->{
-                            when {
-                                nameValidCheckResponse?.isValid == true -> gotoMain()
-                                nameValidCheckResponse?.isValid == false -> showToast { "중복된 닉네임입니다" }
-                                else -> showToast{"중복확인을 해주세요"}
-                            }
+                            gotoMain()
                         }
                         400 ->{
                             val jsonObject = JSONObject(response.errorBody()!!.string())
