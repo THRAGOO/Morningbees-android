@@ -1,6 +1,10 @@
 package com.jasen.kimjaeseung.morningbees.signup
 
+import android.content.Context
+import android.content.res.Resources
+import android.provider.Settings.Global.getString
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.main.SignUpActivity
@@ -14,8 +18,9 @@ import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import kotlin.math.sign
 
-class SignUpPresenter : SignUpContract.Presenter{
+class SignUpPresenter(context: Context) : SignUpContract.Presenter{
     //만약에 activity를 라이프사이클에 맞춰서 구현했으면 presenter에도 라이프사이클 해줘야함
 
     private var signupView : SignUpContract.View ?= null
@@ -23,6 +28,7 @@ class SignUpPresenter : SignUpContract.Presenter{
     var nameValidCheckResponse: NameValidataionCheckResponse? = null
     lateinit var mNickname: String
     var validCheck: Boolean = false
+    var mContext : Context = context
 
     override fun takeView(view: SignUpContract.View){
         signupView = view
@@ -36,9 +42,7 @@ class SignUpPresenter : SignUpContract.Presenter{
         service.nameValidationCheck(tempName)
             .enqueue(object : Callback<NameValidataionCheckResponse> {
                 override fun onFailure(call: Call<NameValidataionCheckResponse>, t: Throwable) {
-                    //showToast { getString(R.string.network_error_message) }
-                    signupView!!.showToastView("네트워크 확인해주세요")
-
+                    signupView!!.showToastView { mContext.resources.getString(R.string.network_error_message) }
                 }
 
                 override fun onResponse(
@@ -53,15 +57,13 @@ class SignUpPresenter : SignUpContract.Presenter{
                             if (nameValidCheckResponse!!.isValid) {    //valid nickname
                                 mNickname = tempName
                                 validCheck = true
-                                //showToast { getString(R.string.validnickname_ok) }
-                                signupView!!.showToastView((R.string.validnickname_ok).toString())
+
+                                signupView!!.showToastView { mContext.resources.getString(R.string.validnickname_ok) }
                                 Log.d(TAG, "validnickname ok")
 
                             } else {
                                 validCheck = false
-                                //showToast { getString(R.string.validnickname_duplicate) }
-
-                                signupView!!.showToastView((R.string.validnickname_duplicate).toString())
+                                signupView!!.showToastView { mContext.resources.getString(R.string.validnickname_duplicate) }
                                 Log.d(TAG, "validnickname duplicate")
                             }
                         }
@@ -73,8 +75,7 @@ class SignUpPresenter : SignUpContract.Presenter{
                             val message = jsonObject.getString("message")
                             val code = jsonObject.getInt("code")
 
-                            signupView!!.showToastView(message)
-                            Log.d(TAG, "validnickname network error")
+                            signupView!!.showToastView{message}
                         }
                         500 -> {//internal server error
                             Dlog().d(response.code().toString())
@@ -119,8 +120,7 @@ class SignUpPresenter : SignUpContract.Presenter{
                             val message = jsonObject.getString("message")
                             val code = jsonObject.getInt("code")
 
-                            signupView!!.showToastView(message)
-                            //showToast { message }
+                            signupView!!.showToastView{message}
                         }
                         500 -> { //internal server error
 

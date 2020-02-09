@@ -13,7 +13,7 @@ import com.jasen.kimjaeseung.morningbees.signup.SignUpContract
 import com.jasen.kimjaeseung.morningbees.signup.SignUpPresenter
 import com.jasen.kimjaeseung.morningbees.util.showToast
 import kotlinx.android.synthetic.main.activity_signup.*
-
+import android.widget.Toast
 import java.util.regex.Pattern
 
 
@@ -39,7 +39,7 @@ class SignUpActivity : BaseActivity(), SignUpContract.View {
     }
 
     override fun initPresenter(){
-        signupPresenter = SignUpPresenter()
+        signupPresenter = SignUpPresenter(this)
     }
 
     @SuppressLint("ResourceType")
@@ -60,7 +60,7 @@ class SignUpActivity : BaseActivity(), SignUpContract.View {
             when{
                 !signupPresenter.validCheck -> {
                     Log.d(TAG, "need validcheck")
-                    showToast { "중복체크를 확인해주세요" }
+                    showToast { getString(R.string.no_nickname_duplicate_check) }
                 }
 
                 signupPresenter.validCheck -> {
@@ -69,7 +69,8 @@ class SignUpActivity : BaseActivity(), SignUpContract.View {
 
                     if (IntentSocialAccessToken == null || IntentProvider == null) {
                         Log.d(TAG, "need intent value from signInActivity")
-                        showToast { "전달된 intent값이 없습니다." }
+                        showToast{getString(R.string.social_login_recheck)}
+
                     } else {
                         signupPresenter.signUpMorningbeesServer(
                             hashMapOf("socialAccessToken" to IntentSocialAccessToken),
@@ -93,13 +94,13 @@ class SignUpActivity : BaseActivity(), SignUpContract.View {
                 when {
                     ps.matcher(source).matches() -> return source
                     else -> {
-                        showToast { getString(R.string.nickname_restriction) }
+                        showToast{getString(R.string.nickname_restriction)}
                         return ""
                     }
                 }
             }
             else -> {
-                showToast { getString(R.string.nickname_byte_restriction) }
+                showToast{getString(R.string.nickname_byte_restriction)}
                 return ""
             }
         }
@@ -110,9 +111,10 @@ class SignUpActivity : BaseActivity(), SignUpContract.View {
         startActivity(nextIntent)
     }
 
-    override fun showToastView(toastMessage: String) {
-        showToast { toastMessage }
+   override fun showToastView(toastMessage: () -> String) {
+       Toast.makeText(this, toastMessage(), Toast.LENGTH_SHORT).show()
     }
+
 
     private fun CloseKeyboard() {
         val view = this.currentFocus
@@ -123,6 +125,7 @@ class SignUpActivity : BaseActivity(), SignUpContract.View {
             inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
         }
     }
+
 
     companion object {
         private const val TAG = "SignUpActivity"
