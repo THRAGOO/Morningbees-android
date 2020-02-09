@@ -1,6 +1,8 @@
 package com.jasen.kimjaeseung.morningbees.network
 
-import com.jasen.kimjaeseung.morningbees.data.*
+import com.jasen.kimjaeseung.morningbees.login.model.SignInResponse
+import com.jasen.kimjaeseung.morningbees.signup.model.NameValidataionCheckResponse
+import com.jasen.kimjaeseung.morningbees.signup.model.SignUpResponse
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call

@@ -3,9 +3,7 @@ package com.jasen.kimjaeseung.morningbees.login
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -15,10 +13,10 @@ import kotlinx.android.synthetic.main.activity_login.*
 
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.tasks.Task
-import com.jasen.kimjaeseung.morningbees.data.SignInResponse
+import com.jasen.kimjaeseung.morningbees.login.model.SignInResponse
 
-import com.jasen.kimjaeseung.morningbees.data.SignUpResponse
 import com.jasen.kimjaeseung.morningbees.main.SignUpActivity
+import com.jasen.kimjaeseung.morningbees.mvp.BaseActivity
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import com.jasen.kimjaeseung.morningbees.util.Dlog
 import com.jasen.kimjaeseung.morningbees.util.showToast
@@ -31,8 +29,9 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
+    private lateinit var loginPresenter: LoginPresenter
 
-class LoginActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var mGoogleSignInClient: GoogleSignInClient    //google sign in client
     private lateinit var mOAuthLoginModule: OAuthLogin  //naver sign in module
 
@@ -42,10 +41,21 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
+        loginPresenter.takeView(this)
+
         initButtonListeners()
 
         initGoogleSignIn()
         initNaverSignIn()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        loginPresenter.dropView()
+    }
+
+    override fun initPresenter() {
+        loginPresenter = LoginPresenter()
     }
 
     private fun initButtonListeners() {
@@ -57,18 +67,19 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
     }
 
 
-    private fun initNaverSignIn() {
+    override fun initNaverSignIn() {
         mOAuthLoginModule = OAuthLogin.getInstance()
         mOAuthLoginModule.init(
-            this, getString(R.string.naver_oauth_client_id)
-            , getString(R.string.naver_oauth_client_secret)
-            , getString(R.string.naver_oauth_client_name)
+            this, this.getString(R.string.naver_oauth_client_id)
+            , this.getString(R.string.naver_oauth_client_secret)
+            , this.getString(R.string.naver_oauth_client_name)
         )
     }
-    private fun initGoogleSignIn() {
+
+    override fun initGoogleSignIn() {
         // configure Google Sign-in and the GoogleSignInClient object
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.google_server_client_id))
+            .requestIdToken(this.getString(R.string.google_server_client_id))
             .requestEmail()
             .build()
 
@@ -77,7 +88,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         refreshIdToken()
 
         // check existing user
-//        val account = GoogleSignIn.getLastSignedInAccount(this)
+//        val account = GoogleSignIn.gestLastSignedInAccount(this)
 //        if (account!=null) {
 //            Log.d(TAG,"already ${account.displayName}")
 //
@@ -85,12 +96,20 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         //updateUI(acoount)
     }
 
-    private fun googleSignIn() {
-        val signInIntent = mGoogleSignInClient.signInIntent
-        startActivityForResult(signInIntent, RC_SIGN_IN)
+    override fun refreshIdToken() {
+        // Attempt to silently refresh the GoogleSignInAccount. If the GoogleSignInAccount
+        // already has a valid token this method may complete immediately.
+        //
+        // If the user has not previously signed in on this device or the sign-in has expired,
+        // this asynchronous branch will attempt to sign in the user silently and get a valid
+        // ID token. Cross-device single sign on will occur in this branch.
+        mGoogleSignInClient.silentSignIn()
+            .addOnCompleteListener(
+                this
+            ) { task -> handleSignInResult(task) }
     }
 
-    private fun signOut() {
+    override fun signOut() {
         //google sign out
         mGoogleSignInClient.signOut().addOnCompleteListener(this) {
             Dlog().d("Google Sign Out")
@@ -100,7 +119,51 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         Dlog().d("Naver Sign Out")
     }
 
-    private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
+    override fun googleSignIn() {
+        val signInIntent = mGoogleSignInClient.signInIntent
+        startActivityForResult(signInIntent, RC_SIGN_IN)
+    }
+
+    override fun naverSignIn() {
+        if (mOAuthLoginModule.getState(this) == OAuthLoginState.OK) {
+            Dlog().d("Status don't need Naver Login")
+            //네이버 access token으로 앱 로그인
+        } else {
+            Dlog().d("Status need login")
+            mOAuthLoginModule.startOauthLoginActivity(this, @SuppressLint("HandlerLeak")
+            object : OAuthLoginHandler() {
+                override fun run(success: Boolean) {
+                    if (success) {
+                        val accessToken = mOAuthLoginModule.getAccessToken(this@LoginActivity)
+                        val refreshToken = mOAuthLoginModule.getRefreshToken(this@LoginActivity)
+                        val expiresAt = mOAuthLoginModule.getExpiresAt(this@LoginActivity)
+                        val tokenType = mOAuthLoginModule.getTokenType(this@LoginActivity)
+                        Dlog().d("naver Login Access Token : $accessToken")
+                        Dlog().d("naver Login refresh Token : $refreshToken")
+                        Dlog().d("naver Login expiresAt : $expiresAt")
+                        Dlog().d("naver Login Token Type : $tokenType")
+                        Dlog().i(
+                            "naver Login Module State : " + mOAuthLoginModule.getState(this@LoginActivity).toString()
+                        )
+
+                        signInMorningbeesServer(
+                            hashMapOf("socialAccessToken" to accessToken),
+                            hashMapOf("provider" to getString(R.string.naver))
+                        )
+
+                    } else {
+                        val errorCode =
+                            mOAuthLoginModule.getLastErrorCode(this@LoginActivity).getCode()
+                        val errorDesc = mOAuthLoginModule.getLastErrorDesc(this@LoginActivity)
+
+                        Dlog().d("errorCode:$errorCode, errorDesc:$errorDesc")
+                    }
+                }
+            })
+        }
+    }
+
+    override fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
         try {
             val account = completedTask.getResult(ApiException::class.java)
             val idToken = account!!.idToken
@@ -120,58 +183,17 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    private fun refreshIdToken() {
-        // Attempt to silently refresh the GoogleSignInAccount. If the GoogleSignInAccount
-        // already has a valid token this method may complete immediately.
-        //
-        // If the user has not previously signed in on this device or the sign-in has expired,
-        // this asynchronous branch will attempt to sign in the user silently and get a valid
-        // ID token. Cross-device single sign on will occur in this branch.
-        mGoogleSignInClient.silentSignIn()
-            .addOnCompleteListener(
-                this
-            ) { task -> handleSignInResult(task) }
-    }
-
-    private fun naverSignIn() {
-        if (mOAuthLoginModule.getState(this) == OAuthLoginState.OK) {
-            Dlog().d("Status don't need Naver Login")
-            //네이버 access token으로 앱 로그인
-        } else {
-            Dlog().d("Status need login")
-            mOAuthLoginModule.startOauthLoginActivity(this, @SuppressLint("HandlerLeak")
-            object : OAuthLoginHandler() {
-                override fun run(success: Boolean) {
-                    if (success) {
-                        val accessToken = mOAuthLoginModule.getAccessToken(this@LoginActivity)
-                        val refreshToken = mOAuthLoginModule.getRefreshToken(this@LoginActivity)
-                        val expiresAt = mOAuthLoginModule.getExpiresAt(this@LoginActivity)
-                        val tokenType = mOAuthLoginModule.getTokenType(this@LoginActivity)
-
-                        Dlog().d("naver Login Access Token : $accessToken")
-                        Dlog().d("naver Login refresh Token : $refreshToken")
-                        Dlog().d("naver Login expiresAt : $expiresAt")
-                        Dlog().d("naver Login Token Type : $tokenType")
-                        Dlog().i(
-                            "naver Login Module State : " + mOAuthLoginModule.getState(this@LoginActivity).toString()
-                        )
-
-                        signInMorningbeesServer(hashMapOf("socialAccessToken" to accessToken),
-                            hashMapOf("provider" to getString(R.string.naver)))
-
-                    } else {
-                        val errorCode = mOAuthLoginModule.getLastErrorCode(this@LoginActivity).getCode()
-                        val errorDesc = mOAuthLoginModule.getLastErrorDesc(this@LoginActivity)
-
-                        Dlog().d("errorCode:$errorCode, errorDesc:$errorDesc")
-                    }
-                }
-            })
+    override fun onClick(v: View) {
+        val i = v.id
+        when (i) {
+            R.id.login_google_sign_in_button -> googleSignIn()
+            R.id.login_google_sign_out_button -> signOut()
+            R.id.login_naver_sign_in_button -> naverSignIn()
+            //R.id.login_goto_signup -> gotoSignUp()
         }
     }
 
-    private fun signInMorningbeesServer(socialAccessToken:HashMap<String,String>,provider:HashMap<String,String>) {
-
+    override fun signInMorningbeesServer(socialAccessToken:HashMap<String,String>,provider:HashMap<String,String>) {
         service.signIn(socialAccessToken,provider).enqueue(object : Callback<SignInResponse>{
             override fun onFailure(call: Call<SignInResponse>, t: Throwable) {
                 showToast { getString(R.string.network_error_message) }
@@ -207,23 +229,13 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         })
     }
 
-    private fun gotoSignUp(socialAccessToken: HashMap<String, String>, provider: HashMap<String, String>) {
-        val intent = Intent(this, SignUpActivity::class.java)
+    private fun gotoSignUp(socialAccessToken:HashMap<String,String>,provider:HashMap<String,String>) {
+        val nextIntent = Intent(this, SignUpActivity::class.java)
 
-        intent.putExtra("socialAccessToken", socialAccessToken.getValue("socialAccessToken"))
-        intent.putExtra("provider", provider.getValue("provider"))
+        nextIntent.putExtra("socialAccessToken", socialAccessToken.getValue("socialAccessToken"))
+        nextIntent.putExtra("provider", provider.getValue("provider"))
 
-        startActivity(intent)
-    }
-
-    override fun onClick(v: View) {
-        val i = v.id
-        when (i) {
-            R.id.login_google_sign_in_button -> googleSignIn()
-            R.id.login_google_sign_out_button -> signOut()
-            R.id.login_naver_sign_in_button -> naverSignIn()
-            //R.id.login_goto_signup -> gotoSignUp()
-        }
+        startActivity(nextIntent)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

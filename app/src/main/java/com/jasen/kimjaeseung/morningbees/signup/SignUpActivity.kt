@@ -3,74 +3,92 @@ package com.jasen.kimjaeseung.morningbees.main
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.view.inputmethod.InputMethodManager
-import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import com.jasen.kimjaeseung.morningbees.R
-import com.jasen.kimjaeseung.morningbees.data.NameValidataionCheckResponse
-import com.jasen.kimjaeseung.morningbees.data.SignUpResponse
-import com.jasen.kimjaeseung.morningbees.util.Dlog
+import com.jasen.kimjaeseung.morningbees.mvp.BaseActivity
+import com.jasen.kimjaeseung.morningbees.signup.SignUpContract
+import com.jasen.kimjaeseung.morningbees.signup.SignUpPresenter
 import com.jasen.kimjaeseung.morningbees.util.showToast
 import kotlinx.android.synthetic.main.activity_signup.*
-import org.json.JSONObject
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+
 import java.util.regex.Pattern
 
 
-class SignUpActivity : AppCompatActivity() {
-    val service = MorningBeesService.create()
-    var nameValidCheckResponse: NameValidataionCheckResponse? = null
-    var validCheck : Boolean = false
-
-    lateinit var mNickname: String
+class SignUpActivity : BaseActivity(), SignUpContract.View {
+    private lateinit var signupPresenter : SignUpPresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.d(TAG, "onCreate callback")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_signup)
+        signupPresenter.takeView(this)
+    }
+
+    override fun onStart() {
+        Log.d(TAG, "onStart callback")
+        super.onStart()
         attachButtonEvent()
     }
 
-    @SuppressLint("ResourceType")
-    private fun attachButtonEvent(){
-        signup_nickname_check_button.setOnClickListener {
-            CloseKeyboard()
-            val filterNickname= nicknameFilter(signup_nickname_text.text.toString())
+    override fun onDestroy() {
+        super.onDestroy()
+        signupPresenter.dropView()
+    }
 
-            if(filterNickname != ""){
-                nameValidMorningbeesServer(filterNickname)
-            }
+    override fun initPresenter(){
+        signupPresenter = SignUpPresenter()
+    }
+
+    @SuppressLint("ResourceType")
+    private fun attachButtonEvent() {
+        signup_nickname_check_button.setOnClickListener{
+            val usrNickname = signup_nickname_text.text.toString()
+
+            CloseKeyboard()
+            val filteredNickname = nicknameFilter(usrNickname)
+
+            if(filteredNickname != "")
+                signupPresenter.nameValidMorningbeesServer(filteredNickname)
         }
 
-        signup_start_button.setOnClickListener {
+        signup_start_button.setOnClickListener{
             CloseKeyboard()
 
             when{
-                !validCheck ->
-                    showToast{"중복체크를 확인해주세요"}
+                !signupPresenter.validCheck -> {
+                    Log.d(TAG, "need validcheck")
+                    showToast { "중복체크를 확인해주세요" }
+                }
 
-                validCheck -> {
+                signupPresenter.validCheck -> {
                     val IntentSocialAccessToken: String? = intent.getStringExtra("socialAccessToken")
-                    val IntentProvider:String? = intent.getStringExtra("provider")
+                    val IntentProvider: String? = intent.getStringExtra("provider")
 
-                    if(IntentSocialAccessToken == null || IntentProvider == null){
-                        showToast{"전달된 intent값이 없습니다."}
-                    }
-                    else {
-                        signUpMorningbeesServer(hashMapOf("socialAccessToken" to IntentSocialAccessToken), hashMapOf("provider" to IntentProvider), hashMapOf("nickname" to mNickname))
+                    if (IntentSocialAccessToken == null || IntentProvider == null) {
+                        Log.d(TAG, "need intent value from signInActivity")
+                        showToast { "전달된 intent값이 없습니다." }
+                    } else {
+                        signupPresenter.signUpMorningbeesServer(
+                            hashMapOf("socialAccessToken" to IntentSocialAccessToken),
+                            hashMapOf("provider" to IntentProvider),
+                            hashMapOf("nickname" to signupPresenter.mNickname)
+                        )
+
+                        Log.d(TAG, signupPresenter.mNickname)
                     }
                 }
             }
         }
     }
 
-    private fun nicknameFilter(source:String): String {
+    private fun nicknameFilter(source: String): String {
         when {
             source.length in 2..10 -> {
-                val ps: Pattern = Pattern.compile("^[a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ\\u318D\\u119E\\u11A2\\u2022\\u2025a\\u00B7\\uFE55]+$")
+                val ps: Pattern =
+                    Pattern.compile("^[a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ\\u318D\\u119E\\u11A2\\u2022\\u2025a\\u00B7\\uFE55]+$")
 
                 when {
                     ps.matcher(source).matches() -> return source
@@ -87,100 +105,21 @@ class SignUpActivity : AppCompatActivity() {
         }
     }
 
-    private fun nameValidMorningbeesServer(tempName: String) {
-        service.nameValidationCheck(tempName).enqueue(object : Callback<NameValidataionCheckResponse> {
-            override fun onFailure(call: Call<NameValidataionCheckResponse>, t: Throwable) {
-                showToast { getString(R.string.network_error_message) }
-            }
-
-            override fun onResponse(call: Call<NameValidataionCheckResponse>, response: Response<NameValidataionCheckResponse>) {
-                Log.d(TAG, response.body().toString())
-
-                when (response.code()) {
-                    200 -> {
-                        nameValidCheckResponse = response.body()
-                        if (nameValidCheckResponse!!.isValid) {    //valid nickname
-                            mNickname = tempName
-                            validCheck = true
-                            showToast { getString(R.string.validnickname_ok) }
-
-                        } else {
-                            showToast { getString(R.string.validnickname_duplicate) }
-                        }
-                    }
-                    400 -> {
-                        Dlog().d(response.code().toString())
-                        val jsonObject = JSONObject(response.errorBody()!!.string())
-                        val timestamp = jsonObject.getString("timestamp")
-                        val status = jsonObject.getString("status")
-                        val message = jsonObject.getString("message")
-                        val code = jsonObject.getInt("code")
-
-                        showToast { message }
-                    }
-                    500 -> {//internal server error
-                        Dlog().d(response.code().toString())
-                    }
-                }
-            }
-        })
-    }
-
-    private fun signUpMorningbeesServer(
-        socialAccessToken: HashMap<String, String>,
-        provider: HashMap<String, String>,
-        nickname: HashMap<String, String>)
-        {
-        //Login에서 넘겨준 socialAccessToken, provider과 nickname 같이 post
-        service.signUp(
-            socialAccessToken, provider, nickname)
-            .enqueue(object: Callback<SignUpResponse>{
-                override fun onFailure(call: Call<SignUpResponse>, t: Throwable) {
-                    Dlog().d(t.toString())
-                }
-
-                override fun onResponse(
-                    call: Call<SignUpResponse>,
-                    response: Response<SignUpResponse>)
-                {
-                    Dlog().d(response.code().toString())
-                    Dlog().d(response.body().toString())
-                    Dlog().d(response.headers().toString())
-                    Dlog().d(response.errorBody().toString())
-                    Dlog().d(response.raw().toString())
-
-                    when(response.code()){
-                        200 ->{
-                            gotoMain()
-                        }
-                        400 ->{
-                            val jsonObject = JSONObject(response.errorBody()!!.string())
-                            val timestamp = jsonObject.getString("timestamp")
-                            val status = jsonObject.getString("status")
-                            val message = jsonObject.getString("message")
-                            val code = jsonObject.getInt("code")
-
-                            showToast { message }
-                        }
-                        500 ->{ //internal server error
-
-                        }
-                    }
-                }
-            })
-    }
-
-    private fun gotoMain() {
+    override fun gotoMain() {
         val nextIntent = Intent(this, MainActivity::class.java)
         startActivity(nextIntent)
+    }
+
+    override fun showToastView(toastMessage: String) {
+        showToast { toastMessage }
     }
 
     private fun CloseKeyboard() {
         val view = this.currentFocus
 
-        if(view != null)
-        {
-            val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        if (view != null) {
+            val inputMethodManager =
+                getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
         }
     }

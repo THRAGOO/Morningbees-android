@@ -1,4 +1,4 @@
-package com.jasen.kimjaeseung.morningbees.data
+package com.jasen.kimjaeseung.morningbees.signup.model
 
 data class SignUpResponse (
     var accessToken : String?=null,
