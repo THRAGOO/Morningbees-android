@@ -3,6 +3,6 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
-    <drawable name="pressed_signup_start_button">#ffda22</drawable>
-    <drawable name="not_pressed_signup_start_button">#dddddd</drawable>
+    <drawable name="active_signup_start_button">#ffda22</drawable>
+    <drawable name="deactive_signup_start_button">#dddddd</drawable>
 </resources>

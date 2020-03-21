@@ -1,6 +1,7 @@
 package com.jasen.kimjaeseung.morningbees.main
 
 import android.annotation.SuppressLint
+import android.app.ActionBar
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -24,6 +25,7 @@ class SignUpActivity : BaseActivity(), SignUpContract.View {
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "onCreate callback")
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_signup)
         signupPresenter.takeView(this)
     }

@@ -15,8 +15,8 @@
             android:layout_width="match_parent"
             android:layout_height="24dp"
             android:background="#efc227">
-
         </LinearLayout>
+
 
         <ImageView
             android:layout_width="36dp"
@@ -51,8 +51,6 @@
                 android:textSize="32sp"
                 android:textStyle="normal"/>
         </RelativeLayout>
-
-
 
         <TextView
             android:layout_width="wrap_content"
