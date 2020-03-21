@@ -1,7 +1,9 @@
 package com.jasen.kimjaeseung.morningbees.network
 
+import com.jasen.kimjaeseung.morningbees.login.model.SignInRequest
 import com.jasen.kimjaeseung.morningbees.login.model.SignInResponse
 import com.jasen.kimjaeseung.morningbees.signup.model.NameValidataionCheckResponse
+import com.jasen.kimjaeseung.morningbees.signup.model.SignUpRequest
 import com.jasen.kimjaeseung.morningbees.signup.model.SignUpResponse
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -25,15 +27,12 @@ interface MorningBeesService {
     @Headers("Content-Type:application/json")
     @POST("/api/auth/sign_in")
     fun signIn(
-        @QueryMap socialAccessToken : Map<String,String>,
-        @QueryMap provider : Map<String,String>
+        @Body signInRequest: SignInRequest
     ): Call<SignInResponse>
 
     @POST("/api/auth/sign_up")
     fun signUp(
-        @QueryMap socialAccessToken: Map<String, String>,
-        @QueryMap provider: Map<String, String>,
-        @QueryMap nickname: Map<String, String>
+        @Body signUpRequest: SignUpRequest
     ): Call<SignUpResponse>
 
     companion object{

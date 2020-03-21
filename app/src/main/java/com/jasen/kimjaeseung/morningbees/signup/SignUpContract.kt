@@ -2,6 +2,7 @@ package com.jasen.kimjaeseung.morningbees.signup
 
 import com.jasen.kimjaeseung.morningbees.mvp.BasePresenter
 import com.jasen.kimjaeseung.morningbees.mvp.BaseView
+import com.jasen.kimjaeseung.morningbees.signup.model.SignUpRequest
 
 //contract 인터페이스 = 해당 view와 presenter가 어떤 메소드를 가져야한다는 것을 보여줌
 interface SignUpContract {
@@ -16,9 +17,7 @@ interface SignUpContract {
     interface Presenter : BasePresenter<View>{
         fun nameValidMorningbeesServer(tempName: String)
         fun signUpMorningbeesServer(
-            socialAccessToken: HashMap<String, String>,
-            provider: HashMap<String, String>,
-            nickname: HashMap<String, String>
+            signUpRequest: SignUpRequest
         )
 
     }

@@ -14,6 +14,7 @@ import com.jasen.kimjaeseung.morningbees.signup.SignUpPresenter
 import com.jasen.kimjaeseung.morningbees.util.showToast
 import kotlinx.android.synthetic.main.activity_signup.*
 import android.widget.Toast
+import com.jasen.kimjaeseung.morningbees.signup.model.SignUpRequest
 import java.util.regex.Pattern
 
 
@@ -73,9 +74,7 @@ class SignUpActivity : BaseActivity(), SignUpContract.View {
 
                     } else {
                         signupPresenter.signUpMorningbeesServer(
-                            hashMapOf("socialAccessToken" to IntentSocialAccessToken),
-                            hashMapOf("provider" to IntentProvider),
-                            hashMapOf("nickname" to signupPresenter.mNickname)
+                            SignUpRequest(IntentSocialAccessToken,IntentProvider,signupPresenter.mNickname)
                         )
 
                         Log.d(TAG, signupPresenter.mNickname)

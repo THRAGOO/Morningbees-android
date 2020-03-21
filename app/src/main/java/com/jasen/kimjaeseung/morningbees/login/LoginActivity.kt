@@ -13,6 +13,7 @@ import kotlinx.android.synthetic.main.activity_login.*
 
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.tasks.Task
+import com.jasen.kimjaeseung.morningbees.login.model.SignInRequest
 import com.jasen.kimjaeseung.morningbees.login.model.SignInResponse
 
 import com.jasen.kimjaeseung.morningbees.main.SignUpActivity
@@ -147,8 +148,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
                         )
 
                         signInMorningbeesServer(
-                            hashMapOf("socialAccessToken" to accessToken),
-                            hashMapOf("provider" to getString(R.string.naver))
+                            SignInRequest(accessToken,getString(R.string.naver))
                         )
 
                     } else {
@@ -193,8 +193,8 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
         }
     }
 
-    override fun signInMorningbeesServer(socialAccessToken:HashMap<String,String>,provider:HashMap<String,String>) {
-        service.signIn(socialAccessToken,provider).enqueue(object : Callback<SignInResponse>{
+    override fun signInMorningbeesServer(signInRequest: SignInRequest) {
+        service.signIn(signInRequest).enqueue(object : Callback<SignInResponse>{
             override fun onFailure(call: Call<SignInResponse>, t: Throwable) {
                 showToast { getString(R.string.network_error_message) }
                 Dlog().d(t.toString())
@@ -202,14 +202,15 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
 
             override fun onResponse(call: Call<SignInResponse>, response: Response<SignInResponse>) {
                 val i = response.code()
+                Dlog().d(response.code().toString())
                 when(i){
                     200 ->{
                         val signInResponse : SignInResponse = response.body()!!
-                        Dlog().d(signInResponse.type.toString())
                         if (signInResponse.type == 1){    //SignIn process
                             //bee check이후 bee 생성 or main
+
                         }else{  //SignUp process
-                            gotoSignUp(socialAccessToken, provider)
+                            gotoSignUp(signInRequest)
                         }
                     }
                     400 ->{ //Bad Request
@@ -229,11 +230,11 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
         })
     }
 
-    private fun gotoSignUp(socialAccessToken:HashMap<String,String>,provider:HashMap<String,String>) {
+    private fun gotoSignUp(signInRequest: SignInRequest) {
         val nextIntent = Intent(this, SignUpActivity::class.java)
 
-        nextIntent.putExtra("socialAccessToken", socialAccessToken.getValue("socialAccessToken"))
-        nextIntent.putExtra("provider", provider.getValue("provider"))
+        nextIntent.putExtra("socialAccessToken", signInRequest.socialAccessToken)
+        nextIntent.putExtra("provider", signInRequest.provider)
 
         startActivity(nextIntent)
     }

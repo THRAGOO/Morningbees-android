@@ -10,6 +10,7 @@ import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.main.SignUpActivity
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import com.jasen.kimjaeseung.morningbees.signup.model.NameValidataionCheckResponse
+import com.jasen.kimjaeseung.morningbees.signup.model.SignUpRequest
 import com.jasen.kimjaeseung.morningbees.signup.model.SignUpResponse
 
 import com.jasen.kimjaeseung.morningbees.util.Dlog
@@ -86,13 +87,11 @@ class SignUpPresenter(context: Context) : SignUpContract.Presenter{
     }
 
     override fun signUpMorningbeesServer(
-        socialAccessToken: HashMap<String, String>,
-        provider: HashMap<String, String>,
-        nickname: HashMap<String, String>
+        signUpRequest: SignUpRequest
     ){
         //Login에서 넘겨준 socialAccessToken, provider과 nickname 같이 post
         service.signUp(
-            socialAccessToken, provider, nickname
+            signUpRequest
         )
             .enqueue(object : Callback<SignUpResponse> {
                 override fun onFailure(call: Call<SignUpResponse>, t: Throwable) {
