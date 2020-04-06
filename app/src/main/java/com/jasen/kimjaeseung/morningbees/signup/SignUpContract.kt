@@ -9,7 +9,10 @@ interface SignUpContract {
     //presenter에서 view를 업데이트하기 위한 이벤트
     interface View : BaseView{
         fun showToastView(toastMessage : () -> String)
-        fun gotoMain()
+        //fun showToastMessage(msg: String)
+        fun gotoMain(accessToken : String, refreshToken : String)
+        fun nicknameValidCheck(i: Int)
+
 
     }
 
@@ -19,7 +22,6 @@ interface SignUpContract {
         fun signUpMorningbeesServer(
             signUpRequest: SignUpRequest
         )
-
     }
 
 

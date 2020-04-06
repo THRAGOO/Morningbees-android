@@ -27,9 +27,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".main.SignUpActivity"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity
+            android:name=".createbee.CreateStep1Activity"
+            android:windowSoftInputMode="adjustResize"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity
+            android:name=".createbee.CreateStep2Activity"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity
+            android:name=".createbee.CreateStep3Activity"
             android:screenOrientation="portrait">
         </activity>
 

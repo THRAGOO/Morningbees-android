@@ -124,7 +124,7 @@
         android:layout_height="56dp"
 
         android:layout_alignParentBottom="true"
-        android:background="@drawable/selector_signup_start_button"
+        android:background="@drawable/selector_custom_button"
 
         android:gravity="center"
         android:letterSpacing="-0.02"

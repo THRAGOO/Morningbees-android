@@ -3,6 +3,14 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
-    <drawable name="active_signup_start_button">#ffda22</drawable>
-    <drawable name="deactive_signup_start_button">#dddddd</drawable>
+
+    <color name="active_button">#ffda22</color>
+    <color name="deactive_button">#dddddd</color>
+
+    <color name="round_button">#F9F9F9</color>
+    <color name="clock_6_button">#FFEF8E</color>
+    <color name="clock_7_button">#FFE251</color>
+    <color name="clock_8_button">#FBC932</color>
+    <color name="clock_9_button">#F29F06</color>
+    <color name="clock_10_button">#EE8007</color>
 </resources>

@@ -3,6 +3,7 @@ package com.jasen.kimjaeseung.morningbees.login
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -13,6 +14,7 @@ import kotlinx.android.synthetic.main.activity_login.*
 
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.tasks.Task
+import com.jasen.kimjaeseung.morningbees.createbee.CreateStep1Activity
 import com.jasen.kimjaeseung.morningbees.login.model.SignInRequest
 import com.jasen.kimjaeseung.morningbees.login.model.SignInResponse
 
@@ -37,6 +39,11 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
     private lateinit var mOAuthLoginModule: OAuthLogin  //naver sign in module
 
     val service =  MorningBeesService.create()
+
+    lateinit var refreshTokenToUseCreateBee : String
+    lateinit var accessTokenToUseCreateBee : String
+    lateinit var provider : String
+    //lateinit var accessToken : String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,6 +72,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
         login_google_sign_out_button.setOnClickListener(this)
         login_naver_sign_in_button.setOnClickListener(this)
         login_goto_signup.setOnClickListener(this)
+        login_goto_beecreate.setOnClickListener(this)
     }
 
 
@@ -128,7 +136,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
     override fun naverSignIn() {
         if (mOAuthLoginModule.getState(this) == OAuthLoginState.OK) {
             Dlog().d("Status don't need Naver Login")
-            //네이버 access token으로 앱 로그인
+            //네이버 access token으로 앱 로그인ㄹ
         } else {
             Dlog().d("Status need login")
             mOAuthLoginModule.startOauthLoginActivity(this, @SuppressLint("HandlerLeak")
@@ -139,6 +147,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
                         val refreshToken = mOAuthLoginModule.getRefreshToken(this@LoginActivity)
                         val expiresAt = mOAuthLoginModule.getExpiresAt(this@LoginActivity)
                         val tokenType = mOAuthLoginModule.getTokenType(this@LoginActivity)
+
                         Dlog().d("naver Login Access Token : $accessToken")
                         Dlog().d("naver Login refresh Token : $refreshToken")
                         Dlog().d("naver Login expiresAt : $expiresAt")
@@ -146,6 +155,8 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
                         Dlog().i(
                             "naver Login Module State : " + mOAuthLoginModule.getState(this@LoginActivity).toString()
                         )
+
+                        provider = getString(R.string.naver)
 
                         signInMorningbeesServer(
                             SignInRequest(accessToken,getString(R.string.naver))
@@ -190,6 +201,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
             R.id.login_google_sign_out_button -> signOut()
             R.id.login_naver_sign_in_button -> naverSignIn()
             //R.id.login_goto_signup -> gotoSignUp()
+            R.id.login_goto_beecreate -> gotoBeeCreate()
         }
     }
 
@@ -208,6 +220,10 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
                         val signInResponse : SignInResponse = response.body()!!
                         if (signInResponse.type == 1){    //SignIn process
                             //bee check이후 bee 생성 or main
+
+                            //create bee하려고 임시로 할당 -규림-
+                            accessTokenToUseCreateBee = signInResponse.accessToken
+                            refreshTokenToUseCreateBee = signInResponse.refreshToken
 
                         }else{  //SignUp process
                             gotoSignUp(signInRequest)
@@ -239,6 +255,19 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
         startActivity(nextIntent)
     }
 
+    private fun gotoBeeCreate(){
+        val nextIntent = Intent(this, CreateStep1Activity::class.java)
+
+        //nextIntent.putExtra("socialAccessToken", accessToken)
+        nextIntent.putExtra("accessToken", accessTokenToUseCreateBee)
+        nextIntent.putExtra("refreshToken", refreshTokenToUseCreateBee)
+
+        //Log.d(TAG, "socialAccessToken: $accessToken")
+        Log.d(TAG, "accessToken: $accessTokenToUseCreateBee")
+
+        startActivity(nextIntent)
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -255,7 +284,6 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
                     Dlog().d(account!!.displayName!!)
 
                     handleSignInResult(task)
-
 
                 } catch (e: ApiException) {
                     // Google Sign In failed, update UI appropriately

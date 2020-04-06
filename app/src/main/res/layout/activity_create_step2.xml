@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:src="http://schemas.android.com/tools">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="35dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_marginBottom="25dp">
+
+            <ImageButton
+                android:id="@+id/go_back_step1_button"
+                android:layout_width="12dp"
+                android:layout_height="20dp"
+                android:src="@drawable/arrow_left"
+                android:padding="0sp"
+                android:scaleType="fitCenter"
+                android:layout_alignParentStart="true"/>
+
+            <ImageButton
+                android:id="@+id/info_step2_button"
+                android:layout_width="20dp"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/icon_info"
+                android:padding="0sp"
+                android:scaleType="fitCenter"
+                android:layout_alignParentEnd="true"
+                />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="24sp"
+                android:lineHeight="33sp"
+                android:textColor="#222222"
+                android:text="미션 수행 시간을" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="24sp"
+                android:lineHeight="33sp"
+                android:textColor="#222222"
+                android:text="선택해 주세요." />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="56dp"
+                android:layout_marginBottom="16dp"
+                android:textColor="#777777"
+                android:textSize="13sp"
+                android:text="시작 및 종료 시간" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/clock_6_button"
+                    android:layout_width="54dp"
+                    android:layout_height="54dp"
+                    android:background="@drawable/clock_6_custom_button"
+                    android:layout_marginEnd="6dp"
+                    android:padding="0sp"
+                    android:scaleType="fitCenter"
+                    android:text="6"/>
+
+                <Button
+                    android:id="@+id/clock_7_button"
+                    android:layout_width="54dp"
+                    android:layout_height="54dp"
+                    android:background="@drawable/clock_7_custom_button"
+                    android:layout_marginEnd="6dp"
+                    android:text="7"/>
+
+                <Button
+                    android:id="@+id/clock_8_button"
+                    android:layout_width="54dp"
+                    android:layout_height="54dp"
+                    android:layout_marginEnd="6dp"
+                    android:background="@drawable/clock_8_custom_button"
+                    android:text="8"/>
+
+                <Button
+                    android:id="@+id/clock_9_button"
+                    android:layout_width="54dp"
+                    android:layout_height="54dp"
+                    android:background="@drawable/clock_9_custom_button"
+                    android:layout_marginEnd="6dp"
+                    android:text="9"/>
+
+                <Button
+                    android:id="@+id/clock_10_button"
+                    android:layout_width="54dp"
+                    android:layout_height="54dp"
+                    android:background="@drawable/clock_10_custom_button"
+                    android:text="10"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/create_step2_next_button"
+        android:text="다음 2/3"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:textColor="#222222"
+        android:textSize="15sp"
+        android:textAlignment="center"
+        android:letterSpacing="0.02"
+        android:background="@drawable/selector_custom_button"
+        android:layout_alignParentBottom="true"
+        />
+
+</RelativeLayout>

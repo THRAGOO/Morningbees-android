@@ -1,7 +1,5 @@
 package com.jasen.kimjaeseung.morningbees.main
 
-import android.annotation.SuppressLint
-import android.app.ActionBar
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -15,11 +13,12 @@ import com.jasen.kimjaeseung.morningbees.signup.SignUpPresenter
 import com.jasen.kimjaeseung.morningbees.util.showToast
 import kotlinx.android.synthetic.main.activity_signup.*
 import android.widget.Toast
+import com.jasen.kimjaeseung.morningbees.createbee.CreateStep1Activity
 import com.jasen.kimjaeseung.morningbees.signup.model.SignUpRequest
 import java.util.regex.Pattern
 
 
-class SignUpActivity : BaseActivity(), SignUpContract.View {
+class SignUpActivity : BaseActivity(), SignUpContract.View, View.OnClickListener {
     private lateinit var signupPresenter : SignUpPresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,26 +26,38 @@ class SignUpActivity : BaseActivity(), SignUpContract.View {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_signup)
+        initButtonListeners()
         signupPresenter.takeView(this)
     }
 
     override fun onStart() {
         Log.d(TAG, "onStart callback")
         super.onStart()
-        attachButtonEvent()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        signupPresenter.dropView()
+        //signupPresenter.dropView()
     }
 
     override fun initPresenter(){
         signupPresenter = SignUpPresenter(this)
     }
 
-    @SuppressLint("ResourceType")
-    private fun attachButtonEvent() {
+    private fun initButtonListeners(){
+        signup_nickname_check_button.setOnClickListener(this)
+        signup_start_button.setOnClickListener(this)
+    }
+
+    override fun onClick(v: View) {
+        val i = v.id
+        when(i){
+            R.id.signup_nickname_check_button -> nicknameCheck()
+            R.id.signup_start_button -> signupStart()
+        }
+    }
+
+    private fun nicknameCheck(){
         signup_nickname_check_button.setOnClickListener{
             val usrNickname = signup_nickname_text.text.toString()
 
@@ -56,34 +67,48 @@ class SignUpActivity : BaseActivity(), SignUpContract.View {
             if(filteredNickname != "")
                 signupPresenter.nameValidMorningbeesServer(filteredNickname)
         }
+    }
 
-        signup_start_button.setOnClickListener{
-            CloseKeyboard()
+    override fun nicknameValidCheck(i: Int) {
+        if(i==1){
+            signup_start_button.isEnabled = true
+            signup_start_button.background = applicationContext.getDrawable(R.color.active_button)
+        }
+        else {
+            signup_start_button.isEnabled = false
+            signup_start_button.background = applicationContext.getDrawable(R.color.deactive_button)
+        }
+    }
 
-            when{
-                !signupPresenter.validCheck -> {
-                    Log.d(TAG, "need validcheck")
-                    showToast { getString(R.string.no_nickname_duplicate_check) }
-                }
+    private fun signupStart(){
+        CloseKeyboard()
 
-                signupPresenter.validCheck -> {
-                    val IntentSocialAccessToken: String? = intent.getStringExtra("socialAccessToken")
-                    val IntentProvider: String? = intent.getStringExtra("provider")
+        when{
+            !signupPresenter.validCheck -> {
+                Log.d(TAG, "need validcheck")
+                showToast { getString(R.string.no_nickname_duplicate_check) }
+            }
 
-                    if (IntentSocialAccessToken == null || IntentProvider == null) {
-                        Log.d(TAG, "need intent value from signInActivity")
-                        showToast{getString(R.string.social_login_recheck)}
+            signupPresenter.validCheck -> {
+                val IntentSocialAccessToken: String? = intent.getStringExtra("socialAccessToken")
+                val IntentProvider: String? = intent.getStringExtra("provider")
 
-                    } else {
-                        signupPresenter.signUpMorningbeesServer(
-                            SignUpRequest(IntentSocialAccessToken,IntentProvider,signupPresenter.mNickname)
-                        )
+                if (IntentSocialAccessToken == null || IntentProvider == null) {
+                    Log.d(TAG, "need intent value from signInActivity")
+                    showToast{getString(R.string.social_login_recheck)}
 
-                        Log.d(TAG, signupPresenter.mNickname)
-                    }
+                } else {
+                    signupPresenter.signUpMorningbeesServer(
+                        SignUpRequest(IntentSocialAccessToken,IntentProvider,signupPresenter.mNickname)
+                    )
+                    Log.d(TAG, signupPresenter.mNickname)
                 }
             }
         }
+    }
+
+    override fun showToastView(toastMessage: () -> String) {
+        Toast.makeText(this, toastMessage(), Toast.LENGTH_SHORT).show()
     }
 
     private fun nicknameFilter(source: String): String {
@@ -107,13 +132,13 @@ class SignUpActivity : BaseActivity(), SignUpContract.View {
         }
     }
 
-    override fun gotoMain() {
-        val nextIntent = Intent(this, MainActivity::class.java)
-        startActivity(nextIntent)
-    }
+    override fun gotoMain(accessToken : String, refreshToken : String) {
+        val nextIntent = Intent(this, CreateStep1Activity::class.java)
 
-   override fun showToastView(toastMessage: () -> String) {
-       Toast.makeText(this, toastMessage(), Toast.LENGTH_SHORT).show()
+        nextIntent.putExtra("accessToken", accessToken)
+        nextIntent.putExtra("refreshToken", refreshToken)
+
+        startActivity(nextIntent)
     }
 
 

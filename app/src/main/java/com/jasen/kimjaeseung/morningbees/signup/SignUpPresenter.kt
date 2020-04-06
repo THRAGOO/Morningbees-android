@@ -7,7 +7,6 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import com.jasen.kimjaeseung.morningbees.R
-import com.jasen.kimjaeseung.morningbees.main.SignUpActivity
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import com.jasen.kimjaeseung.morningbees.signup.model.NameValidataionCheckResponse
 import com.jasen.kimjaeseung.morningbees.signup.model.SignUpRequest
@@ -19,7 +18,6 @@ import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import kotlin.math.sign
 
 class SignUpPresenter(context: Context) : SignUpContract.Presenter{
     //만약에 activity를 라이프사이클에 맞춰서 구현했으면 presenter에도 라이프사이클 해줘야함
@@ -27,9 +25,12 @@ class SignUpPresenter(context: Context) : SignUpContract.Presenter{
     private var signupView : SignUpContract.View ?= null
     private val service = MorningBeesService.create()
     var nameValidCheckResponse: NameValidataionCheckResponse? = null
+    var signUpResponse : SignUpResponse? = null
+
     lateinit var mNickname: String
     var validCheck: Boolean = false
     var mContext : Context = context
+
 
     override fun takeView(view: SignUpContract.View){
         signupView = view
@@ -60,11 +61,13 @@ class SignUpPresenter(context: Context) : SignUpContract.Presenter{
                                 validCheck = true
 
                                 signupView!!.showToastView { mContext.resources.getString(R.string.validnickname_ok) }
+                                signupView!!.nicknameValidCheck(1)
                                 Log.d(TAG, "validnickname ok")
 
                             } else {
                                 validCheck = false
                                 signupView!!.showToastView { mContext.resources.getString(R.string.validnickname_duplicate) }
+                                signupView!!.nicknameValidCheck(0)
                                 Log.d(TAG, "validnickname duplicate")
                             }
                         }
@@ -110,7 +113,12 @@ class SignUpPresenter(context: Context) : SignUpContract.Presenter{
 
                     when (response.code()) {
                         200 -> {
-                            signupView!!.gotoMain()
+                             val signUpResponse = response.body()
+
+                            val accessToken : String = signUpResponse!!.accessToken
+                            val refreshToken : String  = signUpResponse!!.refreshToken
+
+                            signupView!!.gotoMain(accessToken, refreshToken)
                         }
                         400 -> {
                             val jsonObject = JSONObject(response.errorBody()!!.string())

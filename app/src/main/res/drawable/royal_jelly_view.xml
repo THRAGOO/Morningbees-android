@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<rotate xmlns:android="http://schemas.android.com/apk/res/android"
+    android:fromDegrees="90"
+    android:pivotX="50%"
+    android:pivotY="50%"
+    android:toDegrees="90">
+    <vector
+        android:height="21dp"
+        android:viewportHeight="235.0"
+        android:viewportWidth="248.0"
+        android:width="25dp"
+        android:tint="@color/selector_royal_jelly_color"
+        android:tintMode="multiply"
+        xmlns:android="http://schemas.android.com/apk/res/android">
+
+        <path
+            android:fillColor="@color/round_button"
+            android:pathData="M237.581,128.273C241.244,121.558 241.244,113.442 237.581,106.727L189.943,19.38C186.001,12.151 178.424,7.654 170.19,7.654L77.81,7.654C69.576,7.654 61.999,12.151 58.057,19.38L10.419,106.727C6.756,113.442 6.756,121.558 10.419,128.273L58.057,215.62C61.999,222.849 69.576,227.346 77.81,227.346L170.19,227.346C178.424,227.346 186.001,222.849 189.943,215.62L237.581,128.273Z"
+            />
+    </vector>
+</rotate>
