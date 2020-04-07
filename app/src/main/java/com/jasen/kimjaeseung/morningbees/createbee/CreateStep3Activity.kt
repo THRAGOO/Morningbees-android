@@ -199,9 +199,12 @@ class CreateStep3Activity: AppCompatActivity(), View.OnClickListener, View.OnTou
                             val code = jsonObject.getInt("code")
 
                             if(code == 101){ // access token 만료 error handling
+                                showToast { "token 만료" }
                                 renewalServer()
                             }
-                            else { showToast { message }}
+                            else {
+                                showToast { message }
+                            }
                         }
 
                         500 -> { //internal server error
@@ -211,7 +214,13 @@ class CreateStep3Activity: AppCompatActivity(), View.OnClickListener, View.OnTou
                             val message = jsonObject.getString("message")
                             val code = jsonObject.getInt("code")
 
-                            showToast { message}
+                            if(code == 101){ // access token 만료 error handling
+                                //showToast { "token 만료" }
+                                renewalServer()
+                            }
+                            else {
+                                showToast { message }
+                            }
                         }
                     }
                 }

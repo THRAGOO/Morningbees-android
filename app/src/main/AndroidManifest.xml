@@ -16,12 +16,12 @@
 
         <activity
             android:name=".main.MainActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="fullSensor">
         </activity>
 
         <activity
             android:name=".login.LoginActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="fullSensor">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -29,20 +29,20 @@
         </activity>
         <activity
             android:name=".main.SignUpActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="fullSensor">
         </activity>
         <activity
             android:name=".createbee.CreateStep1Activity"
             android:windowSoftInputMode="adjustResize"
-            android:screenOrientation="portrait">
+            android:screenOrientation="fullSensor">
         </activity>
         <activity
             android:name=".createbee.CreateStep2Activity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="fullSensor">
         </activity>
         <activity
             android:name=".createbee.CreateStep3Activity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="fullSensor">
         </activity>
 
     </application>
