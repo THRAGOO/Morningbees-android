@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_marginTop="35dp"
-        android:layout_marginStart="24dp"
+        android:layout_marginStart="11dp"
         android:layout_marginEnd="24dp">
 
         <RelativeLayout
@@ -42,6 +42,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
             android:orientation="vertical">
 
             <TextView
@@ -85,97 +86,96 @@
                 android:id="@+id/create_step3_view">
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="327dp"
+                    android:layout_height="18dp"
                     android:orientation="horizontal"
-                    android:layout_marginStart="71dp">
+                    android:layout_gravity="center_horizontal">
 
-                    <ImageView
-                        android:id="@+id/jelly_1"
-                        android:layout_width="77.2dp"
-                        android:layout_height="77.4dp"
-                        android:background="@drawable/royal_jelly_view"/>
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
 
-                    <ImageView
-                        android:id="@+id/jelly_2"
-                        android:layout_width="77.2dp"
-                        android:layout_height="77.4dp"
-                        android:layout_margin="1dp"
-                        android:background="@drawable/royal_jelly_view"/>
+                        <ImageView
+                            android:id="@+id/jelly_backgroundImageView"
+                            android:layout_width="327dp"
+                            android:layout_height="18dp"
+                            android:background="#F5F5F5"/>
 
-                    <ImageView
-                        android:id="@+id/jelly_3"
-                        android:layout_width="77.2dp"
-                        android:layout_height="77.4dp"
-                        android:layout_marginEnd="1dp"
-                        android:background="@drawable/royal_jelly_view"/>
+                        <ImageButton
+                            android:id="@+id/jelly_3"
+                            android:layout_width="5dp"
+                            android:layout_height="5dp"
+                            android:layout_marginStart="36dp"
+                            android:layout_marginEnd="31dp"
+                            android:background="@drawable/selector_royaljelly"
+                            android:layout_toStartOf="@id/jelly_4"
+                            android:layout_centerVertical="true"/>
 
-                </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginStart="32dp"
-                    android:layout_marginTop="-15dp">
+                        <ImageButton
+                            android:id="@+id/jelly_4"
+                            android:layout_width="5dp"
+                            android:layout_height="5dp"
+                            android:layout_marginEnd="31dp"
+                            android:background="@drawable/selector_royaljelly"
+                            android:layout_toStartOf="@id/jelly_5"
+                            android:layout_centerVertical="true"/>
 
-                    <ImageView
-                        android:id="@+id/jelly_4"
-                        android:layout_width="77.2dp"
-                        android:layout_height="77.4dp"
-                        android:layout_marginEnd="1dp"
-                        android:background="@drawable/royal_jelly_view"/>
+                        <ImageButton
+                            android:id="@+id/jelly_5"
+                            android:layout_width="5dp"
+                            android:layout_height="5dp"
+                            android:layout_marginEnd="31dp"
+                            android:background="@drawable/selector_royaljelly"
+                            android:layout_centerVertical="true"
+                            android:layout_toStartOf="@id/jelly_6"/>
 
-                    <ImageView
-                        android:id="@+id/jelly_5"
-                        android:layout_width="77.2dp"
-                        android:layout_height="77.4dp"
-                        android:layout_marginEnd="1dp"
-                        android:background="@drawable/royal_jelly_view"/>
+                        <ImageButton
+                            android:id="@+id/jelly_6"
+                            android:layout_width="5dp"
+                            android:layout_height="5dp"
+                            android:layout_marginEnd="31dp"
+                            android:background="@drawable/selector_royaljelly"
+                            android:layout_centerVertical="true"
+                            android:layout_toStartOf="@id/jelly_7"/>
 
-                    <ImageView
-                        android:id="@+id/jelly_6"
-                        android:layout_width="77.2dp"
-                        android:layout_height="77.4dp"
-                        android:layout_marginEnd="1dp"
-                        android:background="@drawable/royal_jelly_view"/>
+                        <ImageButton
+                            android:id="@+id/jelly_7"
+                            android:layout_width="5dp"
+                            android:layout_height="5dp"
+                            android:layout_marginEnd="31dp"
+                            android:background="@drawable/selector_royaljelly"
+                            android:layout_centerVertical="true"
+                            android:layout_toStartOf="@id/jelly_8"/>
 
-                    <ImageView
-                        android:id="@+id/jelly_7"
-                        android:layout_width="77.2dp"
-                        android:layout_height="77.4dp"
-                        android:layout_marginEnd="1dp"
-                        android:background="@drawable/royal_jelly_view"/>
+                        <ImageButton
+                            android:id="@+id/jelly_8"
+                            android:layout_width="5dp"
+                            android:layout_height="5dp"
+                            android:layout_marginEnd="31dp"
+                            android:background="@drawable/selector_royaljelly"
+                            android:layout_centerVertical="true"
+                            android:layout_toStartOf="@id/jelly_9"/>
 
-                </LinearLayout>
+                        <ImageButton
+                            android:id="@+id/jelly_9"
+                            android:layout_width="5dp"
+                            android:layout_height="5dp"
+                            android:layout_marginEnd="31dp"
+                            android:background="@drawable/selector_royaljelly"
+                            android:layout_centerVertical="true"
+                            android:layout_toStartOf="@id/jelly_10"/>
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginStart="71dp"
-                    android:layout_marginTop="-15dp">
+                        <ImageButton
+                            android:id="@+id/jelly_10"
+                            android:layout_width="5dp"
+                            android:layout_height="5dp"
+                            android:layout_marginEnd="36dp"
+                            android:background="@drawable/selector_royaljelly"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"/>
 
-                    <ImageView
-                        android:id="@+id/jelly_8"
-                        android:layout_width="77.2dp"
-                        android:layout_height="77.4dp"
-                        android:layout_marginEnd="1dp"
-                        android:background="@drawable/royal_jelly_view"/>
-
-                    <ImageView
-                        android:id="@+id/jelly_9"
-                        android:layout_width="77.2dp"
-                        android:layout_height="77.4dp"
-                        android:layout_marginEnd="1dp"
-                        android:background="@drawable/royal_jelly_view"/>
-
-                    <ImageView
-                        android:id="@+id/jelly_10"
-                        android:layout_width="77.2dp"
-                        android:layout_height="77.4dp"
-                        android:layout_marginEnd="1dp"
-                        android:background="@drawable/royal_jelly_view"/>
+                    </RelativeLayout>
                 </LinearLayout>
             </LinearLayout>
 

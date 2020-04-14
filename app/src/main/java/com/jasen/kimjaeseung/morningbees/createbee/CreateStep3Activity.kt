@@ -25,7 +25,7 @@ import retrofit2.Callback
 import retrofit2.Response
 
 
-class CreateStep3Activity: AppCompatActivity(), View.OnClickListener, View.OnTouchListener {
+class CreateStep3Activity: AppCompatActivity(), View.OnClickListener {
     private var clickCnt : Int = 0
     private var jellyCnt : Int = 0
 
@@ -37,14 +37,13 @@ class CreateStep3Activity: AppCompatActivity(), View.OnClickListener, View.OnTou
     private lateinit var refreshToken: String
 
     private val service = MorningBeesService.create()
-    private var royalJellyArray : Array<Int> = arrayOf(0,0,0,0,0,0,0,0,0,0,0)
+    private var royalJellyArray : Array<Int> = arrayOf(0,0,0,0,0,0,0,0,0)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_create_step3)
         initButtonListeners()
-        initViewListeners()
 
         onStart()
     }
@@ -82,59 +81,45 @@ class CreateStep3Activity: AppCompatActivity(), View.OnClickListener, View.OnTou
 
     }
 
-    @SuppressLint("ClickableViewAccessibility")
-    private fun initViewListeners(){
-
-        for(i in 1 .. 10){
-            val pkg = packageName
-            val mId = resources.getIdentifier("jelly_$i", "id", pkg)
-
-            Log.d(TAG, "jelly_$i : $mId")
-
-            val mImageView : ImageView = findViewById(mId)
-
-            royalJellyArray[i] = mId
-
-            Log.d(TAG, "royaljelly[$i].id = $mId .index = $i")
-
-            //mImageView.setOnTouchListener(this)
-
-        }
-        create_step3_view.setOnTouchListener(this)
-    }
-
     override fun onClick(v: View) {
         val i = v.id
         when(i){
             R.id.create_step3_next_button -> createBeeServer()
             R.id.go_back_step2_button -> gotoStep2()
             R.id.info_step3_button -> showInfo()
+
+            R.id.jelly_3 -> changeJellyColor(3)
+            R.id.jelly_4 -> changeJellyColor(4)
+            R.id.jelly_5 -> changeJellyColor(5)
+            R.id.jelly_6 -> changeJellyColor(6)
+            R.id.jelly_7 -> changeJellyColor(7)
+            R.id.jelly_8 -> changeJellyColor(8)
+            R.id.jelly_9 -> changeJellyColor(9)
+            R.id.jelly_10 -> changeJellyColor(10)
         }
-    }
-
-    override fun onTouch(v: View, event: MotionEvent): Boolean {
-        val imgViewId = v.id
-        val action = event.action
-
-        when(action){
-           //MotionEvent.ACTION_UP -> changeJellyColor()
-            MotionEvent.ACTION_DOWN -> changeJellyColor()
-        }
-
-        return false
     }
 
     private fun initButtonListeners() {
         create_step3_next_button.setOnClickListener(this)
         go_back_step2_button.setOnClickListener(this)
         info_step3_button.setOnClickListener(this)
+        jelly_3.setOnClickListener(this)
+        jelly_4.setOnClickListener(this)
+        jelly_5.setOnClickListener(this)
+        jelly_6.setOnClickListener(this)
+        jelly_7.setOnClickListener(this)
+        jelly_8.setOnClickListener(this)
+        jelly_9.setOnClickListener(this)
+        jelly_10.setOnClickListener(this)
     }
 
-    private fun changeJellyColor(){
+    private fun changeJellyColor(jellyCnt : Int){
         clickCnt++
 
+
+
         if(clickCnt <= 10){
-            jellyCnt = clickCnt
+            //jellyCnt = clickCnt
 
             val mId = royalJellyArray[jellyCnt]
             val mImageView : ImageView = findViewById(mId)
@@ -142,7 +127,7 @@ class CreateStep3Activity: AppCompatActivity(), View.OnClickListener, View.OnTou
         }
         else if (clickCnt > 10 && clickCnt <= 20){
             if(clickCnt == 20){
-                jellyCnt = 0
+                //jellyCnt = 0
                 clickCnt = 0
 
                 val mId = royalJellyArray[1]
@@ -150,7 +135,7 @@ class CreateStep3Activity: AppCompatActivity(), View.OnClickListener, View.OnTou
                 mImageView.isSelected = false
             }
             else{
-                jellyCnt = 10 - (clickCnt%10)
+                //jellyCnt = 10 - (clickCnt%10)
                 val mId = royalJellyArray[jellyCnt+1]
                 val mImageView : ImageView = findViewById(mId)
                 mImageView.isSelected = false
