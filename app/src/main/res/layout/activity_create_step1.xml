@@ -64,7 +64,7 @@
                 android:textColor="#777777"
                 android:textSize="13sp"
                 android:text="Bee 이름"
-                android:layout_marginBottom="12dp"/>
+                android:layout_marginBottom="17dp"/>
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -76,7 +76,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
-                    android:layout_marginTop="15dp"
+                    android:paddingBottom="15dp"
                     android:layout_weight="1"/>
 
                 <ImageButton

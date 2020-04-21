@@ -1,16 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_selected="false">
-        <shape android:shape="oval">
-            <solid android:color="#AAAAAA"/>
-        </shape>
+    <item
+        android:state_selected="false"
+        android:drawable="@drawable/not_selected_jelly_button">
     </item>
 
-    <item android:state_selected="true">
-        <shape android:shape="oval">
-            <size android:width="20dp" android:height="20dp"/>
-            <solid android:color="#FFFFFF"/>
-            <stroke android:width="3dp" android:color="#FFDA22"/>
-        </shape>
+    <item
+        android:state_selected="true"
+        android:drawable="@drawable/selected_jelly_button">
     </item>
 </selector>

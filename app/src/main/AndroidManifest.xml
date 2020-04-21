@@ -31,6 +31,11 @@
             android:name=".main.SignUpActivity"
             android:screenOrientation="fullSensor">
         </activity>
+
+        <activity
+            android:name=".beforejoin.BeforeJoinActivity"
+            android:screenOrientation="fullSensor">
+        </activity>
         <activity
             android:name=".createbee.CreateStep1Activity"
             android:windowSoftInputMode="adjustResize"

@@ -1,5 +1,7 @@
 package com.jasen.kimjaeseung.morningbees.network
 
+import com.jasen.kimjaeseung.morningbees.beforejoin.model.JoinBeeRequest
+import com.jasen.kimjaeseung.morningbees.beforejoin.model.MeResponse
 import com.jasen.kimjaeseung.morningbees.createbee.model.CreateBeeRequest
 import com.jasen.kimjaeseung.morningbees.createbee.model.CreateBeeResponse
 import com.jasen.kimjaeseung.morningbees.createbee.model.RenewalResponse
@@ -54,6 +56,17 @@ interface MorningBeesService {
         @Header ("X-BEES-ACCESS-TOKEN") accessToken : String,
         @Header("X-BEES-REFRESH-TOKEN") refreshToken : String
     ):Call<RenewalResponse>
+
+    @GET("/api/auth/me")
+    fun me(
+        @Header ("X-BEES-ACCESS-TOKEN") accessToken : String
+    ):Call<MeResponse>
+
+    @GET("/api/bees/join")
+    fun joinBee(
+        @Header ("X-BEES-ACCESS-TOKEN") accessToken : String,
+        @Body joinBeeRequest: JoinBeeRequest
+    ): Call<Void>
 
     companion object{
         fun create(): MorningBeesService{

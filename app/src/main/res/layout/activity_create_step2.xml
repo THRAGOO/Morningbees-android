@@ -79,16 +79,17 @@
                     android:layout_height="54dp"
                     android:background="@drawable/clock_6_custom_button"
                     android:layout_marginEnd="6dp"
-                    android:padding="0sp"
                     android:scaleType="fitCenter"
                     android:text="6"/>
+
 
                 <Button
                     android:id="@+id/clock_7_button"
                     android:layout_width="54dp"
                     android:layout_height="54dp"
-                    android:background="@drawable/clock_7_custom_button"
                     android:layout_marginEnd="6dp"
+                    android:background="@drawable/clock_7_custom_button"
+                    android:gravity="center"
                     android:text="7"/>
 
                 <Button
@@ -112,6 +113,7 @@
                     android:layout_width="54dp"
                     android:layout_height="54dp"
                     android:background="@drawable/clock_10_custom_button"
+                    android:textAlignment="center"
                     android:text="10"/>
 
             </LinearLayout>

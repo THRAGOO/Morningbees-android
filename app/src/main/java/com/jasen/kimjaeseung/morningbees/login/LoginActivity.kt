@@ -14,6 +14,9 @@ import kotlinx.android.synthetic.main.activity_login.*
 
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.tasks.Task
+import com.jasen.kimjaeseung.morningbees.beforejoin.BeforeJoinActivity
+import com.jasen.kimjaeseung.morningbees.beforejoin.model.JoinBeeRequest
+import com.jasen.kimjaeseung.morningbees.beforejoin.model.MeResponse
 import com.jasen.kimjaeseung.morningbees.createbee.CreateStep1Activity
 import com.jasen.kimjaeseung.morningbees.login.model.SignInRequest
 import com.jasen.kimjaeseung.morningbees.login.model.SignInResponse
@@ -55,6 +58,12 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
 
         initGoogleSignIn()
         initNaverSignIn()
+
+        if(intent.hasExtra("refreshTokenExpiration")){
+            signOut()
+            showToast { "signOut" }
+        }
+
     }
 
     override fun onDestroy() {
@@ -201,7 +210,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
             R.id.login_google_sign_out_button -> signOut()
             R.id.login_naver_sign_in_button -> naverSignIn()
             //R.id.login_goto_signup -> gotoSignUp()
-            R.id.login_goto_beecreate -> gotoBeeCreate()
+            R.id.login_goto_beecreate -> meServer()
         }
     }
 
@@ -246,6 +255,55 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
         })
     }
 
+    private fun meServer(){
+        var alreadyJoinBee : Boolean = false
+        var nickname : String = ""
+
+        service.me(accessTokenToUseCreateBee)
+            .enqueue(object : Callback<MeResponse>{
+                override fun onResponse(call: Call<MeResponse>, response: Response<MeResponse>) {
+                    val i = response.code()
+
+                    when(i){
+                        200 ->{
+                            val meResponse : MeResponse = response.body()!!
+                            alreadyJoinBee = meResponse.alreadyJoinBee
+                            Log.d(TAG, meResponse.alreadyJoinBee.toString())
+
+                            if(alreadyJoinBee){
+                                nickname = meResponse.nickname
+                                showToast { "already bee join" }
+                            }
+                            else {
+                                Log.d(TAG, "not already bee join")
+                                gotoBeeCreate()
+                            }
+                        }
+
+                        400 -> {
+                            val jsonObject = JSONObject(response.errorBody()!!.string())
+                            val timestamp = jsonObject.getString("timestamp")
+                            val status = jsonObject.getString("status")
+                            val message = jsonObject.getString("message")
+                            val code = jsonObject.getInt("code")
+
+                            showToast { message }
+                        }
+
+                        500 -> {
+
+                        }
+                    }
+                }
+
+                override fun onFailure(call: Call<MeResponse>, t: Throwable) {
+                    Dlog().d(t.toString())
+                }
+            })
+
+    }
+
+
     private fun gotoSignUp(signInRequest: SignInRequest) {
         val nextIntent = Intent(this, SignUpActivity::class.java)
 
@@ -256,14 +314,10 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
     }
 
     private fun gotoBeeCreate(){
-        val nextIntent = Intent(this, CreateStep1Activity::class.java)
+        val nextIntent = Intent(this, BeforeJoinActivity::class.java)
 
-        //nextIntent.putExtra("socialAccessToken", accessToken)
         nextIntent.putExtra("accessToken", accessTokenToUseCreateBee)
         nextIntent.putExtra("refreshToken", refreshTokenToUseCreateBee)
-
-        //Log.d(TAG, "socialAccessToken: $accessToken")
-        Log.d(TAG, "accessToken: $accessTokenToUseCreateBee")
 
         startActivity(nextIntent)
     }
