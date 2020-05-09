@@ -75,13 +75,14 @@
 
                     <ImageView
                         android:id="@+id/jelly_backgroundImageView"
-                        android:layout_width="327dp"
+                        android:layout_width="match_parent"
                         android:layout_height="18dp"
                         android:layout_alignParentTop="true"
                         android:layout_marginTop="3dp"
                         android:background="@drawable/round_imageview"/>
 
                     <LinearLayout
+                        android:id="@+id/jelly_linearLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
@@ -95,10 +96,10 @@
                                 android:layout_width="25dp"
                                 android:layout_height="25dp"
                                 android:layout_gravity="center_vertical"
-                                android:layout_marginStart="6dp"
+                                android:layout_marginStart="5dp"
                                 android:layout_marginEnd="5dp"
                                 android:background="#00000000"
-                                android:src="@drawable/selector_royaljelly" />
+                                android:src="@drawable/jelly_button_selector" />
 
                             <TextView
                                 android:id="@+id/jelly_2_text"
@@ -121,7 +122,7 @@
                                 android:layout_marginStart="5dp"
                                 android:layout_marginEnd="5dp"
                                 android:background="#00000000"
-                                android:src="@drawable/selector_royaljelly" />
+                                android:src="@drawable/jelly_button_selector" />
                             <TextView
                                 android:id="@+id/jelly_3_text"
                                 android:layout_width="wrap_content"
@@ -146,7 +147,7 @@
                                 android:background="#00000000"
                                 android:layout_marginStart="5dp"
                                 android:layout_marginEnd="5dp"
-                                android:src="@drawable/selector_royaljelly"/>
+                                android:src="@drawable/jelly_button_selector"/>
                             <TextView
                                 android:id="@+id/jelly_4_text"
                                 android:layout_width="wrap_content"
@@ -169,7 +170,7 @@
                                 android:background="#00000000"
                                 android:layout_marginStart="5dp"
                                 android:layout_marginEnd="5dp"
-                                android:src="@drawable/selector_royaljelly" />
+                                android:src="@drawable/jelly_button_selector" />
 
                             <TextView
                                 android:id="@+id/jelly_5_text"
@@ -192,8 +193,8 @@
                                 android:layout_gravity="center"
                                 android:background="#00000000"
                                 android:layout_marginStart="5dp"
-                                android:layout_marginEnd="6dp"
-                                android:src="@drawable/selector_royaljelly"/>
+                                android:layout_marginEnd="5dp"
+                                android:src="@drawable/jelly_button_selector"/>
                             <TextView
                                 android:id="@+id/jelly_6_text"
                                 android:layout_width="wrap_content"
@@ -216,8 +217,8 @@
                                 android:layout_gravity="center"
                                 android:background="#00000000"
                                 android:layout_marginStart="5dp"
-                                android:layout_marginEnd="6dp"
-                                android:src="@drawable/selector_royaljelly"/>
+                                android:layout_marginEnd="5dp"
+                                android:src="@drawable/jelly_button_selector"/>
 
                             <TextView
                                 android:id="@+id/jelly_7_text"
@@ -240,8 +241,8 @@
                                 android:layout_gravity="center"
                                 android:background="#00000000"
                                 android:layout_marginStart="5dp"
-                                android:layout_marginEnd="6dp"
-                                android:src="@drawable/selector_royaljelly"/>
+                                android:layout_marginEnd="5dp"
+                                android:src="@drawable/jelly_button_selector"/>
                             <TextView
                                 android:id="@+id/jelly_8_text"
                                 android:layout_width="wrap_content"
@@ -264,9 +265,9 @@
                                 android:layout_height="25dp"
                                 android:layout_gravity="center"
                                 android:background="#00000000"
-                                android:src="@drawable/selector_royaljelly"
+                                android:src="@drawable/jelly_button_selector"
                                 android:layout_marginStart="5dp"
-                                android:layout_marginEnd="6dp"/>
+                                android:layout_marginEnd="5dp"/>
 
                             <TextView
                                 android:id="@+id/jelly_9_text"
@@ -291,7 +292,7 @@
                                 android:layout_marginStart="5dp"
                                 android:layout_marginEnd="11dp"
                                 android:background="#00000000"
-                                android:src="@drawable/selector_royaljelly"/>
+                                android:src="@drawable/jelly_button_selector"/>
                             <TextView
                                 android:id="@+id/jelly_10_text"
                                 android:layout_width="wrap_content"

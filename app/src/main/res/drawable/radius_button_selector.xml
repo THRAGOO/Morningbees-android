@@ -2,11 +2,10 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:state_selected="false"
-        android:drawable="@drawable/not_selected_jelly_button">
+        android:drawable="@drawable/radius_button_selected">
     </item>
-
     <item
         android:state_selected="true"
-        android:drawable="@drawable/selected_jelly_button">
+        android:drawable="@drawable/radius_button_notselected">
     </item>
 </selector>

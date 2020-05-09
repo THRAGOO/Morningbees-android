@@ -1,18 +1,24 @@
 package com.jasen.kimjaeseung.morningbees.signup
 
 import android.content.Context
+import android.content.Intent
 import android.content.res.Resources
 import android.provider.Settings.Global.getString
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.core.content.ContextCompat.startActivity
 import com.jasen.kimjaeseung.morningbees.R
+import com.jasen.kimjaeseung.morningbees.beforejoin.BeforeJoinActivity
+import com.jasen.kimjaeseung.morningbees.beforejoin.model.MeResponse
+import com.jasen.kimjaeseung.morningbees.login.LoginActivity
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import com.jasen.kimjaeseung.morningbees.signup.model.NameValidataionCheckResponse
 import com.jasen.kimjaeseung.morningbees.signup.model.SignUpRequest
 import com.jasen.kimjaeseung.morningbees.signup.model.SignUpResponse
 
 import com.jasen.kimjaeseung.morningbees.util.Dlog
+import com.jasen.kimjaeseung.morningbees.util.showToast
 
 import org.json.JSONObject
 import retrofit2.Call
@@ -118,7 +124,8 @@ class SignUpPresenter(context: Context) : SignUpContract.Presenter{
                             val accessToken : String = signUpResponse!!.accessToken
                             val refreshToken : String  = signUpResponse!!.refreshToken
 
-                            signupView!!.gotoMain(accessToken, refreshToken)
+                            //signupView!!.gotoMain(accessToken, refreshToken)
+                            meServer(accessToken, refreshToken)
                         }
                         400 -> {
                             val jsonObject = JSONObject(response.errorBody()!!.string())
@@ -136,6 +143,64 @@ class SignUpPresenter(context: Context) : SignUpContract.Presenter{
                 }
             })
     }
+
+
+    override fun meServer(accessToken : String, refreshToken : String){
+        var alreadyJoin : Boolean
+        var nickname : String = ""
+
+        service.me(accessToken)
+            .enqueue(object : Callback<MeResponse>{
+                override fun onResponse(call: Call<MeResponse>, response: Response<MeResponse>) {
+                    val i = response.code()
+
+                    when(i){
+                        200 ->{
+                            val meResponse : MeResponse = response.body()!!
+                            alreadyJoin = meResponse.alreadyJoin
+                            nickname = meResponse.nickname
+
+                            Log.d(TAG, meResponse.alreadyJoin.toString())
+
+                            if(alreadyJoin){
+                                nickname = meResponse.nickname
+                                Log.d(TAG,"already bee join")
+                            }
+                            else {
+                                Log.d(TAG, "not already bee join")
+                                signupView!!.gotoBeeCreate(accessToken, refreshToken)
+                            }
+                        }
+
+                        400 -> {
+                            val jsonObject = JSONObject(response.errorBody()!!.string())
+                            val timestamp = jsonObject.getString("timestamp")
+                            val status = jsonObject.getString("status")
+                            val message = jsonObject.getString("message")
+                            val code = jsonObject.getInt("code")
+
+                            signupView!!.showToastView{message}
+                        }
+
+                        500 -> {
+                            val jsonObject = JSONObject(response.errorBody()!!.string())
+                            val timestamp = jsonObject.getString("timestamp")
+                            val status = jsonObject.getString("status")
+                            val message = jsonObject.getString("message")
+                            val code = jsonObject.getInt("code")
+
+                            signupView!!.showToastView{message}
+                        }
+                    }
+                }
+
+                override fun onFailure(call: Call<MeResponse>, t: Throwable) {
+                    Dlog().d(t.toString())
+                }
+            })
+
+    }
+
 
     companion object {
         private const val TAG = "SignUpPresenter"

@@ -93,7 +93,6 @@
                 android:id="@+id/beename_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/beename_text"
                 android:textColor="#aaaaaa"
                 android:textSize="12sp"/>
 

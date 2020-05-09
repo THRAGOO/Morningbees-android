@@ -10,9 +10,9 @@ interface SignUpContract {
     interface View : BaseView{
         fun showToastView(toastMessage : () -> String)
         //fun showToastMessage(msg: String)
-        fun gotoMain(accessToken : String, refreshToken : String)
+       // fun gotoMain(accessToken : String, refreshToken : String)
         fun nicknameValidCheck(i: Int)
-
+        fun gotoBeeCreate(accessToken: String, refreshToken: String)
 
     }
 
@@ -22,6 +22,7 @@ interface SignUpContract {
         fun signUpMorningbeesServer(
             signUpRequest: SignUpRequest
         )
+        fun meServer(accessToken : String, refreshToken : String)
     }
 
 

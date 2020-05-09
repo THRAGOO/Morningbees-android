@@ -1,10 +1,10 @@
 package com.jasen.kimjaeseung.morningbees.network
 
-import com.jasen.kimjaeseung.morningbees.beforejoin.model.JoinBeeRequest
+import androidx.media.AudioAttributesCompat
 import com.jasen.kimjaeseung.morningbees.beforejoin.model.MeResponse
 import com.jasen.kimjaeseung.morningbees.createbee.model.CreateBeeRequest
-import com.jasen.kimjaeseung.morningbees.createbee.model.CreateBeeResponse
 import com.jasen.kimjaeseung.morningbees.createbee.model.RenewalResponse
+import com.jasen.kimjaeseung.morningbees.invitebee.model.JoinBeeResponse
 import com.jasen.kimjaeseung.morningbees.login.model.SignInRequest
 import com.jasen.kimjaeseung.morningbees.login.model.SignInResponse
 import com.jasen.kimjaeseung.morningbees.signup.model.NameValidataionCheckResponse
@@ -64,8 +64,13 @@ interface MorningBeesService {
 
     @GET("/api/bees/join")
     fun joinBee(
-        @Header ("X-BEES-ACCESS-TOKEN") accessToken : String,
-        @Body joinBeeRequest: JoinBeeRequest
+        @Header ("X-BEES-ACCESS-TOKEN") accessToken : String
+    ): Call<JoinBeeResponse>
+
+    @Headers("Content-Type:application/json")
+    @DELETE("/api/bees/withdrawal")
+    fun withdrawalBee(
+        @Header ("X-BEES-ACCESS-TOKEN") accessToken : String
     ): Call<Void>
 
     companion object{

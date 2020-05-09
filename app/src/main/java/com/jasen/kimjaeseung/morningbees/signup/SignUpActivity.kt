@@ -13,7 +13,8 @@ import com.jasen.kimjaeseung.morningbees.signup.SignUpPresenter
 import com.jasen.kimjaeseung.morningbees.util.showToast
 import kotlinx.android.synthetic.main.activity_signup.*
 import android.widget.Toast
-import com.jasen.kimjaeseung.morningbees.createbee.CreateStep1Activity
+import androidx.core.content.ContextCompat
+import com.jasen.kimjaeseung.morningbees.beforejoin.BeforeJoinActivity
 import com.jasen.kimjaeseung.morningbees.signup.model.SignUpRequest
 import java.util.regex.Pattern
 
@@ -132,13 +133,13 @@ class SignUpActivity : BaseActivity(), SignUpContract.View, View.OnClickListener
         }
     }
 
-    override fun gotoMain(accessToken : String, refreshToken : String) {
-        val nextIntent = Intent(this, CreateStep1Activity::class.java)
+    override fun gotoBeeCreate(accessToken: String, refreshToken: String){
+        val nextIntent = Intent(this, BeforeJoinActivity::class.java)
 
         nextIntent.putExtra("accessToken", accessToken)
         nextIntent.putExtra("refreshToken", refreshToken)
 
-        startActivity(nextIntent)
+       startActivity(nextIntent)
     }
 
 

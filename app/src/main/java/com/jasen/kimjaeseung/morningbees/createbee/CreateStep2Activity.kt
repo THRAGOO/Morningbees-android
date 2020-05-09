@@ -1,5 +1,6 @@
 package com.jasen.kimjaeseung.morningbees.createbee
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -22,16 +23,12 @@ class CreateStep2Activity : AppCompatActivity(), View.OnClickListener{
     lateinit var accessToken : String
     lateinit var refreshToken: String
 
+    private val REQUEST_TEST = 2
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_step2)
-
-        onStart()
         initButtonListeners()
-    }
-
-    override fun onStart() {
-        super.onStart()
 
         if(intent.hasExtra("beename")) {
             intent.getStringExtra("beename")?.let{
@@ -48,9 +45,6 @@ class CreateStep2Activity : AppCompatActivity(), View.OnClickListener{
             refreshToken = intent.getStringExtra("refreshToken")
         }
 
-        Log.d(TAG, "onStart() intentBeename: $intentBeename")
-        Log.d(TAG, "accessToken: $accessToken")
-        Log.d(TAG, "refreshToken: $refreshToken")
     }
 
     override fun onClick(v: View) {
@@ -62,7 +56,7 @@ class CreateStep2Activity : AppCompatActivity(), View.OnClickListener{
             R.id.clock_9_button -> buttonPressed(9)
             R.id.clock_10_button -> buttonPressed(10)
             R.id.create_step2_next_button -> gotoStep3()
-            R.id.go_back_step1_button -> gotoStep1()
+            R.id.go_back_step1_button -> onBackPressed()
             R.id.info_step2_button ->showInfo()
         }
     }
@@ -178,15 +172,12 @@ class CreateStep2Activity : AppCompatActivity(), View.OnClickListener{
                 else
                     lastMissionTime = i + 6
             }
-
         }
     }
 
     private fun gotoStep3(){
         val nextIntent = Intent(this, CreateStep3Activity::class.java)
-
         missionTimeCheck()
-
         Log.d(TAG, "firstMissionTime: $firstMissionTime , lastMissionTime: $lastMissionTime")
 
         nextIntent.putExtra("beename", intentBeename)
@@ -194,16 +185,61 @@ class CreateStep2Activity : AppCompatActivity(), View.OnClickListener{
         nextIntent.putExtra("lastMissionTime", lastMissionTime)
         nextIntent.putExtra("accessToken", accessToken)
         nextIntent.putExtra("refreshToken", refreshToken)
-        startActivity(nextIntent)
+
+        startActivityForResult(nextIntent, REQUEST_TEST)
     }
 
-    private fun gotoStep1(){
+    override fun onBackPressed() {
+        super.onBackPressed()
+
         val nextIntent = Intent(this, CreateStep1Activity::class.java)
         nextIntent.putExtra("beename", intentBeename)
         nextIntent.putExtra("accessToken", accessToken)
         nextIntent.putExtra("refreshToken", refreshToken)
         Log.d(TAG,"gotoStep1 beename:$intentBeename")
-       startActivity(nextIntent)
+
+        setResult(Activity.RESULT_OK, nextIntent)
+        finish()
+
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if(requestCode == REQUEST_TEST){
+            if(resultCode == Activity.RESULT_OK){
+                if(intent.hasExtra("beename")) {
+                    intent.getStringExtra("beename")?.let{
+                        intentBeename = intent.getStringExtra("beename") }
+                }
+                else
+                    intentBeename = ""
+
+                if(intent.hasExtra("accessToken")){
+                    accessToken = intent.getStringExtra("accessToken")
+                }
+
+                if(intent.hasExtra("refreshToken")){
+                    refreshToken = intent.getStringExtra("refreshToken")
+                }
+
+                if(intent.hasExtra("firstMissionTime")){
+                    firstMissionTime = intent.getIntExtra("firstMissionTime", 0)
+                    buttonPressed(firstMissionTime)
+                    Log.d(TAG, "firstMissionTime: $firstMissionTime")
+                }
+
+                if(intent.hasExtra("lastMissionTime")){
+                    lastMissionTime = intent.getIntExtra("lastMissionTime", 0)
+                    buttonPressed(lastMissionTime)
+                    Log.d(TAG, "lastMissionTime: $lastMissionTime")
+                }
+
+                Log.d(TAG, "onStart() intentBeename: $intentBeename")
+                Log.d(TAG, "accessToken: $accessToken")
+                Log.d(TAG, "refreshToken: $refreshToken")
+            }
+        }
     }
 
     private fun showInfo(){

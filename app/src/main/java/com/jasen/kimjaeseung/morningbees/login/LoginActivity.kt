@@ -15,7 +15,6 @@ import kotlinx.android.synthetic.main.activity_login.*
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.tasks.Task
 import com.jasen.kimjaeseung.morningbees.beforejoin.BeforeJoinActivity
-import com.jasen.kimjaeseung.morningbees.beforejoin.model.JoinBeeRequest
 import com.jasen.kimjaeseung.morningbees.beforejoin.model.MeResponse
 import com.jasen.kimjaeseung.morningbees.createbee.CreateStep1Activity
 import com.jasen.kimjaeseung.morningbees.login.model.SignInRequest
@@ -41,12 +40,11 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
     private lateinit var mGoogleSignInClient: GoogleSignInClient    //google sign in client
     private lateinit var mOAuthLoginModule: OAuthLogin  //naver sign in module
 
+    private lateinit var mAccessToken : String
+    private lateinit var mRefreshToken : String
+    private lateinit var provider : String
     val service =  MorningBeesService.create()
 
-    lateinit var refreshTokenToUseCreateBee : String
-    lateinit var accessTokenToUseCreateBee : String
-    lateinit var provider : String
-    //lateinit var accessToken : String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,7 +53,6 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
         loginPresenter.takeView(this)
 
         initButtonListeners()
-
         initGoogleSignIn()
         initNaverSignIn()
 
@@ -63,7 +60,6 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
             signOut()
             showToast { "signOut" }
         }
-
     }
 
     override fun onDestroy() {
@@ -80,8 +76,9 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
         login_google_sign_in_button.setOnClickListener(this)
         login_google_sign_out_button.setOnClickListener(this)
         login_naver_sign_in_button.setOnClickListener(this)
-        login_goto_signup.setOnClickListener(this)
-        login_goto_beecreate.setOnClickListener(this)
+        withdraw_bee_button.setOnClickListener(this)
+        //login_goto_signup.setOnClickListener(this)
+        //login_goto_beecreate.setOnClickListener(this)
     }
 
 
@@ -167,9 +164,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
 
                         provider = getString(R.string.naver)
 
-                        signInMorningbeesServer(
-                            SignInRequest(accessToken,getString(R.string.naver))
-                        )
+                        signInMorningbeesServer(SignInRequest(accessToken,getString(R.string.naver)))
 
                     } else {
                         val errorCode =
@@ -209,8 +204,9 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
             R.id.login_google_sign_in_button -> googleSignIn()
             R.id.login_google_sign_out_button -> signOut()
             R.id.login_naver_sign_in_button -> naverSignIn()
+            R.id.withdraw_bee_button -> withdrawBee(mAccessToken, mRefreshToken)
             //R.id.login_goto_signup -> gotoSignUp()
-            R.id.login_goto_beecreate -> meServer()
+            //R.id.login_goto_beecreate -> meServer()
         }
     }
 
@@ -230,9 +226,13 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
                         if (signInResponse.type == 1){    //SignIn process
                             //bee check이후 bee 생성 or main
 
-                            //create bee하려고 임시로 할당 -규림-
-                            accessTokenToUseCreateBee = signInResponse.accessToken
-                            refreshTokenToUseCreateBee = signInResponse.refreshToken
+                            val accessToken = signInResponse.accessToken
+                            val refreshToken = signInResponse.refreshToken
+
+                            mAccessToken = accessToken
+                            mRefreshToken = refreshToken
+
+                            meServer(accessToken, refreshToken)
 
                         }else{  //SignUp process
                             gotoSignUp(signInRequest)
@@ -255,29 +255,20 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
         })
     }
 
-    private fun meServer(){
-        var alreadyJoinBee : Boolean = false
-        var nickname : String = ""
+    private fun withdrawBee(accessToken: String, refreshToken: String){
 
-        service.me(accessTokenToUseCreateBee)
-            .enqueue(object : Callback<MeResponse>{
-                override fun onResponse(call: Call<MeResponse>, response: Response<MeResponse>) {
+        service.withdrawalBee(accessToken)
+            .enqueue(object : Callback<Void> {
+                override fun onFailure(call: Call<Void>, t: Throwable) {
+                    Dlog().d(t.toString())
+                }
+
+                override fun onResponse(call: Call<Void>, response: Response<Void>) {
                     val i = response.code()
 
-                    when(i){
+                    when (i) {
                         200 ->{
-                            val meResponse : MeResponse = response.body()!!
-                            alreadyJoinBee = meResponse.alreadyJoinBee
-                            Log.d(TAG, meResponse.alreadyJoinBee.toString())
-
-                            if(alreadyJoinBee){
-                                nickname = meResponse.nickname
-                                showToast { "already bee join" }
-                            }
-                            else {
-                                Log.d(TAG, "not already bee join")
-                                gotoBeeCreate()
-                            }
+                            Log.d(TAG,"bee withdrawal success")
                         }
 
                         400 -> {
@@ -292,6 +283,58 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
 
                         500 -> {
 
+                        }
+                    }
+
+                }
+            })
+    }
+
+    private fun meServer(accessToken : String, refreshToken : String){
+        var alreadyJoin : Boolean
+        var nickname : String = ""
+
+        service.me(accessToken)
+            .enqueue(object : Callback<MeResponse>{
+                override fun onResponse(call: Call<MeResponse>, response: Response<MeResponse>) {
+                    val i = response.code()
+
+                    when(i){
+                        200 ->{
+                            val meResponse : MeResponse = response.body()!!
+                            alreadyJoin = meResponse.alreadyJoin
+                            nickname = meResponse.nickname
+
+                            Log.d(TAG, meResponse.alreadyJoin.toString())
+
+                            if(alreadyJoin){
+                                nickname = meResponse.nickname
+                                Log.d(TAG,"already bee join")
+                            }
+                            else {
+                                Log.d(TAG, "not already bee join")
+                                gotoBeeCreate(accessToken, refreshToken)
+                            }
+                        }
+
+                        400 -> {
+                            val jsonObject = JSONObject(response.errorBody()!!.string())
+                            val timestamp = jsonObject.getString("timestamp")
+                            val status = jsonObject.getString("status")
+                            val message = jsonObject.getString("message")
+                            val code = jsonObject.getInt("code")
+
+                            showToast { message }
+                        }
+
+                        500 -> {
+                            val jsonObject = JSONObject(response.errorBody()!!.string())
+                            val timestamp = jsonObject.getString("timestamp")
+                            val status = jsonObject.getString("status")
+                            val message = jsonObject.getString("message")
+                            val code = jsonObject.getInt("code")
+
+                            showToast { message }
                         }
                     }
                 }
@@ -313,11 +356,11 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
         startActivity(nextIntent)
     }
 
-    private fun gotoBeeCreate(){
+    private fun gotoBeeCreate(accessToken: String, refreshToken: String){
         val nextIntent = Intent(this, BeforeJoinActivity::class.java)
 
-        nextIntent.putExtra("accessToken", accessTokenToUseCreateBee)
-        nextIntent.putExtra("refreshToken", refreshTokenToUseCreateBee)
+        nextIntent.putExtra("accessToken", accessToken)
+        nextIntent.putExtra("refreshToken", refreshToken)
 
         startActivity(nextIntent)
     }

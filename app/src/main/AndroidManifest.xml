@@ -39,15 +39,18 @@
         <activity
             android:name=".createbee.CreateStep1Activity"
             android:windowSoftInputMode="adjustResize"
-            android:screenOrientation="fullSensor">
+            android:screenOrientation="fullSensor"
+            android:parentActivityName=".beforejoin.BeforeJoinActivity">
         </activity>
         <activity
             android:name=".createbee.CreateStep2Activity"
-            android:screenOrientation="fullSensor">
+            android:screenOrientation="fullSensor"
+            android:parentActivityName=".createbee.CreateStep1Activity">
         </activity>
         <activity
             android:name=".createbee.CreateStep3Activity"
-            android:screenOrientation="fullSensor">
+            android:screenOrientation="fullSensor"
+            android:parentActivityName=".createbee.CreateStep2Activity">
         </activity>
 
     </application>
