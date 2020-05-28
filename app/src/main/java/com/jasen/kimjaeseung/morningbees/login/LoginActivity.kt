@@ -19,6 +19,7 @@ import com.jasen.kimjaeseung.morningbees.beforejoin.model.MeResponse
 import com.jasen.kimjaeseung.morningbees.createbee.CreateStep1Activity
 import com.jasen.kimjaeseung.morningbees.login.model.SignInRequest
 import com.jasen.kimjaeseung.morningbees.login.model.SignInResponse
+import com.jasen.kimjaeseung.morningbees.main.MainActivity
 
 import com.jasen.kimjaeseung.morningbees.main.SignUpActivity
 import com.jasen.kimjaeseung.morningbees.mvp.BaseActivity
@@ -100,6 +101,8 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
 
+        Dlog().d("google sign in")
+
         refreshIdToken()
 
         // check existing user
@@ -118,6 +121,9 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
         // If the user has not previously signed in on this device or the sign-in has expired,
         // this asynchronous branch will attempt to sign in the user silently and get a valid
         // ID token. Cross-device single sign on will occur in this branch.
+
+        Dlog().d("google refresh id token")
+
         mGoogleSignInClient.silentSignIn()
             .addOnCompleteListener(
                 this
@@ -142,7 +148,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
     override fun naverSignIn() {
         if (mOAuthLoginModule.getState(this) == OAuthLoginState.OK) {
             Dlog().d("Status don't need Naver Login")
-            //네이버 access token으로 앱 로그인ㄹ
+            //네이버 access token으로 앱 로그인
         } else {
             Dlog().d("Status need login")
             mOAuthLoginModule.startOauthLoginActivity(this, @SuppressLint("HandlerLeak")
@@ -186,10 +192,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
             Dlog().d("Id Token : " + idToken)
 
             //모닝비즈서버에 엑세스토큰,프로바이더 전송
-//            val signInRequest = SignInRequest(idToken.toString(),getString(R.string.google))
-//            signInMorningbeesServer(signInRequest)
-//            signUpMorningbeesServer(idToken.toString(), "google", "nick")
-
+            signInMorningbeesServer(SignInRequest(idToken.toString(),getString(R.string.google)))
 
             //updateUI(account)
         } catch (e: ApiException) {
@@ -310,6 +313,9 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
                             if(alreadyJoin){
                                 nickname = meResponse.nickname
                                 Log.d(TAG,"already bee join")
+
+                                //bee 이미 생성, 메인이동
+                                gotoMainActivty()
                             }
                             else {
                                 Log.d(TAG, "not already bee join")
@@ -344,6 +350,12 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
                 }
             })
 
+    }
+
+    private fun gotoMainActivty(){
+        val nextIntent = Intent(this, MainActivity::class.java)
+
+        startActivity(nextIntent)
     }
 
 
