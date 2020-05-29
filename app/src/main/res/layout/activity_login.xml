@@ -1,15 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:background="#ffffff"
+    >
 
-    <com.google.android.gms.common.SignInButton
-        android:id="@+id/login_google_sign_in_button"
+    <ImageView
+        android:id="@+id/login_beebackground"
+        android:layout_width="match_parent"
+        android:layout_height="520dp"
+        android:adjustViewBounds="true"
+        android:background="#ffffff"
+        android:scaleType="fitXY"
+        android:src="@drawable/bg_signin"/>
+
+    <ImageView
+        android:id="@+id/login_beeimage"
+        android:layout_marginTop="460dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="172dp"
+        android:layout_height="188dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/bee" />
+
+    <LinearLayout
+        android:background="#ffffff"
+        android:layout_marginTop="520dp"
+        android:paddingTop="20dp"
+        android:orientation="vertical"
+        android:paddingBottom="50dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/login_naver_sign_in_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:src="@drawable/btn_naver"
+            />
+
+        <ImageView
+            android:id="@+id/login_google_sign_in_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:layout_marginTop="12dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:src="@drawable/btn_google"
+            />
+    </LinearLayout>
+
+
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:buttonSize="standard" />
+        android:singleLine="true"
+        android:textColor="#000000"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="109dp"
+        android:textSize="15sp"
+        android:text="친구들과 함께하는 기상미션"
+        />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_marginLeft="81dp"
+        android:layout_marginRight="81dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="144dp"
+        android:adjustViewBounds="true"
+        android:src="@drawable/logo_title"/>
 
     <Button
         android:id="@+id/login_google_sign_out_button"
@@ -18,29 +83,12 @@
         android:text="Sign Out" />
 
     <Button
-        android:id="@+id/login_naver_sign_in_button"
-        android:text="네이버"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp" />
-
-    <Button
         android:id="@+id/withdraw_bee_button"
         android:text="withdraw bee"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
-    <!--
-    <Button
-        android:id="@+id/login_goto_signup"
-        android:text="go to signup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
 
-    <Button
-        android:id="@+id/login_goto_beecreate"
-        android:text="go to beecreate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
 
-        -->
-</LinearLayout>
+
+</FrameLayout>

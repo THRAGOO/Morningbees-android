@@ -53,6 +53,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
 
         loginPresenter.takeView(this)
 
+        initAnimation()
         initButtonListeners()
         initGoogleSignIn()
         initNaverSignIn()
@@ -78,8 +79,10 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
         login_google_sign_out_button.setOnClickListener(this)
         login_naver_sign_in_button.setOnClickListener(this)
         withdraw_bee_button.setOnClickListener(this)
-        //login_goto_signup.setOnClickListener(this)
-        //login_goto_beecreate.setOnClickListener(this)
+    }
+
+    private fun initAnimation(){
+        login_beeimage.animate().translationY(-343f).setDuration(500)
     }
 
 

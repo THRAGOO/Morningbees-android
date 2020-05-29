@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.jasen.kimjaeseung.morningbees">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:name=".GlobalApp"
@@ -13,47 +13,41 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+        <meta-data
+            android:name="com.google.android.actions"
+            android:resource="@xml/bee_radius" />
 
         <activity
             android:name=".main.MainActivity"
-            android:screenOrientation="fullSensor">
-        </activity>
-
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".login.LoginActivity"
-            android:screenOrientation="fullSensor">
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".main.SignUpActivity"
-            android:screenOrientation="fullSensor">
-        </activity>
-
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".beforejoin.BeforeJoinActivity"
-            android:screenOrientation="fullSensor">
-        </activity>
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".createbee.CreateStep1Activity"
-            android:windowSoftInputMode="adjustResize"
-            android:screenOrientation="fullSensor"
-            android:parentActivityName=".beforejoin.BeforeJoinActivity">
-        </activity>
+            android:parentActivityName=".beforejoin.BeforeJoinActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"></activity>
         <activity
             android:name=".createbee.CreateStep2Activity"
-            android:screenOrientation="fullSensor"
-            android:parentActivityName=".createbee.CreateStep1Activity">
-        </activity>
+            android:parentActivityName=".createbee.CreateStep1Activity"
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".createbee.CreateStep3Activity"
-            android:screenOrientation="fullSensor"
-            android:parentActivityName=".createbee.CreateStep2Activity">
-        </activity>
-
+            android:parentActivityName=".createbee.CreateStep2Activity"
+            android:screenOrientation="portrait"></activity>
     </application>
-
 
 </manifest>
