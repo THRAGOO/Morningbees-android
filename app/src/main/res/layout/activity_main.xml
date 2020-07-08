@@ -1,16 +1,188 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".main.MainActivity">
 
-    <TextView
-        android:id="@+id/textView"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp">
+
+        <TextView
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/bee_title"
+            android:layout_marginTop="142dp"/>
+
+        <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="MainActivity"
-        tools:layout_editor_absoluteX="135dp"
-        tools:layout_editor_absoluteY="328dp" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:id="@+id/total_member_number"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="누적 로얄젤리"
+                android:layout_marginEnd="8dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/total_pay"/>
+            
+            <Button
+                android:layout_width="72dp"
+                android:layout_height="28dp"
+                android:text="내역 확인"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="54dp"
+                android:layout_height="54dp"
+                android:id="@+id/mission_time"/>
+
+            <TextView
+                android:layout_width="54dp"
+                android:layout_height="54dp"
+                android:id="@+id/today_user" />
+
+            <TextView
+                android:layout_width="54dp"
+                android:layout_height="54dp"
+                android:id="@+id/mission_difficulty"/>
+
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="오늘의 미션사진"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/today_date"/>
+
+            <Button
+                android:text="calendar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/iconCalendar"/>
+        </LinearLayout>
+
+        <FrameLayout
+            android:layout_marginStart="28dp"
+            android:layout_width="312dp"
+            android:layout_height="400dp">
+
+            <RelativeLayout
+                android:id="@+id/wrap_not_upload_mission_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/not_upload_mission_img_view" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="아직 미션이 등록되지 않았습니다."/>
+
+
+                <ImageButton
+                    android:id="@+id/go_mission_create_btn"
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentBottom="true"
+                    android:src = "@drawable/participate_in_mission"/>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/wrap_upload_mission_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/today_mission_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="오늘의 미션"
+                    android:textSize="14dp"
+                    android:layout_above="@id/today_mission_text"
+                    android:layout_marginBottom="12dp"/>
+
+                <TextView
+                    android:id="@+id/today_mission_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentBottom="true"
+                    android:textSize="24dp" />
+
+                <ImageButton
+                    android:id="@+id/go_mission_participate_btn"
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentBottom="true"
+                    android:src = "@drawable/participate_in_mission"/>
+            </RelativeLayout>
+
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="184dp"
+                android:text="미션 참여사진"/>
+
+            <ImageButton
+                android:layout_width="18dp"
+                android:layout_height="16dp"
+                android:src="@drawable/icon_arrow_right" />
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/main_recycler_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+</ScrollView>

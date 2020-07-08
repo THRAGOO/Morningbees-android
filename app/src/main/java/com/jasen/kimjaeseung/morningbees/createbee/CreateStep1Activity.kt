@@ -67,7 +67,7 @@ class CreateStep1Activity:AppCompatActivity(), View.OnClickListener {
     override fun onClick(v: View) {
         val i = v.id
         when (i) {
-            R.id.go_back_main_button -> onBackPressed()
+            R.id.go_back_start_button -> onBackPressed()
             R.id.info_step1_button->showInfo()
             R.id.create_step1_next_button -> gotoStep2()
             R.id.delete_beename_text_button -> beenameTextDelete()
@@ -75,7 +75,7 @@ class CreateStep1Activity:AppCompatActivity(), View.OnClickListener {
     }
 
     private fun initButtonListeners(){
-        go_back_main_button.setOnClickListener(this)
+        go_back_start_button.setOnClickListener(this)
         info_step1_button.setOnClickListener(this)
         create_step1_next_button.setOnClickListener(this)
         delete_beename_text_button.setOnClickListener(this)

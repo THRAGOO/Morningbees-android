@@ -7,10 +7,15 @@ import com.jasen.kimjaeseung.morningbees.createbee.model.RenewalResponse
 import com.jasen.kimjaeseung.morningbees.invitebee.model.JoinBeeResponse
 import com.jasen.kimjaeseung.morningbees.login.model.SignInRequest
 import com.jasen.kimjaeseung.morningbees.login.model.SignInResponse
+import com.jasen.kimjaeseung.morningbees.main.model.BeeInfoResponse
+import com.jasen.kimjaeseung.morningbees.main.model.MissionInfoRequest
+import com.jasen.kimjaeseung.morningbees.main.model.MissionInfoResponse
+import com.jasen.kimjaeseung.morningbees.missioncreate.model.MissionCreateRequest
 import com.jasen.kimjaeseung.morningbees.signup.model.NameValidataionCheckResponse
 import com.jasen.kimjaeseung.morningbees.signup.model.SignUpRequest
 import com.jasen.kimjaeseung.morningbees.signup.model.SignUpResponse
 import okhttp3.Interceptor
+import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -19,6 +24,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import retrofit2.http.*
 import retrofit2.http.Headers
+import java.io.File
 
 
 interface MorningBeesService {
@@ -72,6 +78,26 @@ interface MorningBeesService {
     fun withdrawalBee(
         @Header ("X-BEES-ACCESS-TOKEN") accessToken : String
     ): Call<Void>
+
+    @GET("/api/my_bee")
+    fun beeInfo(
+        @Header ("X-BEES-ACCESS-TOKEN") accessToken : String
+    ): Call<BeeInfoResponse>
+
+    @GET("/api/my_bee/mission")
+    fun missionInfo(
+        @Header ("X-BEES-ACCESS-TOKEN") accessToken : String,
+        @Query("targetDate") targetDate: String
+    ): Call<MissionInfoResponse>
+
+    @Multipart
+    @POST("/api/missions")
+    fun missionCreate(
+        @Header ("X-BEES-ACCESS-TOKEN") accessToken : String,
+        //@Part ("image") image : MultipartBody.Part,
+        @Body missionCreateRequest: MissionCreateRequest
+    ): Call<Void>
+
 
     companion object{
         fun create(): MorningBeesService{

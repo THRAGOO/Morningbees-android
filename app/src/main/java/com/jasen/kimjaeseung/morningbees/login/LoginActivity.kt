@@ -152,6 +152,11 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
         if (mOAuthLoginModule.getState(this) == OAuthLoginState.OK) {
             Dlog().d("Status don't need Naver Login")
             //네이버 access token으로 앱 로그인
+
+            val accessToken = mOAuthLoginModule.getAccessToken(this)
+            val refreshToken = mOAuthLoginModule.getRefreshToken(this)
+
+            meServer(accessToken, refreshToken)
         } else {
             Dlog().d("Status need login")
             mOAuthLoginModule.startOauthLoginActivity(this, @SuppressLint("HandlerLeak")
@@ -172,7 +177,6 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
                         )
 
                         provider = getString(R.string.naver)
-
                         signInMorningbeesServer(SignInRequest(accessToken,getString(R.string.naver)))
 
                     } else {
@@ -210,7 +214,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
             R.id.login_google_sign_in_button -> googleSignIn()
             R.id.login_google_sign_out_button -> signOut()
             R.id.login_naver_sign_in_button -> naverSignIn()
-            R.id.withdraw_bee_button -> withdrawBee(mAccessToken, mRefreshToken)
+            R.id.withdraw_bee_button -> withdrawBee(mAccessToken)
             //R.id.login_goto_signup -> gotoSignUp()
             //R.id.login_goto_beecreate -> meServer()
         }
@@ -261,7 +265,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
         })
     }
 
-    private fun withdrawBee(accessToken: String, refreshToken: String){
+    private fun withdrawBee(accessToken: String){
 
         service.withdrawalBee(accessToken)
             .enqueue(object : Callback<Void> {
@@ -318,7 +322,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
                                 Log.d(TAG,"already bee join")
 
                                 //bee 이미 생성, 메인이동
-                                gotoMainActivty()
+                                gotoMainActivty(accessToken)
                             }
                             else {
                                 Log.d(TAG, "not already bee join")
@@ -355,9 +359,9 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
 
     }
 
-    private fun gotoMainActivty(){
+    private fun gotoMainActivty(accessToken: String){
         val nextIntent = Intent(this, MainActivity::class.java)
-
+        nextIntent.putExtra("accessToken", accessToken)
         startActivity(nextIntent)
     }
 

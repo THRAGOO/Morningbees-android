@@ -4,13 +4,11 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
-import android.util.DisplayMetrics
 import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.isVisible
 import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.createbee.model.CreateBeeRequest
 import com.jasen.kimjaeseung.morningbees.createbee.model.RenewalResponse
@@ -128,13 +126,13 @@ class CreateStep3Activity: AppCompatActivity(), View.OnClickListener {
                     jelly_3.setImageDrawable(getDrawable(R.drawable.jelly_button_selected))
                     create_step3_next_button.isEnabled = true
                     create_step3_next_button.background = applicationContext.getDrawable(R.color.active_button)
-                    jelly_3_text.isVisible = true
+                    jelly_3_text.visibility= View.VISIBLE
                 }
                 else {
                     jelly_3.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
                     create_step3_next_button.isEnabled = false
                     create_step3_next_button.background = applicationContext.getDrawable(R.color.deactive_button)
-                    jelly_3_text.isVisible = false
+                    jelly_3_text.visibility= View.INVISIBLE
                 }
 
                 jelly_2.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
@@ -155,13 +153,13 @@ class CreateStep3Activity: AppCompatActivity(), View.OnClickListener {
                     jelly_4.setImageDrawable(getDrawable(R.drawable.jelly_button_selected))
                     create_step3_next_button.isEnabled = true
                     create_step3_next_button.background = applicationContext.getDrawable(R.color.active_button)
-                    jelly_4_text.isVisible = true
+                    jelly_4_text.visibility= View.VISIBLE
                 }
                 else {
                     jelly_4.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
                     create_step3_next_button.isEnabled = false
                     create_step3_next_button.background = applicationContext.getDrawable(R.color.deactive_button)
-                    jelly_4_text.isVisible = false
+                    jelly_4_text.visibility= View.INVISIBLE
                 }
 
                 jelly_2.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
@@ -182,13 +180,13 @@ class CreateStep3Activity: AppCompatActivity(), View.OnClickListener {
                     jelly_5.setImageDrawable(getDrawable(R.drawable.jelly_button_selected))
                     create_step3_next_button.isEnabled = true
                     create_step3_next_button.background = applicationContext.getDrawable(R.color.active_button)
-                    jelly_5_text.isVisible = true
+                    jelly_5_text.visibility= View.VISIBLE
                 }
                 else {
                     jelly_5.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
                     create_step3_next_button.isEnabled = false
                     create_step3_next_button.background = applicationContext.getDrawable(R.color.deactive_button)
-                    jelly_5_text.isVisible = false
+                    jelly_5_text.visibility= View.INVISIBLE
                 }
 
                 jelly_2.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
@@ -209,13 +207,13 @@ class CreateStep3Activity: AppCompatActivity(), View.OnClickListener {
                     jelly_6.setImageDrawable(getDrawable(R.drawable.jelly_button_selected))
                     create_step3_next_button.isEnabled = true
                     create_step3_next_button.background = applicationContext.getDrawable(R.color.active_button)
-                    jelly_6_text.isVisible = true
+                    jelly_6_text.visibility= View.VISIBLE
                 }
                 else {
                     jelly_6.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
                     create_step3_next_button.isEnabled = false
                     create_step3_next_button.background = applicationContext.getDrawable(R.color.deactive_button)
-                    jelly_6_text.isVisible = false
+                    jelly_6_text.visibility= View.INVISIBLE
                 }
 
                 jelly_2.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
@@ -236,13 +234,13 @@ class CreateStep3Activity: AppCompatActivity(), View.OnClickListener {
                     jelly_7.setImageDrawable(getDrawable(R.drawable.jelly_button_selected))
                     create_step3_next_button.isEnabled = true
                     create_step3_next_button.background = applicationContext.getDrawable(R.color.active_button)
-                    jelly_7_text.isVisible = true
+                    jelly_7_text.visibility= View.VISIBLE
                 }
                 else {
                     jelly_7.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
                     create_step3_next_button.isEnabled = false
                     create_step3_next_button.background = applicationContext.getDrawable(R.color.deactive_button)
-                    jelly_7_text.isVisible = false
+                    jelly_7_text.visibility= View.INVISIBLE
                 }
 
                 jelly_2.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
@@ -263,13 +261,13 @@ class CreateStep3Activity: AppCompatActivity(), View.OnClickListener {
                     jelly_8.setImageDrawable(getDrawable(R.drawable.jelly_button_selected))
                     create_step3_next_button.isEnabled = true
                     create_step3_next_button.background = applicationContext.getDrawable(R.color.active_button)
-                    jelly_8_text.isVisible = true
+                    jelly_8_text.visibility= View.VISIBLE
                 }
                 else {
                     jelly_8.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
                     create_step3_next_button.isEnabled = false
                     create_step3_next_button.background = applicationContext.getDrawable(R.color.deactive_button)
-                    jelly_8_text.isVisible = false
+                    jelly_8_text.visibility= View.INVISIBLE
                 }
 
                 jelly_2.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
@@ -290,13 +288,13 @@ class CreateStep3Activity: AppCompatActivity(), View.OnClickListener {
                     jelly_9.setImageDrawable(getDrawable(R.drawable.jelly_button_selected))
                     create_step3_next_button.isEnabled = true
                     create_step3_next_button.background = applicationContext.getDrawable(R.color.active_button)
-                    jelly_9_text.isVisible = true
+                    jelly_9_text.visibility= View.VISIBLE
                 }
                 else {
                     jelly_9.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
                     create_step3_next_button.isEnabled = false
                     create_step3_next_button.background = applicationContext.getDrawable(R.color.deactive_button)
-                    jelly_9_text.isVisible = false
+                    jelly_9_text.visibility= View.INVISIBLE
                 }
 
                 jelly_2.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
@@ -340,13 +338,13 @@ class CreateStep3Activity: AppCompatActivity(), View.OnClickListener {
 
     private fun initButtonVisible(){
         jelly_2_text.setTypeface(Typeface.DEFAULT, Typeface.NORMAL)
-        jelly_3_text.isVisible = false
-        jelly_4_text.isVisible = false
-        jelly_5_text.isVisible = false
-        jelly_6_text.isVisible = false
-        jelly_7_text.isVisible = false
-        jelly_8_text.isVisible = false
-        jelly_9_text.isVisible = false
+        jelly_3_text.visibility= View.INVISIBLE
+        jelly_4_text.visibility= View.INVISIBLE
+        jelly_5_text.visibility= View.INVISIBLE
+        jelly_6_text.visibility= View.INVISIBLE
+        jelly_7_text.visibility= View.INVISIBLE
+        jelly_8_text.visibility= View.INVISIBLE
+        jelly_9_text.visibility= View.INVISIBLE
         jelly_10_text.setTypeface(Typeface.DEFAULT, Typeface.NORMAL)
     }
 
@@ -383,7 +381,7 @@ class CreateStep3Activity: AppCompatActivity(), View.OnClickListener {
 
                     when (response.code()){
                         201 -> {
-                            gotoMain()
+                            gotoMain(accessToken)
                         }
 
                         400 ->{
@@ -480,8 +478,9 @@ class CreateStep3Activity: AppCompatActivity(), View.OnClickListener {
             })
     }
 
-    private fun  gotoMain(){
+    private fun  gotoMain(accessToken : String){
         val nextIntent = Intent(this, MainActivity::class.java)
+        nextIntent.putExtra("accessToken", accessToken)
         startActivity(nextIntent)
     }
 

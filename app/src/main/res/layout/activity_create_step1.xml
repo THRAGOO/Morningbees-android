@@ -20,7 +20,7 @@
             android:layout_marginBottom="25dp">
 
             <ImageButton
-                android:id="@+id/go_back_main_button"
+                android:id="@+id/go_back_start_button"
                 android:layout_width="12dp"
                 android:layout_height="20dp"
                 android:src="@drawable/arrow_left"

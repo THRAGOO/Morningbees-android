@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/go_back_main_btn"
+            android:src ="@drawable/arrow_left" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="미션 등록"
+            android:layout_centerInParent="true"
+            android:textSize="16dp"/>
+
+        <Button
+            android:id="@+id/mission_create_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="완료"
+            android:layout_alignParentEnd="true"/>
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="소개"/>
+
+    <EditText
+        android:id="@+id/description_mission"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="사진 업로드"/>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="150dp">
+        
+        <RelativeLayout
+            android:id="@+id/wrap_click_img_view"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:visibility="visible">
+
+            <Button
+                android:id="@+id/take_picture_btn"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:background="@drawable/take_picture_button"
+                android:text="사진찍기"
+                android:drawableTop="@drawable/icon_camera" />
+
+            <Button
+                android:id="@+id/get_picture_btn"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:background="@drawable/take_picture_button"
+                android:text="갤러리에서\n가져오기"
+                android:layout_toEndOf="@id/take_picture_btn"
+                android:drawableTop="@drawable/icon_photo" />
+        </RelativeLayout>
+        
+        <RelativeLayout
+            android:id="@+id/wrap_load_img_view"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:visibility="invisible">
+            
+            <ImageView
+                android:id="@+id/upload_img_view"
+                android:layout_width="120dp"
+                android:layout_height="120dp"/>
+
+            <Button
+                android:id="@+id/reload_img_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="다시 올리기"
+                android:drawableStart="@drawable/icon_reload"
+                android:layout_toEndOf="@id/upload_img_view"/>
+
+        </RelativeLayout>
+    </FrameLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="난이도 설정"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="설정값에 따라 로얄젤리 액수가 달라집니다."/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        
+        <Button
+            android:id="@+id/difficulty_hard_btn"
+            android:layout_width="104dp"
+            android:layout_height="96dp"
+            android:background="@drawable/difficulty_button_selector"
+            android:text="상"/>
+
+        <Button
+            android:id="@+id/difficulty_normal_btn"
+            android:layout_width="104dp"
+            android:layout_height="96dp"
+            android:layout_toEndOf="@id/difficulty_hard_btn"
+            android:background="@drawable/difficulty_button_selector"
+            android:text="중"/>
+
+        <Button
+            android:id="@+id/difficulty_easy_btn"
+            android:layout_width="104dp"
+            android:layout_height="96dp"
+            android:layout_toEndOf="@id/difficulty_normal_btn"
+            android:background="@drawable/difficulty_button_selector"
+            android:text="하"/>
+    </RelativeLayout>
+
+
+</LinearLayout>
