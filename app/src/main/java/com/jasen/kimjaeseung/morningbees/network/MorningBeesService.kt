@@ -1,6 +1,5 @@
 package com.jasen.kimjaeseung.morningbees.network
 
-import androidx.media.AudioAttributesCompat
 import com.jasen.kimjaeseung.morningbees.beforejoin.model.MeResponse
 import com.jasen.kimjaeseung.morningbees.createbee.model.CreateBeeRequest
 import com.jasen.kimjaeseung.morningbees.createbee.model.RenewalResponse
@@ -8,13 +7,10 @@ import com.jasen.kimjaeseung.morningbees.invitebee.model.JoinBeeResponse
 import com.jasen.kimjaeseung.morningbees.login.model.SignInRequest
 import com.jasen.kimjaeseung.morningbees.login.model.SignInResponse
 import com.jasen.kimjaeseung.morningbees.main.model.BeeInfoResponse
-import com.jasen.kimjaeseung.morningbees.main.model.MissionInfoRequest
 import com.jasen.kimjaeseung.morningbees.main.model.MissionInfoResponse
-import com.jasen.kimjaeseung.morningbees.missioncreate.model.MissionCreateRequest
 import com.jasen.kimjaeseung.morningbees.signup.model.NameValidataionCheckResponse
 import com.jasen.kimjaeseung.morningbees.signup.model.SignUpRequest
 import com.jasen.kimjaeseung.morningbees.signup.model.SignUpResponse
-import okhttp3.Interceptor
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -23,8 +19,6 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import retrofit2.http.*
-import retrofit2.http.Headers
-import java.io.File
 
 
 interface MorningBeesService {
@@ -94,8 +88,11 @@ interface MorningBeesService {
     @POST("/api/missions")
     fun missionCreate(
         @Header ("X-BEES-ACCESS-TOKEN") accessToken : String,
-        //@Part ("image") image : MultipartBody.Part,
-        @Body missionCreateRequest: MissionCreateRequest
+        @Part image : MultipartBody.Part,
+        @Part("beeId") beeId: Int,
+        @Part("description") description : String,
+        @Part("type") type : Int,
+        @Part("difficulty") difficulty : Int
     ): Call<Void>
 
 

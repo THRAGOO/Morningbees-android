@@ -1,7 +1,5 @@
 package com.jasen.kimjaeseung.morningbees.missioncreate
 import android.Manifest
-import android.content.Context
-import android.content.ContextWrapper
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -20,19 +18,24 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.main.MainActivity
-import com.jasen.kimjaeseung.morningbees.missioncreate.model.MissionCreateRequest
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import com.jasen.kimjaeseung.morningbees.util.Dlog
+import com.jasen.kimjaeseung.morningbees.util.URIPathHelper
 import com.jasen.kimjaeseung.morningbees.util.showToast
 import kotlinx.android.synthetic.main.activity_mission_create.*
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.io.*
+import java.io.File
+import java.io.IOException
 import java.nio.ByteBuffer
 import java.text.SimpleDateFormat
 import java.util.*
+
 class MissionCreateActivity: AppCompatActivity(), View.OnClickListener {
     private lateinit var accessToken : String
     val service =  MorningBeesService.create()
@@ -42,7 +45,7 @@ class MissionCreateActivity: AppCompatActivity(), View.OnClickListener {
     private var beeId : Int = 0
     var tempFile : File? = null     // 카메라로 찍은 사진 File (갤러리에 저장)
     var bitmap : Bitmap? = null     // 갤러리에서 가져온 사진 bitmap
-    lateinit var image : ByteArray  // 서버에 보낼 image data
+    var image : File? = null  // 서버에 보낼 image data
     // 앱이 카메라 권한을 가지고 있는지 확인하는 변수 ( 카메라 권한이 없다면 -1 반환 )
     private val permissionCheckCamera by lazy{
         ContextCompat.checkSelfPermission(
@@ -72,7 +75,7 @@ class MissionCreateActivity: AppCompatActivity(), View.OnClickListener {
             beeId = intent.getIntExtra("beeId", 0)
         }
         initButtonListeners()
-        missionCreateServer()
+//        missionCreateServer()
         chkPermission()
     }
     override fun onClick(v: View) {
@@ -94,15 +97,20 @@ class MissionCreateActivity: AppCompatActivity(), View.OnClickListener {
         if(bitmap != null) {
             image = bitmapToByteArray(bitmap!!)
         }*/
+
         if(difficulty == -1){
             showToast { "난이도 설정해주세요. " }
+        }
+        else if( image == null){
+            showToast { "사진을 선택해 주세요." }
         }
         else if (description == ""){
             showToast { "미션 타이틀을 등록해주세요. " }
         }
         else {
-            val missionCreateRequest = MissionCreateRequest(image, beeId, description, type, difficulty)
-            service.missionCreate(accessToken, missionCreateRequest).enqueue(object : Callback<Void> {
+            val imageFile:File = image!!
+            val testImage : MultipartBody.Part = MultipartBody.Part.createFormData("image",imageFile.name,imageFile.asRequestBody("image/*".toMediaTypeOrNull()))
+            service.missionCreate(accessToken,testImage,beeId,description,type,difficulty).enqueue(object : Callback<Void> {
                 override fun onFailure(call : Call<Void>, t:Throwable){
                     Dlog().d(t.toString())
                 }
@@ -140,7 +148,7 @@ class MissionCreateActivity: AppCompatActivity(), View.OnClickListener {
         ActivityCompat.requestPermissions(
             this,
             arrayOf(
-                Manifest.permission.CAMERA
+                Manifest.permission.CAMERA,Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE
             ),
             REQUEST_PERMISSION
         )
@@ -160,6 +168,7 @@ class MissionCreateActivity: AppCompatActivity(), View.OnClickListener {
     }
     fun gotoGallery(){
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        intent.type = "image/*"
         startActivityForResult(intent, PICK_FROM_ALBUM)
     }
     fun gotoCamera(){
@@ -222,6 +231,9 @@ class MissionCreateActivity: AppCompatActivity(), View.OnClickListener {
                 }
                 upload_img_view.setImageBitmap(selectedImage)
                 bitmap = selectedImage!!
+
+                image = File(URIPathHelper().getPath(this,photoUri))
+
             }
         }
         else if(requestCode == PICK_FROM_CAMERA){
@@ -229,6 +241,8 @@ class MissionCreateActivity: AppCompatActivity(), View.OnClickListener {
             val selectedImage = BitmapFactory.decodeFile(tempFile?.absolutePath)
             upload_img_view.setImageBitmap(selectedImage)
             bitmap = selectedImage
+
+            image = tempFile
         }
         //bitmapToByteArray(bitmap)
         changeWrapView(LOAD_IMAGEVIEW)
@@ -285,6 +299,7 @@ class MissionCreateActivity: AppCompatActivity(), View.OnClickListener {
         difficulty_normal_btn.setOnClickListener(this)
         difficulty_easy_btn.setOnClickListener(this)
     }
+
     companion object {
         private const val REQUEST_PERMISSION = 1000
         private const val PICK_FROM_ALBUM = 1001
