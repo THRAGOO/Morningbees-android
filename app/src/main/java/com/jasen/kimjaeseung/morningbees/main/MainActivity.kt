@@ -1,10 +1,14 @@
 package com.jasen.kimjaeseung.morningbees.main
 
+import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
+import android.provider.ContactsContract
 import android.util.Log
 import android.view.View
+import android.widget.DatePicker
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.beforejoin.model.MeResponse
@@ -22,7 +26,9 @@ import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.net.URI
 import java.net.URL
+import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -37,16 +43,16 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     var totalPay : Int = 0
     var todayUser : String = ""
 
-    var missionImgURL : String = ""
+    var missionImgURL : URL? = null
     var missionDesc : String = ""
 
-    var missionImgURLList  = ArrayList<String>()
+    var missionImgURLList  = ArrayList<String>() // <URL> 로 해야됨
 
     private lateinit var adapter: MainRecyclerViewAdapter
     private lateinit var layoutManager: LinearLayoutManager
 
-    var date : Date = Date()
-    var targetDate : String = SimpleDateFormat("yyyy-MM-dd").format(date)
+    var mDate : Date = Date()
+    var targetDate : String = SimpleDateFormat("yyyy-MM-dd").format(mDate)
 
     var beeId : Int = 0
 
@@ -57,7 +63,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         if(intent.hasExtra("accessToken")) {
             accessToken = intent.getStringExtra("accessToken")
         }
-
         initRecyclerView()
         initButtonListeners()
     }
@@ -75,7 +80,20 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         when(i){
             R.id.go_mission_create_btn -> gotoMissionCreate()
             R.id.go_mission_participate_btn -> goMissionParticipate()
+            R.id.calendar_btn -> changeTargetDate()
         }
+    }
+
+    private fun changeTargetDate(){
+        val c = Calendar.getInstance()
+        val year = c.get(Calendar.YEAR)
+        val month = c.get(Calendar.MONTH)
+        val day = c.get(Calendar.DAY_OF_MONTH)
+
+        val dpd = DatePickerDialog(this, DatePickerDialog.OnDateSetListener { view, year, month, day ->
+            today_date.setText(""+year+"-"+month+"-"+day)
+        }, year, month, day)
+        dpd.show()
     }
 
     //startactivity stack check 하기
@@ -103,16 +121,13 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                             missionTime = beeInfoResponse.missionTime
                             totalPay = beeInfoResponse.totalPay
                             todayUser = beeInfoResponse.todayUser
-
                             Log.d(TAG, "title: $title")
-
                         }
                         else {
                             title = beeInfoResponse.title
                             missionTime = beeInfoResponse.missionTime
                             totalPay = beeInfoResponse.totalPay
                             todayUser = beeInfoResponse.todayUser
-
                             Log.d(TAG, "title: $title")
                         }
                     }
@@ -157,7 +172,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                             val mission = jsonArray.getJSONObject(i)
 
                             if (i == 0){
-                                missionImgURL = mission.getString("image_url")
+                                //missionImgURL = mission.getURL("image_url")
+                                // 여기 missionImgURL 받아오는 거 해야함
+
                                 missionDesc = mission.getString("desc")
                             }
                             else {
@@ -233,8 +250,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             })
     }
 
-    fun setImgView(){
-        if(missionImgURL == ""){
+    private fun setImgView(){
+        if(missionImgURL == null){
             //today_mission_image.setImageBitmap()
             wrap_upload_mission_view.visibility = View.INVISIBLE
             wrap_not_upload_mission_view.visibility = View.VISIBLE
@@ -243,13 +260,22 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             wrap_upload_mission_view.visibility = View.VISIBLE
             wrap_not_upload_mission_view.visibility = View.INVISIBLE
 
-            // today_mission_image
-            // today_mission_text
+            // uri -> bitmap
+            uriToBitmap(missionImgURL!!)
+            today_mission_text2.text = title
+            mission_time_txt.text = missionTime
         }
     }
 
+    private fun uriToBitmap(url: URL){
+
+    }
+
     fun initButtonListeners(){
-       go_mission_create_btn.setOnClickListener(this)
+        go_mission_create_btn.setOnClickListener(this)
+        go_mission_participate_btn.setOnClickListener(this)
+        calendar_btn.setOnClickListener(this) 
+
     }
 
     fun gotoMissionCreate(){

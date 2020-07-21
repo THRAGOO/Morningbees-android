@@ -94,8 +94,12 @@ interface MorningBeesService {
     @POST("/api/missions")
     fun missionCreate(
         @Header ("X-BEES-ACCESS-TOKEN") accessToken : String,
-        //@Part ("image") image : MultipartBody.Part,
-        @Body missionCreateRequest: MissionCreateRequest
+        @Part ("image") image :  File,
+        @Part ("beeId") beeId : Int,
+        @Part ("description") description : String,
+        @Part ("type") type : Int,
+        @Part ("difficult") difficult : Int
+        //@Body missionCreateRequest: MissionCreateRequest
     ): Call<Void>
 
 

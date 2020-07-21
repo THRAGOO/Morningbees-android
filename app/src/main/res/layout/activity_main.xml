@@ -20,21 +20,45 @@
             android:id="@+id/bee_title"
             android:layout_marginTop="142dp"/>
 
-        <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/total_member_number"/>
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/total_member_number_text"
+                android:text="전체멤버"
+                android:layout_marginEnd="5dp"/>
 
-        <LinearLayout
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/total_member_number"
+                android:layout_toEndOf="@id/total_member_number_text"
+                android:text="3"/>
+        </RelativeLayout>
+
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_marginBottom="32dp">
+
+            <ImageView
+                android:layout_width="21dp"
+                android:layout_height="21dp"
+                android:src="@drawable/oval"
+                android:layout_marginEnd="6dp"
+                android:id="@+id/amount_royal_jelly_img"
+                android:layout_centerVertical="true"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="누적 로얄젤리"
-                android:layout_marginEnd="8dp"/>
+                android:layout_marginEnd="8dp"
+                android:textSize="14dp"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@id/amount_royal_jelly_img"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -44,65 +68,225 @@
             <Button
                 android:layout_width="72dp"
                 android:layout_height="28dp"
+                android:layout_alignParentEnd="true"
+                android:background="#00ff0000"
+                android:textSize="12dp"
                 android:text="내역 확인"/>
-        </LinearLayout>
+        </RelativeLayout>
 
-        <LinearLayout
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/mission_time_wrap"
+                android:layout_marginStart="13dp"
+                android:layout_alignParentStart="true"
+                android:layout_marginEnd="32dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/mission_time"
+                    android:text="미션시간 "
+                    android:layout_centerHorizontal="true"/>
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="86dp"
+                    android:layout_below="@id/mission_time"
+                    android:id="@+id/mission_time_img"
+                    android:layout_centerInParent="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_alignParentStart="true">
+
+                    <ImageView
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:src="@drawable/mission_time_solid_img"
+                        android:layout_centerInParent="true" />
+
+                    <ImageView
+                        android:layout_width="54dp"
+                        android:layout_height="54dp"
+                        android:src="@drawable/mission_time_img"
+                        android:layout_centerInParent="true"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/mission_time_txt"
+                        android:text="7.9"
+                        android:textSize="20dp"
+                        android:textColor="#FFFFFF"
+                        android:textStyle="bold"
+                        android:layout_centerInParent="true"/>
+                </RelativeLayout>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/bar1_main_img"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/mission_time_wrap"
+                android:layout_marginEnd="32dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/blank_text1"
+                    android:layout_centerHorizontal="true"/>
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="86dp"
+                    android:layout_below="@id/blank_text1"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true">
+
+                    <ImageView
+                        android:layout_width="1dp"
+                        android:layout_height="11dp"
+                        android:src ="@drawable/main_bar_img"
+                        android:layout_centerInParent="true" />
+                </RelativeLayout>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/today_user_wrap"
+                android:layout_toEndOf="@id/bar1_main_img"
+                android:layout_marginEnd="32dp"
+                android:layout_centerInParent="true">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/today_user"
+                    android:text="오늘의 꿀벌 "
+                    android:layout_centerHorizontal="true"/>
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="86dp"
+                    android:id="@+id/today_user_img"
+                    android:layout_below="@id/today_user"
+                    android:layout_centerHorizontal="true">
+
+                    <ImageView
+                        android:layout_width="54dp"
+                        android:layout_height="54dp"
+                        android:layout_centerInParent="true"
+                        android:src = "@drawable/mission_time_solid_img" />
+                </RelativeLayout>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/bar2_main_img"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/today_user_wrap"
+                android:layout_toStartOf="@id/mission_difficulty_wrap"
+                android:layout_marginEnd="32dp">
+
+                <TextView
+                    android:layout_width="1dp"
+                    android:layout_height="11dp"
+                    android:layout_marginBottom="11dp"
+                    android:id="@+id/blank_text2"
+                    android:layout_centerHorizontal="true"/>
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="86dp"
+                    android:layout_below="@id/blank_text2"
+                    android:layout_centerHorizontal="true">
+
+                    <ImageView
+                        android:layout_width="1dp"
+                        android:layout_height="11dp"
+                        android:src ="@drawable/main_bar_img"
+                        android:layout_centerInParent="true" />
+                </RelativeLayout>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/mission_difficulty_wrap"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="13dp"
+                android:layout_alignParentEnd="true">
+
+                <TextView
+                    android:id="@+id/mission_difficulty"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="난이도 "
+                    android:layout_centerHorizontal="true"/>
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="86dp"
+                    android:layout_below="@id/mission_difficulty"
+                    android:layout_centerHorizontal="true"
+                    android:id="@+id/mission_difficulty_img">
+
+                    <ImageView
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_centerInParent="true"
+                        android:src="@drawable/middle_level" />
+                </RelativeLayout>
+
+            </RelativeLayout>
+        </RelativeLayout>
+
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_marginBottom="19dp">
 
             <TextView
-                android:layout_width="54dp"
-                android:layout_height="54dp"
-                android:id="@+id/mission_time"/>
-
-            <TextView
-                android:layout_width="54dp"
-                android:layout_height="54dp"
-                android:id="@+id/today_user" />
-
-            <TextView
-                android:layout_width="54dp"
-                android:layout_height="54dp"
-                android:id="@+id/mission_difficulty"/>
-
-        </LinearLayout>
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+                android:id="@+id/mission_img_txt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20dp"
+                android:text="오늘의 미션사진"
+                android:layout_alignParentStart="true"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="오늘의 미션사진"/>
+                android:id="@+id/today_date"
+                android:text="2020-03-29"
+                android:scaleType="fitCenter"
+                android:layout_centerVertical="true"
+                android:textSize="13dp"
+                android:layout_toStartOf="@id/calendar_btn"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/today_date"/>
-
-            <Button
-                android:text="calendar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/iconCalendar"/>
-        </LinearLayout>
+            <ImageButton
+                android:id="@+id/calendar_btn"
+                android:src="@drawable/icon_calendar"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:background="#00ff0000"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="12dp"/>
+        </RelativeLayout>
 
         <FrameLayout
-            android:layout_marginStart="28dp"
-            android:layout_width="312dp"
+            android:layout_width="match_parent"
             android:layout_height="400dp">
 
             <RelativeLayout
                 android:id="@+id/wrap_not_upload_mission_view"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <ImageView
@@ -117,18 +301,28 @@
                     android:text="아직 미션이 등록되지 않았습니다."/>
 
 
-                <ImageButton
-                    android:id="@+id/go_mission_create_btn"
-                    android:layout_width="72dp"
-                    android:layout_height="72dp"
-                    android:layout_alignParentEnd="true"
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
-                    android:src = "@drawable/participate_in_mission"/>
+                    android:layout_alignParentEnd="true">
+
+                    <ImageButton
+                        android:id="@+id/go_mission_create_btn"
+                        android:layout_width="74dp"
+                        android:layout_height="74dp"
+                        android:layout_marginBottom="29dp"
+                        android:layout_marginEnd="26dp"
+                        android:background="#00ff0000"
+                        android:adjustViewBounds="true"
+                        android:scaleType="fitCenter"
+                        android:src = "@drawable/participate_in_mission"/>
+                </RelativeLayout>
             </RelativeLayout>
 
             <RelativeLayout
                 android:id="@+id/wrap_upload_mission_view"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <ImageView
@@ -136,49 +330,82 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
 
-                <TextView
+                <RelativeLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="오늘의 미션"
-                    android:textSize="14dp"
-                    android:layout_above="@id/today_mission_text"
-                    android:layout_marginBottom="12dp"/>
+                    android:layout_alignParentBottom="true">
 
-                <TextView
-                    android:id="@+id/today_mission_text"
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="오늘의 미션"
+                        android:textSize="14dp"
+                        android:id="@+id/today_mission_text1"
+                        android:layout_marginStart="29dp"
+                        android:layout_marginBottom="12dp" />
+
+                    <TextView
+                        android:id="@+id/today_mission_text2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="29dp"
+                        android:layout_marginStart="29dp"
+                        android:textSize="24dp"
+                        android:text="마스크 쓰고 \n셀카찍기"
+                        android:layout_below="@+id/today_mission_text1"/>
+                </RelativeLayout>
+
+                <RelativeLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentBottom="true"
-                    android:textSize="24dp" />
-
-                <ImageButton
-                    android:id="@+id/go_mission_participate_btn"
-                    android:layout_width="72dp"
-                    android:layout_height="72dp"
                     android:layout_alignParentEnd="true"
-                    android:layout_alignParentBottom="true"
-                    android:src = "@drawable/participate_in_mission"/>
-            </RelativeLayout>
+                    android:layout_alignParentBottom="true">
 
+                    <ImageButton
+                        android:id="@+id/go_mission_participate_btn"
+                        android:layout_width="74dp"
+                        android:layout_height="74dp"
+                        android:background="#00ff0000"
+                        android:adjustViewBounds="true"
+                        android:scaleType="fitCenter"
+                        android:layout_marginBottom="29dp"
+                        android:layout_marginEnd="26dp"
+                        android:src="@drawable/participate_in_mission" />
+                </RelativeLayout>
+            </RelativeLayout>
         </FrameLayout>
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_marginTop="36dp"
+            android:layout_marginBottom="20dp">
 
             <TextView
+                android:id="@+id/mission_participate_img_txt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="184dp"
+                android:layout_alignParentStart="true"
+                android:textSize="20dp"
                 android:text="미션 참여사진"/>
 
-            <ImageButton
-                android:layout_width="18dp"
-                android:layout_height="16dp"
-                android:src="@drawable/icon_arrow_right" />
-        </LinearLayout>
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true">
+                <ImageButton
+                    android:id="@+id/mission_participate_img_btn"
+                    android:layout_width="18dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/icon_arrow_right"
+                    android:background="#00ff0000"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
+                    android:layout_marginEnd="3dp"/>
+            </RelativeLayout>
+        </RelativeLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/main_recycler_view"

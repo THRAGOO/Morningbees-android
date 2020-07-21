@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Morningbees</string>
     <!--<string name="google_server_client_id">804125796572-5sg3l25b8km7c9j6vb57c3s6n6199s3i.apps.googleusercontent.com</string>-->
-    <string name="google_server_client_id">507544410589-i91g22cbu6o6dpaukd8e4jo761k4js6v.apps.googleusercontent.com</string>
+    <string name="google_server_client_id">804125796572-5sg3l25b8km7c9j6vb57c3s6n6199s3i.apps.googleusercontent.com</string>
     <string name="naver_oauth_client_secret">NOIcUU6bcT</string>
     <string name="naver_oauth_client_id">5ZQIXFnwSx2XDv1Xcvpz</string>
     <string name="naver_oauth_client_name">Morningbees</string>
