@@ -453,7 +453,6 @@ class CreateStep3Activity: AppCompatActivity(), View.OnClickListener {
                                 //refresh token 만료
                                 showToast { message }
                                 gotoLogin()
-
                             }
                         }
 

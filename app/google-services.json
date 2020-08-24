@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "804125796572",
+    "firebase_url": "https://thragoo-morningbees-278907.firebaseio.com",
+    "project_id": "thragoo-morningbees-278907",
+    "storage_bucket": "thragoo-morningbees-278907.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:804125796572:android:4c5a8434b84a65ab2e6c19",
+        "android_client_info": {
+          "package_name": "com.jasen.kimjaeseung.morningbees"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "804125796572-li56pv8pm8f95kc1f3u1irj43nle6oiu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAzj6KlKJdL5JMu0OiqmHuu1FlYoGv4ay0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "804125796572-li56pv8pm8f95kc1f3u1irj43nle6oiu.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "804125796572-b1pcjnlr3e3rskvaogvkr227pki00a3e.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.Morningbees-iOS"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

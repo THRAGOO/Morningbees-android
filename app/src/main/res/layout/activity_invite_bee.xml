@@ -64,7 +64,7 @@
                 android:background="@drawable/radius_button_selector"
                 android:layout_centerHorizontal="true"
                 android:layout_marginBottom="20dp"
-                android:text="Bee에 참여하기 "/>
+                android:text="모임에 참여하기 "/>
 
             <Button
                 android:id="@+id/close_inviteView_button"
@@ -80,6 +80,4 @@
         </RelativeLayout>
 
     </RelativeLayout>
-
-
 </LinearLayout>

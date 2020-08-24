@@ -2,6 +2,7 @@ package com.jasen.kimjaeseung.morningbees.login
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -14,9 +15,13 @@ import kotlinx.android.synthetic.main.activity_login.*
 
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.tasks.Task
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.dynamiclinks.ktx.dynamicLinks
+import com.google.firebase.ktx.Firebase
 import com.jasen.kimjaeseung.morningbees.beforejoin.BeforeJoinActivity
 import com.jasen.kimjaeseung.morningbees.beforejoin.model.MeResponse
 import com.jasen.kimjaeseung.morningbees.createbee.CreateStep1Activity
+import com.jasen.kimjaeseung.morningbees.invitebee.InviteBeeActivity
 import com.jasen.kimjaeseung.morningbees.login.model.SignInRequest
 import com.jasen.kimjaeseung.morningbees.login.model.SignInResponse
 import com.jasen.kimjaeseung.morningbees.main.MainActivity
@@ -44,7 +49,10 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
     private lateinit var mAccessToken : String
     private lateinit var mRefreshToken : String
     private lateinit var provider : String
+
+    private lateinit var beeid : String
     val service =  MorningBeesService.create()
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,6 +70,36 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
             signOut()
             showToast { "signOut" }
         }
+
+        // 동적 링크 수신
+        Firebase.dynamicLinks
+            .getDynamicLink(intent)
+            .addOnSuccessListener(this) { pendingDynamicLinkData ->
+                // Get deep link from result (may be null if no link is found)
+                var deepLink: Uri? = null
+                if (pendingDynamicLinkData != null) {
+                    deepLink = pendingDynamicLinkData.link
+
+                    beeid = deepLink?.getQueryParameter("beeid").orEmpty()
+                    Log.d(TAG, "pendingDynamicLinkData: $pendingDynamicLinkData")
+                    Log.d(TAG, "beeid: $beeid")
+                    val InviteIntent = Intent(this, InviteBeeActivity::class.java)
+                    InviteIntent.putExtra("beeid", beeid)
+                    startActivity(InviteIntent)
+                    finish()
+                }
+                Log.d(TAG, "pendingDynamicLinkData is null")
+
+                // Handle the deep link. For example, open the linked
+                // content, or apply promotional credit to the user's
+                // account.
+                // ...
+
+                // ...
+
+
+            }
+            .addOnFailureListener(this) { e -> Log.w(InviteBeeActivity.TAG, "getDynamicLink:onFailure", e) }
     }
 
     override fun onDestroy() {
@@ -154,9 +192,10 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
             //네이버 access token으로 앱 로그인
 
             val accessToken = mOAuthLoginModule.getAccessToken(this)
-            val refreshToken = mOAuthLoginModule.getRefreshToken(this)
+            //val refreshToken = mOAuthLoginModule.getRefreshToken(this)
+            //meServer(accessToken, refreshToken)
+            gotoMainActivty(accessToken)
 
-            meServer(accessToken, refreshToken)
         } else {
             Dlog().d("Status need login")
             mOAuthLoginModule.startOauthLoginActivity(this, @SuppressLint("HandlerLeak")

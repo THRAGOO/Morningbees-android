@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <application
         android:name=".GlobalApp"
         android:allowBackup="true"
@@ -25,13 +26,26 @@
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter
+                android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data
+                    android:host="morningbees.page.link"
+                    android:scheme="https"
+                    android:pathPrefix="/DQbR"/>
+                <data
+                    android:host="morningbees.page.link"
+                    android:scheme="http"/>
             </intent-filter>
         </activity>
         <activity
             android:name=".main.SignUpActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait">
+        </activity>
         <activity
             android:name=".beforejoin.BeforeJoinActivity"
             android:screenOrientation="portrait"></activity>
@@ -52,6 +66,14 @@
         <activity android:name=".missioncreate.MissionCreateActivity"
             android:screenOrientation="portrait"></activity>
 
+        <activity android:name=".createlink.CreateLinkActivity">
+
+        </activity>
+
+        <activity android:name=".invitebee.InviteBeeActivity"
+            android:screenOrientation="portrait">
+        </activity>
+
         <!-- 사진 촬영을 위한 provider -->
         <provider
             android:authorities="com.jasen.kimjaeseung.morningbees.provider"
@@ -61,10 +83,8 @@
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths"/>
-
         </provider>
-
-
     </application>
+
 
 </manifest>

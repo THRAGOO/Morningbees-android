@@ -1,9 +1,13 @@
 package com.jasen.kimjaeseung.morningbees.main.model
 
-data class MissionInfoResponse(
-    val image_url : String?,
-    val desc : String?,
-    val nickname : String?,
-    val agreeCount : Int?,
-    val disagreeCount : Int?
-) {}
+import retrofit2.http.Url
+
+class MissionInfoResponse{
+    class missions{
+        lateinit var image_url : Url
+        lateinit var desc : String
+        lateinit var nickname : String
+        val agreeCount : Int = 0
+        val disagreeCount : Int = 0
+    }
+}

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:state_selected="false"
+        android:drawable="@drawable/easy_btn_notselected">
+        <shape android:shape="rectangle">
+            <size android:width="102dp" android:height="94dp"/>
+            <solid android:color="#f2f2f2"/>
+            <corners
+                android:bottomLeftRadius="20dp"
+                android:bottomRightRadius="20dp"
+                android:topLeftRadius="20dp"
+                android:topRightRadius="20dp"/>
+        </shape>
+    </item>
+
+    <item
+        android:state_selected="true"
+        android:drawable="@drawable/easy_btn_selected">
+        <shape android:shape="rectangle">
+            <size android:width="102dp" android:height="94dp"/>
+            <corners
+                android:bottomLeftRadius="20dp"
+                android:bottomRightRadius="20dp"
+                android:topLeftRadius="20dp"
+                android:topRightRadius="20dp"/>
+        </shape>
+    </item>
+</selector>
