@@ -2,6 +2,7 @@ package com.jasen.kimjaeseung.morningbees.createbee
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -57,7 +58,6 @@ class CreateStep2Activity : AppCompatActivity(), View.OnClickListener{
             R.id.clock_10_button -> buttonPressed(10)
             R.id.create_step2_next_button -> gotoStep3()
             R.id.go_back_step1_button -> onBackPressed()
-            R.id.info_step2_button ->showInfo()
         }
     }
 
@@ -78,11 +78,13 @@ class CreateStep2Activity : AppCompatActivity(), View.OnClickListener{
         if(count == 1){
             if(!checkNextButtonText){
                 create_step2_next_button.isEnabled = false
+                create_step2_next_button.setTextColor(Color.parseColor("#aaaaaa"))
                 create_step2_next_button.background=applicationContext.getDrawable(R.color.deactive_button)
                 create_step2_next_button.text="미션 종료시간도 선택해주세요 "
             }
             else{
                 create_step2_next_button.isEnabled = false
+                create_step2_next_button.setTextColor(Color.parseColor("#aaaaaa"))
                 create_step2_next_button.background=applicationContext.getDrawable(R.color.deactive_button)
                 create_step2_next_button.text="미션 시작 시간도 선택해주세요 "
             }
@@ -92,16 +94,19 @@ class CreateStep2Activity : AppCompatActivity(), View.OnClickListener{
             lastMissionTime = pressedButton
             create_step2_next_button.text="다음 2/3"
             create_step2_next_button.isEnabled = true
+            create_step2_next_button.setTextColor(Color.parseColor("#222222"))
             create_step2_next_button.background=applicationContext.getDrawable(R.color.active_button)
         }
         else if(count == 0){
             create_step2_next_button.text="다음 2/3"
             create_step2_next_button.isEnabled = false
+            create_step2_next_button.setTextColor(Color.parseColor("#aaaaaa"))
             create_step2_next_button.background=applicationContext.getDrawable(R.color.deactive_button)
         }
+        /*
         else{
             showToast { "미션 수행 시간을 모두 지정하였습니다." }
-        }
+        }*/
     }
 
     private fun buttonColorChange(pressedButton: Int){
@@ -240,10 +245,6 @@ class CreateStep2Activity : AppCompatActivity(), View.OnClickListener{
                 Log.d(TAG, "refreshToken: $refreshToken")
             }
         }
-    }
-
-    private fun showInfo(){
-
     }
 
     companion object {

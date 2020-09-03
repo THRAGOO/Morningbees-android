@@ -19,6 +19,8 @@ class CalendarDialog : DialogFragment(), View.OnClickListener{
     lateinit var calendarAdapter : CalendarRecyclerViewAdapter
     lateinit var mDialogFragment: OnMyDialogResult
     var targetDate : String = ""
+    var todayDate : String = ""
+    var _targetDate : String = ""
 
     override fun onResume() {
         super.onResume()
@@ -51,10 +53,15 @@ class CalendarDialog : DialogFragment(), View.OnClickListener{
 
         calendarAdapter.setItemClickListener(object : CalendarRecyclerViewAdapter.ItemClickListener{
             override fun onClick(view: View, position: Int) {
-                if (position in 1..9)
+
+                if (position in 1..9){
                     targetDate += "-0$position"
-                else
+                    _targetDate += "0$position"
+                }
+                else{
                     targetDate += "-$position"
+                    _targetDate += "$position"
+                }
 
                 mDialogFragment.finish(targetDate)
                 dialog!!.dismiss()
@@ -67,6 +74,11 @@ class CalendarDialog : DialogFragment(), View.OnClickListener{
         tv_next_month.setOnClickListener{
             calendarAdapter.changeToNextMonth()
         }
+
+        //today date
+        val curDate = Date()
+        val simpleDate = SimpleDateFormat("yyyyMMdd").format(curDate)
+        todayDate = simpleDate
     }
 
     override fun onClick(p0: View?) {
@@ -74,11 +86,14 @@ class CalendarDialog : DialogFragment(), View.OnClickListener{
     }
 
     fun refreshCurrentMonth(calendar: Calendar){
-        val sdf = SimpleDateFormat("MM yyyy", Locale.KOREAN)
+        val sdf = SimpleDateFormat("MMMM yyyy", Locale.ENGLISH)
         tv_current_month.text = sdf.format(calendar.time)
 
         val _tarDate = SimpleDateFormat("yyyy-MM", Locale.KOREAN)
         targetDate = _tarDate.format(calendar.time)
+
+        val _tDate = SimpleDateFormat("yyyyMM", Locale.KOREAN)
+        _targetDate = _tDate.format(calendar.time)
     }
 
     fun setDialogResult(dialogResult : OnMyDialogResult){

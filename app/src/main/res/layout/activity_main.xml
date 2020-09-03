@@ -41,8 +41,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/total_member_number"
-                android:layout_toEndOf="@id/total_member_number_text"
-                android:text="0"/>
+                android:layout_toEndOf="@id/total_member_number_text" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -450,19 +449,19 @@
                         android:scaleType="fitCenter"
                         android:src = "@drawable/participate_in_mission"/>
                 </RelativeLayout>
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/wrap_upload_mission_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
 
                 <ImageView
                     android:id="@+id/today_mission_image"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@drawable/upload_mission_img_view"
-                    android:scaleType="fitXY"/>
+                    android:scaleType="fitXY" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/wrap_upload_mission_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
                 <RelativeLayout
                     android:layout_width="wrap_content"
@@ -486,7 +485,6 @@
                         android:layout_marginBottom="29dp"
                         android:layout_marginStart="29dp"
                         android:textSize="24dp"
-                        android:text="마스크 쓰고 \n셀카찍기"
                         android:textStyle="bold"
                         android:textColor="#ffffff"
                         android:layout_below="@+id/today_mission_text1"/>

@@ -34,11 +34,11 @@
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <data
-                    android:host="morningbees.page.link"
+                    android:host="thragoo.page.link"
                     android:scheme="https"
                     android:pathPrefix="/DQbR"/>
                 <data
-                    android:host="morningbees.page.link"
+                    android:host="thragoo.page.link"
                     android:scheme="http"/>
             </intent-filter>
         </activity>
@@ -72,6 +72,11 @@
 
         <activity android:name=".invitebee.InviteBeeActivity"
             android:screenOrientation="portrait">
+        </activity>
+
+        <activity android:name=".missionparticipate.MissionParticipateActivity"
+            android:screenOrientation="portrait">
+
         </activity>
 
         <!-- 사진 촬영을 위한 provider -->

@@ -2,6 +2,7 @@ package com.jasen.kimjaeseung.morningbees.createbee
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
 import android.util.Log
@@ -87,7 +88,6 @@ class CreateStep3Activity: AppCompatActivity(), View.OnClickListener {
         when(i){
             R.id.create_step3_next_button -> createBeeServer()
             R.id.go_back_step2_button -> onBackPressed()
-            R.id.info_step3_button -> showInfo()
 
             R.id.jelly_2 -> {
                 jellyCnt = 2
@@ -97,12 +97,14 @@ class CreateStep3Activity: AppCompatActivity(), View.OnClickListener {
                 if(jelly_2.isSelected) {
                     jelly_2.setImageDrawable(getDrawable(R.drawable.jelly_button_selected))
                     create_step3_next_button.isEnabled = true
+                    create_step3_next_button.setTextColor(Color.parseColor("#222222"))
                     create_step3_next_button.background = applicationContext.getDrawable(R.color.active_button)
                     jelly_2_text.setTypeface(Typeface.DEFAULT, Typeface.BOLD)
                 }
                 else {
                     jelly_2.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
                     create_step3_next_button.isEnabled = false
+                    create_step3_next_button.setTextColor(Color.parseColor("#aaaaaa"))
                     create_step3_next_button.background = applicationContext.getDrawable(R.color.deactive_button)
                     jelly_2_text.setTypeface(Typeface.DEFAULT, Typeface.NORMAL)
                 }
@@ -125,12 +127,14 @@ class CreateStep3Activity: AppCompatActivity(), View.OnClickListener {
                 if(jelly_3.isSelected) {
                     jelly_3.setImageDrawable(getDrawable(R.drawable.jelly_button_selected))
                     create_step3_next_button.isEnabled = true
+                    create_step3_next_button.setTextColor(Color.parseColor("#222222"))
                     create_step3_next_button.background = applicationContext.getDrawable(R.color.active_button)
                     jelly_3_text.visibility= View.VISIBLE
                 }
                 else {
                     jelly_3.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
                     create_step3_next_button.isEnabled = false
+                    create_step3_next_button.setTextColor(Color.parseColor("#aaaaaa"))
                     create_step3_next_button.background = applicationContext.getDrawable(R.color.deactive_button)
                     jelly_3_text.visibility= View.INVISIBLE
                 }
@@ -152,12 +156,14 @@ class CreateStep3Activity: AppCompatActivity(), View.OnClickListener {
                 if(jelly_4.isSelected) {
                     jelly_4.setImageDrawable(getDrawable(R.drawable.jelly_button_selected))
                     create_step3_next_button.isEnabled = true
+                    create_step3_next_button.setTextColor(Color.parseColor("#222222"))
                     create_step3_next_button.background = applicationContext.getDrawable(R.color.active_button)
                     jelly_4_text.visibility= View.VISIBLE
                 }
                 else {
                     jelly_4.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
                     create_step3_next_button.isEnabled = false
+                    create_step3_next_button.setTextColor(Color.parseColor("#aaaaaa"))
                     create_step3_next_button.background = applicationContext.getDrawable(R.color.deactive_button)
                     jelly_4_text.visibility= View.INVISIBLE
                 }
@@ -179,12 +185,14 @@ class CreateStep3Activity: AppCompatActivity(), View.OnClickListener {
                 if(jelly_5.isSelected) {
                     jelly_5.setImageDrawable(getDrawable(R.drawable.jelly_button_selected))
                     create_step3_next_button.isEnabled = true
+                    create_step3_next_button.setTextColor(Color.parseColor("#222222"))
                     create_step3_next_button.background = applicationContext.getDrawable(R.color.active_button)
                     jelly_5_text.visibility= View.VISIBLE
                 }
                 else {
                     jelly_5.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
                     create_step3_next_button.isEnabled = false
+                    create_step3_next_button.setTextColor(Color.parseColor("#aaaaaa"))
                     create_step3_next_button.background = applicationContext.getDrawable(R.color.deactive_button)
                     jelly_5_text.visibility= View.INVISIBLE
                 }
@@ -206,12 +214,14 @@ class CreateStep3Activity: AppCompatActivity(), View.OnClickListener {
                 if(jelly_6.isSelected) {
                     jelly_6.setImageDrawable(getDrawable(R.drawable.jelly_button_selected))
                     create_step3_next_button.isEnabled = true
+                    create_step3_next_button.setTextColor(Color.parseColor("#222222"))
                     create_step3_next_button.background = applicationContext.getDrawable(R.color.active_button)
                     jelly_6_text.visibility= View.VISIBLE
                 }
                 else {
                     jelly_6.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
                     create_step3_next_button.isEnabled = false
+                    create_step3_next_button.setTextColor(Color.parseColor("#aaaaaa"))
                     create_step3_next_button.background = applicationContext.getDrawable(R.color.deactive_button)
                     jelly_6_text.visibility= View.INVISIBLE
                 }
@@ -233,12 +243,14 @@ class CreateStep3Activity: AppCompatActivity(), View.OnClickListener {
                 if(jelly_7.isSelected) {
                     jelly_7.setImageDrawable(getDrawable(R.drawable.jelly_button_selected))
                     create_step3_next_button.isEnabled = true
+                    create_step3_next_button.setTextColor(Color.parseColor("#222222"))
                     create_step3_next_button.background = applicationContext.getDrawable(R.color.active_button)
                     jelly_7_text.visibility= View.VISIBLE
                 }
                 else {
                     jelly_7.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
                     create_step3_next_button.isEnabled = false
+                    create_step3_next_button.setTextColor(Color.parseColor("#aaaaaa"))
                     create_step3_next_button.background = applicationContext.getDrawable(R.color.deactive_button)
                     jelly_7_text.visibility= View.INVISIBLE
                 }
@@ -260,12 +272,14 @@ class CreateStep3Activity: AppCompatActivity(), View.OnClickListener {
                 if(jelly_8.isSelected) {
                     jelly_8.setImageDrawable(getDrawable(R.drawable.jelly_button_selected))
                     create_step3_next_button.isEnabled = true
+                    create_step3_next_button.setTextColor(Color.parseColor("#222222"))
                     create_step3_next_button.background = applicationContext.getDrawable(R.color.active_button)
                     jelly_8_text.visibility= View.VISIBLE
                 }
                 else {
                     jelly_8.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
                     create_step3_next_button.isEnabled = false
+                    create_step3_next_button.setTextColor(Color.parseColor("#aaaaaa"))
                     create_step3_next_button.background = applicationContext.getDrawable(R.color.deactive_button)
                     jelly_8_text.visibility= View.INVISIBLE
                 }
@@ -287,12 +301,14 @@ class CreateStep3Activity: AppCompatActivity(), View.OnClickListener {
                 if(jelly_9.isSelected) {
                     jelly_9.setImageDrawable(getDrawable(R.drawable.jelly_button_selected))
                     create_step3_next_button.isEnabled = true
+                    create_step3_next_button.setTextColor(Color.parseColor("#222222"))
                     create_step3_next_button.background = applicationContext.getDrawable(R.color.active_button)
                     jelly_9_text.visibility= View.VISIBLE
                 }
                 else {
                     jelly_9.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
                     create_step3_next_button.isEnabled = false
+                    create_step3_next_button.setTextColor(Color.parseColor("#aaaaaa"))
                     create_step3_next_button.background = applicationContext.getDrawable(R.color.deactive_button)
                     jelly_9_text.visibility= View.INVISIBLE
                 }
@@ -314,12 +330,14 @@ class CreateStep3Activity: AppCompatActivity(), View.OnClickListener {
                 if(jelly_10.isSelected) {
                     jelly_10.setImageDrawable(getDrawable(R.drawable.jelly_button_selected))
                     create_step3_next_button.isEnabled = true
+                    create_step3_next_button.setTextColor(Color.parseColor("#222222"))
                     create_step3_next_button.background = applicationContext.getDrawable(R.color.active_button)
                     jelly_10_text.setTypeface(Typeface.DEFAULT, Typeface.BOLD)
                 }
                 else {
                     jelly_10.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
                     create_step3_next_button.isEnabled = false
+                    create_step3_next_button.setTextColor(Color.parseColor("#aaaaaa"))
                     create_step3_next_button.background = applicationContext.getDrawable(R.color.deactive_button)
                     jelly_10_text.setTypeface(Typeface.DEFAULT, Typeface.NORMAL)
                 }
@@ -351,7 +369,6 @@ class CreateStep3Activity: AppCompatActivity(), View.OnClickListener {
     private fun initButtonListeners() {
         create_step3_next_button.setOnClickListener(this)
         go_back_step2_button.setOnClickListener(this)
-        info_step3_button.setOnClickListener(this)
         jelly_2.setOnClickListener(this)
         jelly_3.setOnClickListener(this)
         jelly_4.setOnClickListener(this)
@@ -488,10 +505,6 @@ class CreateStep3Activity: AppCompatActivity(), View.OnClickListener {
         val nextIntent = Intent(this, LoginActivity::class.java)
         nextIntent.putExtra("refreshTokenExpiration", "refreshTokenExpiration")
         startActivity(nextIntent)
-    }
-
-    private fun showInfo(){
-
     }
 
     companion object {

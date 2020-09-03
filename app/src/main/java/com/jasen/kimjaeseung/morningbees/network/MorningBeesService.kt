@@ -67,7 +67,6 @@ interface MorningBeesService {
     fun joinBee(
         @Header ("X-BEES-ACCESS-TOKEN") accessToken : String,
         @Body joinBeeRequest: JoinBeeRequest
-    //): Call<JoinBeeResponse>
     ): Call<Void>
 
     @Headers("Content-Type:application/json")
@@ -75,13 +74,6 @@ interface MorningBeesService {
     fun withdrawalBee(
         @Header ("X-BEES-ACCESS-TOKEN") accessToken : String
     ): Call<Void>
-
-    /*
-    @GET("/api/my_bee")
-    fun beeInfo(
-        @Header ("X-BEES-ACCESS-TOKEN") accessToken : String
-    ): Call<BeeInfoResponse>
-    */
 
     @GET("/api/my_bee/mission")
     fun missionInfo(
@@ -106,6 +98,11 @@ interface MorningBeesService {
         @Query("targetDate") targetDate : String,
         @Query("beeId") beeId : Int
     ): Call<MainResponse>
+
+    @GET("/api/my_bee")
+    fun beeInfo(
+        @Header ("X-BEES-ACCESS-TOKEN") accessToken : String
+    ): Call<BeeInfoResponse>
 
     companion object{
         fun create(): MorningBeesService{

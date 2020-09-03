@@ -10,6 +10,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.jasen.kimjaeseung.morningbees.R
 import kotlinx.android.synthetic.main.item_calendar.view.*
+import java.text.SimpleDateFormat
 
 
 import java.util.*
@@ -58,32 +59,48 @@ class CalendarRecyclerViewAdapter(val calendarActivity: CalendarDialog) : Recycl
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         bindDefaultView(holder as CalendarRecycelrViewHolder, position)
 
-        if(position % BaseCalendar.DAYS_OF_WEEK == 0){
-            holder.itemView.calendar_date.setTextColor(Color.parseColor("#ff1200"))
-        }
-        else if (position % BaseCalendar.DAYS_OF_WEEK == 6){
-            holder.itemView.calendar_date.setTextColor(Color.parseColor("#2269FF"))
+        var mPosition = baseCalendar.data[position].toString()
+
+        if(mPosition.toInt() in 1..9) mPosition = "0$mPosition"
+
+        val mTargetDate = (calendarActivity._targetDate + mPosition).toInt()
+
+        if(calendarActivity.todayDate.toInt() +1 < mTargetDate){
+            holder.itemView.calendar_date.setTextColor(Color.parseColor("#cccccc"))
         }
         else{
-            holder.itemView.calendar_date.setTextColor(Color.parseColor("#676d6e"))
+            if(position % BaseCalendar.DAYS_OF_WEEK == 0){
+                holder.itemView.calendar_date.setTextColor(Color.parseColor("#f03e3e")) // sunday
+            }
+            else if (position % BaseCalendar.DAYS_OF_WEEK == 6){
+                holder.itemView.calendar_date.setTextColor(Color.parseColor("#2269FF")) // saturday
+            }
+            else{
+                holder.itemView.calendar_date.setTextColor(Color.parseColor("#676d6e"))
+            }
         }
 
         if(position < baseCalendar.prevMonthTailOffset || position >= baseCalendar.prevMonthTailOffset + baseCalendar.currentMonthMaxDate){
-             holder.itemView.calendar_date.alpha = 0f
+            holder.itemView.calendar_date.alpha = 0f
         }
         else {
-            holder.itemView.calendar_date.alpha = 1f
-            holder.itemView.calendar_date.text = baseCalendar.data[position].toString()
-            holder.itemView.setOnClickListener{
-                val data = baseCalendar.data[position]
-                itemClickListener.onClick(it, data)
-                //callbackListener.onDataReceived(data.toString())
-                Log.d(TAG, "data: $data")
+            if(calendarActivity.todayDate.toInt() +1 < mTargetDate) {
+                holder.itemView.calendar_date.alpha = 1f
+                holder.itemView.calendar_date.text = baseCalendar.data[position].toString()
+                holder.itemView.calendar_date.isClickable = false
+            }
+            else {
+                holder.itemView.calendar_date.alpha = 1f
+                holder.itemView.calendar_date.text = baseCalendar.data[position].toString()
+                holder.itemView.setOnClickListener{
+                    val data = baseCalendar.data[position]
+                    itemClickListener.onClick(it, data)
+                    Log.d(TAG, "data: $data")
+                }
             }
         }
     }
-
-
+    
     fun changeToPrevMonth(){
         baseCalendar.changeToPrevMonth {
             refreshView(it)

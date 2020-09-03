@@ -68,7 +68,6 @@ class CreateStep1Activity:AppCompatActivity(), View.OnClickListener {
         val i = v.id
         when (i) {
             R.id.go_back_start_button -> onBackPressed()
-            R.id.info_step1_button->showInfo()
             R.id.create_step1_next_button -> gotoStep2()
             R.id.delete_beename_text_button -> beenameTextDelete()
         }
@@ -76,7 +75,6 @@ class CreateStep1Activity:AppCompatActivity(), View.OnClickListener {
 
     private fun initButtonListeners(){
         go_back_start_button.setOnClickListener(this)
-        info_step1_button.setOnClickListener(this)
         create_step1_next_button.setOnClickListener(this)
         delete_beename_text_button.setOnClickListener(this)
     }
@@ -91,11 +89,10 @@ class CreateStep1Activity:AppCompatActivity(), View.OnClickListener {
                 else
                     delete_beename_text_button.visibility = View.VISIBLE
 
-                if(create_beename_text.length() > 10){
-                    beename_textview.setText("10자 이내로 입력해주세요")
-                    val strColor = "#AAAAAA"
-                    beename_textview.setTextColor(Color.parseColor(strColor))
+                if(create_beename_text.length() < 2 || create_beename_text.length() > 10){
+                    beename_textview.setText("2~10자 이내로 입력해주세요")
                     create_step1_next_button.isEnabled = false
+                    create_step1_next_button.setTextColor(Color.parseColor("#aaaaaa"))
                     create_step1_next_button.background = applicationContext.getDrawable(R.color.deactive_button)
                     /*
                     beename_textview.setText("사용불가한 이름입니다.")
@@ -106,6 +103,7 @@ class CreateStep1Activity:AppCompatActivity(), View.OnClickListener {
                 else{
                     beename_textview.setText("")
                     create_step1_next_button.isEnabled = true
+                    create_step1_next_button.setTextColor(Color.parseColor("#222222"))
                     create_step1_next_button.background = applicationContext.getDrawable(R.color.active_button)
                 }
             }

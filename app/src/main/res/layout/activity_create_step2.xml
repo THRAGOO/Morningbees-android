@@ -6,7 +6,7 @@
     xmlns:src="http://schemas.android.com/tools">
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_marginTop="35dp"
@@ -26,16 +26,6 @@
                 android:padding="0sp"
                 android:scaleType="fitCenter"
                 android:layout_alignParentStart="true"/>
-
-            <ImageButton
-                android:id="@+id/info_step2_button"
-                android:layout_width="20dp"
-                android:layout_height="wrap_content"
-                app:srcCompat="@drawable/icon_info"
-                android:padding="0sp"
-                android:scaleType="fitCenter"
-                android:layout_alignParentEnd="true"
-                />
         </RelativeLayout>
 
         <LinearLayout
@@ -127,10 +117,10 @@
         android:text="다음 2/3"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:textColor="#222222"
         android:textSize="15sp"
         android:textAlignment="center"
         android:letterSpacing="0.02"
+        android:textColor="#aaaaaa"
         android:background="@drawable/selector_custom_button"
         android:layout_alignParentBottom="true"
         />

@@ -29,8 +29,10 @@
             android:layout_height="120dp"
             android:layout_marginEnd="24dp"
             android:background="@drawable/take_picture_button"
-            android:paddingTop="50dp"
+            android:gravity="bottom|center_horizontal"
+            android:paddingBottom="36dp"
             android:textColor="#aaaaaa"
+            android:textSize="13dp"
             android:text="사진찍기"
             android:stateListAnimator="@null" />
 
@@ -41,7 +43,9 @@
             android:layout_marginStart="22dp"
             android:layout_toEndOf="@id/pc_take_picture_btn"
             android:background="@drawable/gallery_picture_button"
-            android:paddingTop="50dp"
+            android:gravity="bottom|center_horizontal"
+            android:paddingBottom="20dp"
+            android:textSize="13dp"
             android:text="갤러리에서\n가져오기"
             android:textColor="#aaaaaa"
             android:stateListAnimator="@null"/>

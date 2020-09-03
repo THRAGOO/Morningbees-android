@@ -13,8 +13,6 @@ import kotlin.collections.ArrayList
 data class MainResponse(
     var missions: JsonArray?,
     var beeInfos: JsonObject?
-    //var missions: List<Missions>,
-    //var beeInfos: BeeInfos
 )
 
 data class Missions (

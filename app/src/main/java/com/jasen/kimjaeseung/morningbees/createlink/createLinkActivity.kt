@@ -27,10 +27,10 @@ class CreateLinkActivity : AppCompatActivity() {
     }
 
     fun createDynamicLink(){
-        val invitationLink = "https://www.example.com/?beeid=${beeid}"
+        val invitationLink = "https://www.app.thragoo.com/?beeid=${beeid}"
         val dynamicLink = Firebase.dynamicLinks.dynamicLink {
             link = Uri.parse(invitationLink)
-            domainUriPrefix = "https://morningbees.page.link"
+            domainUriPrefix = "https://thragoo.page.link"
             androidParameters { minimumVersion = 1 }
         }
 
@@ -38,7 +38,7 @@ class CreateLinkActivity : AppCompatActivity() {
         //shareLink(dynamicLinkUri)
         val shortLinkTask = Firebase.dynamicLinks.shortLinkAsync {
             link = Uri.parse(invitationLink)
-            domainUriPrefix = "https://morningbees.page.link"
+            domainUriPrefix = "https://thragoo.page.link"
 
             androidParameters { minimumVersion = 1 }
         }.addOnCompleteListener(this,  OnCompleteListener<ShortDynamicLink>(){

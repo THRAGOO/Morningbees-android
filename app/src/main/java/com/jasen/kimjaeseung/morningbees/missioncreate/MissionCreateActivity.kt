@@ -119,9 +119,9 @@ class MissionCreateActivity: AppCompatActivity(), View.OnClickListener {
         description_mission.addTextChangedListener(object: TextWatcher {
             override fun afterTextChanged(edit: Editable) {
                 // Text가 바뀌고 동작할 코드
-                if(description_mission.length()==0)
+                if(description_mission.length() == 0)
                 {
-                    mission_create_btn.setTextColor(Color.parseColor("#CCCCCC"))
+                    mission_create_btn.setTextColor(Color.parseColor("#cccccc"))
                     mission_create_btn.isEnabled = false
                 }
                 else {
@@ -136,7 +136,6 @@ class MissionCreateActivity: AppCompatActivity(), View.OnClickListener {
                 description = description_mission.text.toString()
             }
         })
-
     }
 
     private fun isActivateButton(){
@@ -155,21 +154,15 @@ class MissionCreateActivity: AppCompatActivity(), View.OnClickListener {
     }
 
     private fun missionCreateServer(){
-        if(difficulty == -1){
-            showToast { "난이도 설정해주세요. " }
-        }
-        else if(image == null){
-            showToast { "사진을 선택해 주세요." }
-        }
-        else if (description == ""){
-            showToast { "미션 타이틀을 등록해주세요. " }
-        }
+        if(difficulty == -1){ showToast { "난이도 설정해주세요. " } }
+        else if(image == null){ showToast { "사진을 선택해 주세요." } }
+        else if (description == ""){ showToast { "미션 타이틀을 등록해주세요. " } }
         else {
-            val imageFile:File = image!!
-            val testImage : MultipartBody.Part = MultipartBody.Part.createFormData("image",imageFile.name,imageFile.asRequestBody("image/*".toMediaTypeOrNull()))
+            val imageFile : File = image!!
+            val testImage : MultipartBody.Part = MultipartBody.Part.createFormData("image", imageFile.name, imageFile.asRequestBody("image/*".toMediaTypeOrNull()))
 
-            //service.missionCreate(testImage,beeId,description,type,difficulty).enqueue(object : Callback<Void> {
-            service.missionCreate(accessToken,testImage,beeId,description,type,difficulty).enqueue(object : Callback<Void> {
+            service.missionCreate(accessToken, testImage, beeId, description, type, difficulty)
+                .enqueue(object : Callback<Void> {
                 override fun onFailure(call : Call<Void>, t:Throwable){
                     Dlog().d(t.toString())
                 }
@@ -225,7 +218,7 @@ class MissionCreateActivity: AppCompatActivity(), View.OnClickListener {
     }
 
     fun gotoCamera(){
-        //외장 메모리 (sd card) 연결 여부 확
+        //외장 메모리 (sd card) 연결 여부 확인
         val state : String = Environment.getExternalStorageState()
         if(!state.equals(Environment.MEDIA_MOUNTED)){
             Log.d(TAG, "SDcard is not mounted")
@@ -256,7 +249,7 @@ class MissionCreateActivity: AppCompatActivity(), View.OnClickListener {
     }
 
     private fun createImageFile() : File? {
-        val timeStamp : String = SimpleDateFormat("yyyMMdd_HHmmss").format(Date())
+        val timeStamp : String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
         val imageFileName = "morningbees"
 
         // 외부 앱 전용 저장소
@@ -274,7 +267,7 @@ class MissionCreateActivity: AppCompatActivity(), View.OnClickListener {
         } catch(e: IOException){
             e.printStackTrace()
         }
-        return null;
+        return null
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?){
@@ -293,8 +286,7 @@ class MissionCreateActivity: AppCompatActivity(), View.OnClickListener {
                 }
                 upload_img_view.setImageBitmap(selectedImage)
                 bitmap = selectedImage!!
-                image = File(URIPathHelper().getPath(this,photoUri))
-
+                image = File(URIPathHelper().getPath(this, photoUri))
             }
         }
         else if(requestCode == PICK_FROM_CAMERA){
@@ -311,7 +303,6 @@ class MissionCreateActivity: AppCompatActivity(), View.OnClickListener {
         else{
             changeWrapView(LOAD_IMAGEVIEW)
         }
-
     }
 
     private fun changeWrapView(status : Int){ // wrap view change
@@ -391,7 +382,6 @@ class MissionCreateActivity: AppCompatActivity(), View.OnClickListener {
         isActivateButton()
     }
 
-
     private fun chkPermission(){
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
             if(permissionCheckCamera == PackageManager.PERMISSION_DENIED){
@@ -409,78 +399,11 @@ class MissionCreateActivity: AppCompatActivity(), View.OnClickListener {
         ActivityCompat.requestPermissions(
             this,
             arrayOf(
-                Manifest.permission.CAMERA,Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE
+                Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE
             ),
             REQUEST_PERMISSION
         )
     }
-
-    /*
-private fun saveImageInAlbum(context: Context, fileName : String, bitmap: Bitmap){
-    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
-        Log.d(TAG, "현재 버전이 Q 이상 ")
-        val values = ContentValues()
-        with(values){
-            put(MediaStore.Images.Media.TITLE, fileName)
-            put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis())
-            put(MediaStore.Images.Media.RELATIVE_PATH, "DCIM/morningbees")
-            put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
-        }
-
-        val uri = context.contentResolver
-            .insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
-        val fos = context.contentResolver.openOutputStream(uri!!)
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos)
-        fos?.run{
-            flush()
-            close()
-        }
-    } else{
-        val dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString() +
-                File.separator + "morningbees"
-        val file = File(dir)
-        if(!file.exists()){
-            file.mkdirs()
-        }
-
-        val imgFile = File(file, "capture.jpg")
-        val os = FileOutputStream(imgFile)
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, os)
-        os.flush()
-        os.close()
-
-        val values = ContentValues()
-        with(values) {
-            put(MediaStore.Images.Media.TITLE, fileName)
-            put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis())
-            put(MediaStore.Images.Media.BUCKET_ID, fileName)
-            put(MediaStore.Images.Media.DATA, imgFile.absolutePath)
-            put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
-        }
-        context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
-    }
-}
-*/
-
-    private fun bitmapToFile(bitmap : Bitmap) : File{
-        // Get the context wrapper
-        val wrapper = ContextWrapper(applicationContext)
-        // Initialize a new file instance to save bitmap object
-        var file = wrapper.getDir("Images", Context.MODE_PRIVATE)
-        file = File(file, "${UUID.randomUUID()}.jpg")
-
-        try{
-            // Compress the bitmap and save in jpg format
-            val stream: OutputStream = FileOutputStream(file)
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
-            stream.flush()
-            stream.close()
-        }catch(e:IOException){
-            e.printStackTrace()
-        }
-        return file
-    }
-
 
     companion object {
         private const val REQUEST_PERMISSION = 1000
