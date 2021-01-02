@@ -23,7 +23,7 @@
                 android:id="@+id/go_back_start_button"
                 android:layout_width="12dp"
                 android:layout_height="20dp"
-                android:src="@drawable/arrow_left"
+                android:src="@drawable/icon_arrow_left_back"
                 android:padding="0sp"
                 android:scaleType="fitCenter"
                 android:background="#00ff0000"
@@ -59,8 +59,7 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:layout_height="wrap_content">
 
                 <EditText
                     android:id="@+id/create_beename_text"
@@ -68,7 +67,6 @@
                     android:layout_height="wrap_content"
                     android:ems="10"
                     android:paddingBottom="15dp"
-                    android:layout_weight="1"
                     android:hint="2~10자 이내로 입력해 주세요. "/>
 
                 <ImageButton

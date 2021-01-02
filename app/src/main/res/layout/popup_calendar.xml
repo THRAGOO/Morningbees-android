@@ -44,7 +44,6 @@
             android:scaleType="fitCenter"
             android:background="#00ff0000"
             android:layout_alignParentEnd="true"
-            android:layout_marginEnd="27dp"
             android:layout_centerVertical="true"/>
 
     </RelativeLayout>
@@ -66,7 +65,8 @@
             android:textColor="#F03E3E"
             android:textSize="12dp"
             android:textStyle="bold"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:gravity="center"/>
 
         <TextView
             android:id="@+id/mon"
@@ -76,7 +76,8 @@
             android:textStyle="bold"
             android:text="Mon "
             android:textColor="#CCCCCC"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:gravity="center"/>
         <TextView
             android:id="@+id/tue"
             android:layout_width="wrap_content"
@@ -85,7 +86,8 @@
             android:textStyle="bold"
             android:text="Tue "
             android:textColor="#CCCCCC"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:gravity="center"/>
 
         <TextView
             android:id="@+id/wed"
@@ -95,7 +97,8 @@
             android:textStyle="bold"
             android:text="Wed "
             android:textColor="#CCCCCC"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:gravity="center"/>
         <TextView
             android:id="@+id/thu"
             android:layout_width="wrap_content"
@@ -104,7 +107,8 @@
             android:textSize="12dp"
             android:textStyle="bold"
             android:textColor="#CCCCCC"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:gravity="center"/>
         <TextView
             android:id="@+id/fri"
             android:layout_width="wrap_content"
@@ -113,7 +117,8 @@
             android:textSize="12dp"
             android:textStyle="bold"
             android:textColor="#CCCCCC"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:gravity="center"/>
         <TextView
             android:id="@+id/sat"
             android:layout_width="wrap_content"
@@ -122,7 +127,8 @@
             android:textSize="12dp"
             android:textStyle="bold"
             android:textColor="#2269FF"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:gravity="center"/>
     </LinearLayout>
 
     <ImageView

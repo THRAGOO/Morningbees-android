@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.jasen.kimjaeseung.morningbees">
     <uses-feature android:name="android.hardware.camera"
         android:required="true" />
@@ -17,10 +18,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-
         <activity
             android:name=".main.MainActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait">
+        </activity>
         <activity
             android:name=".login.LoginActivity"
             android:screenOrientation="portrait">
@@ -28,22 +29,9 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <intent-filter
-                android:autoVerify="true">
-                <action android:name="android.intent.action.VIEW"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.BROWSABLE"/>
-                <data
-                    android:host="thragoo.page.link"
-                    android:scheme="https"
-                    android:pathPrefix="/DQbR"/>
-                <data
-                    android:host="thragoo.page.link"
-                    android:scheme="http"/>
-            </intent-filter>
         </activity>
         <activity
-            android:name=".main.SignUpActivity"
+            android:name=".signup.SignUpActivity"
             android:screenOrientation="portrait">
         </activity>
         <activity
@@ -62,21 +50,24 @@
             android:name=".createbee.CreateStep3Activity"
             android:parentActivityName=".createbee.CreateStep2Activity"
             android:screenOrientation="portrait"></activity>
-
         <activity android:name=".missioncreate.MissionCreateActivity"
             android:screenOrientation="portrait"></activity>
-
-        <activity android:name=".createlink.CreateLinkActivity">
-
-        </activity>
-
         <activity android:name=".invitebee.InviteBeeActivity"
             android:screenOrientation="portrait">
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:host="thragoo.page.link" android:scheme="https"/>
+                <data android:host="thragoo.page.link" android:scheme="http"/>
+            </intent-filter>
         </activity>
 
         <activity android:name=".missionparticipate.MissionParticipateActivity"
             android:screenOrientation="portrait">
-
+        </activity>
+        <activity android:name=".setting.SettingActivity"
+            android:screenOrientation="portrait">
         </activity>
 
         <!-- 사진 촬영을 위한 provider -->

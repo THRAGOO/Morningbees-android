@@ -1,25 +1,26 @@
 package com.jasen.kimjaeseung.morningbees.network
 
-import com.jasen.kimjaeseung.morningbees.beforejoin.model.MeResponse
-import com.jasen.kimjaeseung.morningbees.createbee.model.CreateBeeRequest
-import com.jasen.kimjaeseung.morningbees.createbee.model.RenewalResponse
-import com.jasen.kimjaeseung.morningbees.invitebee.model.JoinBeeRequest
-import com.jasen.kimjaeseung.morningbees.login.model.SignInRequest
-import com.jasen.kimjaeseung.morningbees.login.model.SignInResponse
-import com.jasen.kimjaeseung.morningbees.main.model.*
-import com.jasen.kimjaeseung.morningbees.signup.model.NameValidataionCheckResponse
-import com.jasen.kimjaeseung.morningbees.signup.model.SignUpRequest
-import com.jasen.kimjaeseung.morningbees.signup.model.SignUpResponse
+import com.jasen.kimjaeseung.morningbees.model.me.MeResponse
+import com.jasen.kimjaeseung.morningbees.model.createbee.CreateBeeRequest
+import com.jasen.kimjaeseung.morningbees.model.renewal.RenewalResponse
+import com.jasen.kimjaeseung.morningbees.model.joinbee.JoinBeeRequest
+import com.jasen.kimjaeseung.morningbees.model.signin.SignInRequest
+import com.jasen.kimjaeseung.morningbees.model.signin.SignInResponse
+import com.jasen.kimjaeseung.morningbees.model.beeinfo.BeeInfoResponse
+import com.jasen.kimjaeseung.morningbees.model.main.MainResponse
+import com.jasen.kimjaeseung.morningbees.model.missioninfo.MissionInfoRequest
+import com.jasen.kimjaeseung.morningbees.model.missioninfo.MissionInfoResponse
+import com.jasen.kimjaeseung.morningbees.model.namevalidationcheck.NameValidataionCheckResponse
+import com.jasen.kimjaeseung.morningbees.model.signup.SignUpRequest
+import com.jasen.kimjaeseung.morningbees.model.signup.SignUpResponse
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import retrofit2.http.*
-import java.util.*
 
 
 interface MorningBeesService {
@@ -28,12 +29,6 @@ interface MorningBeesService {
     fun nameValidationCheck(
         @Query("nickname") nickname: String?
     ): Call<NameValidataionCheckResponse>
-
-    /*
-    fun nameValidationCheck(
-        @QueryMap nickname: Map<String, String>
-    ):Call<NameValidataionCheckResponse>
-    */
 
     @Headers("Content-Type:application/json")
     @POST("/api/auth/sign_in")
@@ -71,7 +66,7 @@ interface MorningBeesService {
 
     @Headers("Content-Type:application/json")
     @DELETE("/api/bees/withdrawal")
-    fun withdrawalBee(
+    fun beeWithdrawal(
         @Header ("X-BEES-ACCESS-TOKEN") accessToken : String
     ): Call<Void>
 
@@ -99,10 +94,11 @@ interface MorningBeesService {
         @Query("beeId") beeId : Int
     ): Call<MainResponse>
 
-    @GET("/api/my_bee")
+    @GET("/api/bees/{id}")
     fun beeInfo(
-        @Header ("X-BEES-ACCESS-TOKEN") accessToken : String
-    ): Call<BeeInfoResponse>
+        @Header ("X-BEES-ACCESS-TOKEN") accessToken : String,
+        @Path (value = "id", encoded = true) beeId: Int
+     ): Call<BeeInfoResponse>
 
     companion object{
         fun create(): MorningBeesService{

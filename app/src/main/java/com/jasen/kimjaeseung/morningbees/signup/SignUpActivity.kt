@@ -1,4 +1,4 @@
-package com.jasen.kimjaeseung.morningbees.main
+package com.jasen.kimjaeseung.morningbees.signup
 
 import android.content.Context
 import android.content.Intent
@@ -8,16 +8,12 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.mvp.BaseActivity
-import com.jasen.kimjaeseung.morningbees.signup.SignUpContract
-import com.jasen.kimjaeseung.morningbees.signup.SignUpPresenter
 import com.jasen.kimjaeseung.morningbees.util.showToast
 import kotlinx.android.synthetic.main.activity_signup.*
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import com.jasen.kimjaeseung.morningbees.beforejoin.BeforeJoinActivity
-import com.jasen.kimjaeseung.morningbees.signup.model.SignUpRequest
+import com.jasen.kimjaeseung.morningbees.model.signup.SignUpRequest
 import java.util.regex.Pattern
-
 
 class SignUpActivity : BaseActivity(), SignUpContract.View, View.OnClickListener {
     private lateinit var signupPresenter : SignUpPresenter
@@ -38,7 +34,7 @@ class SignUpActivity : BaseActivity(), SignUpContract.View, View.OnClickListener
 
     override fun onDestroy() {
         super.onDestroy()
-        //signupPresenter.dropView()
+        signupPresenter.dropView()
     }
 
     override fun initPresenter(){
@@ -51,10 +47,9 @@ class SignUpActivity : BaseActivity(), SignUpContract.View, View.OnClickListener
     }
 
     override fun onClick(v: View) {
-        val i = v.id
-        when(i){
+        when(v.id){
             R.id.signup_nickname_check_button -> nicknameCheck()
-            R.id.signup_start_button -> signupStart()
+            R.id.signup_start_button -> signUpStart()
         }
     }
 
@@ -62,7 +57,7 @@ class SignUpActivity : BaseActivity(), SignUpContract.View, View.OnClickListener
         signup_nickname_check_button.setOnClickListener{
             val usrNickname = signup_nickname_text.text.toString()
 
-            CloseKeyboard()
+            closeKeyboard()
             val filteredNickname = nicknameFilter(usrNickname)
 
             if(filteredNickname != "")
@@ -81,9 +76,8 @@ class SignUpActivity : BaseActivity(), SignUpContract.View, View.OnClickListener
         }
     }
 
-    private fun signupStart(){
-        CloseKeyboard()
-
+    private fun signUpStart(){
+        closeKeyboard()
         when{
             !signupPresenter.validCheck -> {
                 Log.d(TAG, "need validcheck")
@@ -91,16 +85,19 @@ class SignUpActivity : BaseActivity(), SignUpContract.View, View.OnClickListener
             }
 
             signupPresenter.validCheck -> {
-                val IntentSocialAccessToken: String? = intent.getStringExtra("socialAccessToken")
-                val IntentProvider: String? = intent.getStringExtra("provider")
+                val intentSocialAccessToken: String? = intent.getStringExtra("socialAccessToken")
+                val intentProvider: String? = intent.getStringExtra("provider")
 
-                if (IntentSocialAccessToken == null || IntentProvider == null) {
+                if (intentSocialAccessToken == null || intentProvider == null) {
                     Log.d(TAG, "need intent value from signInActivity")
                     showToast{getString(R.string.social_login_recheck)}
-
                 } else {
                     signupPresenter.signUpMorningbeesServer(
-                        SignUpRequest(IntentSocialAccessToken,IntentProvider,signupPresenter.mNickname)
+                        SignUpRequest(
+                            intentSocialAccessToken,
+                            intentProvider,
+                            signupPresenter.mNickname
+                        )
                     )
                     Log.d(TAG, signupPresenter.mNickname)
                 }
@@ -113,8 +110,8 @@ class SignUpActivity : BaseActivity(), SignUpContract.View, View.OnClickListener
     }
 
     private fun nicknameFilter(source: String): String {
-        when {
-            source.length in 2..10 -> {
+        when (source.length) {
+            in 2..10 -> {
                 val ps: Pattern =
                     Pattern.compile("^[a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ\\u318D\\u119E\\u11A2\\u2022\\u2025a\\u00B7\\uFE55]+$")
 
@@ -135,15 +132,12 @@ class SignUpActivity : BaseActivity(), SignUpContract.View, View.OnClickListener
 
     override fun gotoBeeCreate(accessToken: String, refreshToken: String){
         val nextIntent = Intent(this, BeforeJoinActivity::class.java)
-
         nextIntent.putExtra("accessToken", accessToken)
         nextIntent.putExtra("refreshToken", refreshToken)
-
        startActivity(nextIntent)
     }
 
-
-    private fun CloseKeyboard() {
+    private fun closeKeyboard() {
         val view = this.currentFocus
 
         if (view != null) {

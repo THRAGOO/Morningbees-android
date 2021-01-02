@@ -7,12 +7,10 @@ import android.graphics.Typeface
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.Button
-import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import com.jasen.kimjaeseung.morningbees.R
-import com.jasen.kimjaeseung.morningbees.createbee.model.CreateBeeRequest
-import com.jasen.kimjaeseung.morningbees.createbee.model.RenewalResponse
+import com.jasen.kimjaeseung.morningbees.model.createbee.CreateBeeRequest
+import com.jasen.kimjaeseung.morningbees.model.renewal.RenewalResponse
 import com.jasen.kimjaeseung.morningbees.login.LoginActivity
 import com.jasen.kimjaeseung.morningbees.main.MainActivity
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
@@ -382,7 +380,14 @@ class CreateStep3Activity: AppCompatActivity(), View.OnClickListener {
 
     private fun createBeeServer(){
         val mPay : Int = (jellyCnt*1000)
-        val createBeeRequest = CreateBeeRequest(beename, firstMissionTime, lastMissionTime, mPay, " ")
+        val createBeeRequest =
+            CreateBeeRequest(
+                beename,
+                firstMissionTime,
+                lastMissionTime,
+                mPay,
+                " "
+            )
         //val mAccessToken = accessToken
         
         service.createBee(accessToken, createBeeRequest)
@@ -497,6 +502,7 @@ class CreateStep3Activity: AppCompatActivity(), View.OnClickListener {
     private fun  gotoMain(accessToken : String){
         val nextIntent = Intent(this, MainActivity::class.java)
         nextIntent.putExtra("accessToken", accessToken)
+        nextIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
         startActivity(nextIntent)
     }
 

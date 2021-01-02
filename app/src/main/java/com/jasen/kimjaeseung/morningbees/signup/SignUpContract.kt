@@ -2,7 +2,7 @@ package com.jasen.kimjaeseung.morningbees.signup
 
 import com.jasen.kimjaeseung.morningbees.mvp.BasePresenter
 import com.jasen.kimjaeseung.morningbees.mvp.BaseView
-import com.jasen.kimjaeseung.morningbees.signup.model.SignUpRequest
+import com.jasen.kimjaeseung.morningbees.model.signup.SignUpRequest
 
 //contract 인터페이스 = 해당 view와 presenter가 어떤 메소드를 가져야한다는 것을 보여줌
 interface SignUpContract {

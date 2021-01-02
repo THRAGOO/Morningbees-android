@@ -11,7 +11,7 @@
         android:layout_width="12dp"
         android:layout_height="20dp"
         android:background="#00ff0000"
-        android:src="@drawable/arrow_left"
+        android:src="@drawable/icon_arrow_left_back"
         android:scaleType="fitCenter"
         android:layout_marginBottom="25dp"
         android:layout_marginTop="35dp"/>

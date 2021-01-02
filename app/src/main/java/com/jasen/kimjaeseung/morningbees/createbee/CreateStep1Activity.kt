@@ -90,18 +90,14 @@ class CreateStep1Activity:AppCompatActivity(), View.OnClickListener {
                     delete_beename_text_button.visibility = View.VISIBLE
 
                 if(create_beename_text.length() < 2 || create_beename_text.length() > 10){
-                    beename_textview.setText("2~10자 이내로 입력해주세요")
+                    beename_textview.text = "2~10자 이내로 입력해주세요"
                     create_step1_next_button.isEnabled = false
                     create_step1_next_button.setTextColor(Color.parseColor("#aaaaaa"))
                     create_step1_next_button.background = applicationContext.getDrawable(R.color.deactive_button)
-                    /*
-                    beename_textview.setText("사용불가한 이름입니다.")
-                    val strColor = "#ffffffff"
-                    beename_textview.setTextColor(Color.parseColor(strColor))
-                     */
+
                 }
                 else{
-                    beename_textview.setText("")
+                    beename_textview.text = ""
                     create_step1_next_button.isEnabled = true
                     create_step1_next_button.setTextColor(Color.parseColor("#222222"))
                     create_step1_next_button.background = applicationContext.getDrawable(R.color.active_button)
@@ -115,7 +111,6 @@ class CreateStep1Activity:AppCompatActivity(), View.OnClickListener {
                 beename = create_beename_text.text.toString()
             }
         })
-
     }
 
     private fun beenameTextDelete(){
@@ -148,8 +143,6 @@ class CreateStep1Activity:AppCompatActivity(), View.OnClickListener {
     private fun showInfo(){
 
     }
-
-    //Lifecycle 해서 main으로 돌아가면 저장된 데이터 지우
 
     companion object {
         private const val TAG = "CreateStep1Activity"

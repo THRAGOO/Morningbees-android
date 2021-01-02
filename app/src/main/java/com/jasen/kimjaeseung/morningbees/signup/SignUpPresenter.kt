@@ -1,24 +1,15 @@
 package com.jasen.kimjaeseung.morningbees.signup
 
 import android.content.Context
-import android.content.Intent
-import android.content.res.Resources
-import android.provider.Settings.Global.getString
 import android.util.Log
-import android.view.View
-import android.widget.Toast
-import androidx.core.content.ContextCompat.startActivity
 import com.jasen.kimjaeseung.morningbees.R
-import com.jasen.kimjaeseung.morningbees.beforejoin.BeforeJoinActivity
-import com.jasen.kimjaeseung.morningbees.beforejoin.model.MeResponse
-import com.jasen.kimjaeseung.morningbees.login.LoginActivity
+import com.jasen.kimjaeseung.morningbees.model.me.MeResponse
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
-import com.jasen.kimjaeseung.morningbees.signup.model.NameValidataionCheckResponse
-import com.jasen.kimjaeseung.morningbees.signup.model.SignUpRequest
-import com.jasen.kimjaeseung.morningbees.signup.model.SignUpResponse
+import com.jasen.kimjaeseung.morningbees.model.namevalidationcheck.NameValidataionCheckResponse
+import com.jasen.kimjaeseung.morningbees.model.signup.SignUpRequest
+import com.jasen.kimjaeseung.morningbees.model.signup.SignUpResponse
 
 import com.jasen.kimjaeseung.morningbees.util.Dlog
-import com.jasen.kimjaeseung.morningbees.util.showToast
 
 import org.json.JSONObject
 import retrofit2.Call
@@ -28,7 +19,7 @@ import retrofit2.Response
 class SignUpPresenter(context: Context) : SignUpContract.Presenter{
     //만약에 activity를 라이프사이클에 맞춰서 구현했으면 presenter에도 라이프사이클 해줘야함
 
-    private var signupView : SignUpContract.View ?= null
+    private var signUpView : SignUpContract.View ?= null
     private val service = MorningBeesService.create()
     var nameValidCheckResponse: NameValidataionCheckResponse? = null
     var signUpResponse : SignUpResponse? = null
@@ -39,18 +30,18 @@ class SignUpPresenter(context: Context) : SignUpContract.Presenter{
 
 
     override fun takeView(view: SignUpContract.View){
-        signupView = view
+        signUpView = view
     }
 
     override fun dropView() {
-        signupView = null
+        signUpView = null
     }
 
     override fun nameValidMorningbeesServer(tempName: String){
         service.nameValidationCheck(tempName)
             .enqueue(object : Callback<NameValidataionCheckResponse> {
                 override fun onFailure(call: Call<NameValidataionCheckResponse>, t: Throwable) {
-                    signupView!!.showToastView { mContext.resources.getString(R.string.network_error_message) }
+                    signUpView!!.showToastView { mContext.resources.getString(R.string.network_error_message) }
                 }
 
                 override fun onResponse(
@@ -66,14 +57,14 @@ class SignUpPresenter(context: Context) : SignUpContract.Presenter{
                                 mNickname = tempName
                                 validCheck = true
 
-                                signupView!!.showToastView { mContext.resources.getString(R.string.validnickname_ok) }
-                                signupView!!.nicknameValidCheck(1)
+                                signUpView!!.showToastView { mContext.resources.getString(R.string.validnickname_ok) }
+                                signUpView!!.nicknameValidCheck(1)
                                 Log.d(TAG, "validnickname ok")
 
                             } else {
                                 validCheck = false
-                                signupView!!.showToastView { mContext.resources.getString(R.string.validnickname_duplicate) }
-                                signupView!!.nicknameValidCheck(0)
+                                signUpView!!.showToastView { mContext.resources.getString(R.string.validnickname_duplicate) }
+                                signUpView!!.nicknameValidCheck(0)
                                 Log.d(TAG, "validnickname duplicate")
                             }
                         }
@@ -85,7 +76,7 @@ class SignUpPresenter(context: Context) : SignUpContract.Presenter{
                             val message = jsonObject.getString("message")
                             val code = jsonObject.getInt("code")
 
-                            signupView!!.showToastView{message}
+                            signUpView!!.showToastView{message}
                         }
                         500 -> {//internal server error
                             Dlog().d(response.code().toString())
@@ -98,10 +89,7 @@ class SignUpPresenter(context: Context) : SignUpContract.Presenter{
     override fun signUpMorningbeesServer(
         signUpRequest: SignUpRequest
     ){
-        //Login에서 넘겨준 socialAccessToken, provider과 nickname 같이 post
-        service.signUp(
-            signUpRequest
-        )
+        service.signUp(signUpRequest)
             .enqueue(object : Callback<SignUpResponse> {
                 override fun onFailure(call: Call<SignUpResponse>, t: Throwable) {
                     Dlog().d(t.toString())
@@ -119,7 +107,7 @@ class SignUpPresenter(context: Context) : SignUpContract.Presenter{
 
                     when (response.code()) {
                         200 -> {
-                             val signUpResponse = response.body()
+                            signUpResponse = response.body()
 
                             val accessToken : String = signUpResponse!!.accessToken
                             val refreshToken : String  = signUpResponse!!.refreshToken
@@ -129,12 +117,9 @@ class SignUpPresenter(context: Context) : SignUpContract.Presenter{
                         }
                         400 -> {
                             val jsonObject = JSONObject(response.errorBody()!!.string())
-                            val timestamp = jsonObject.getString("timestamp")
-                            val status = jsonObject.getString("status")
                             val message = jsonObject.getString("message")
-                            val code = jsonObject.getInt("code")
 
-                            signupView!!.showToastView{message}
+                            signUpView!!.showToastView{message}
                         }
                         500 -> { //internal server error
 
@@ -146,8 +131,8 @@ class SignUpPresenter(context: Context) : SignUpContract.Presenter{
 
 
     override fun meServer(accessToken : String, refreshToken : String){
-        var alreadyJoin : Boolean
-        var nickname : String = ""
+        var alreadyJoin : Boolean?
+        var nickname : String? = ""
 
         service.me(accessToken)
             .enqueue(object : Callback<MeResponse>{
@@ -156,19 +141,17 @@ class SignUpPresenter(context: Context) : SignUpContract.Presenter{
 
                     when(i){
                         200 ->{
-                            val meResponse : MeResponse = response.body()!!
-                            alreadyJoin = meResponse.alreadyJoin
-                            nickname = meResponse.nickname
+                            val meResponse : MeResponse? = response.body()
+                            alreadyJoin = meResponse?.alreadyJoin
+                            nickname = meResponse?.nickname
 
-                            Log.d(TAG, meResponse.alreadyJoin.toString())
-
-                            if(alreadyJoin){
-                                nickname = meResponse.nickname
+                            if(alreadyJoin == true){
+                                nickname = meResponse?.nickname
                                 Log.d(TAG,"already bee join")
                             }
                             else {
                                 Log.d(TAG, "not already bee join")
-                                signupView!!.gotoBeeCreate(accessToken, refreshToken)
+                                signUpView!!.gotoBeeCreate(accessToken, refreshToken)
                             }
                         }
 
@@ -179,7 +162,7 @@ class SignUpPresenter(context: Context) : SignUpContract.Presenter{
                             val message = jsonObject.getString("message")
                             val code = jsonObject.getInt("code")
 
-                            signupView!!.showToastView{message}
+                            signUpView!!.showToastView{message}
                         }
 
                         500 -> {
@@ -189,7 +172,7 @@ class SignUpPresenter(context: Context) : SignUpContract.Presenter{
                             val message = jsonObject.getString("message")
                             val code = jsonObject.getInt("code")
 
-                            signupView!!.showToastView{message}
+                            signUpView!!.showToastView{message}
                         }
                     }
                 }

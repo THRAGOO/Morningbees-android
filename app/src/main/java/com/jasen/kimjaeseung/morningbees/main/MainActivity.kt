@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
@@ -20,21 +21,26 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
+import com.bumptech.glide.load.MultiTransformation
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.firebase.dynamiclinks.ShortDynamicLink
+
+import com.google.firebase.ktx.Firebase
 import com.jasen.kimjaeseung.morningbees.R
-import com.jasen.kimjaeseung.morningbees.beforejoin.model.MeResponse
+import com.jasen.kimjaeseung.morningbees.model.me.MeResponse
 import com.jasen.kimjaeseung.morningbees.calendar.CalendarDialog
-import com.jasen.kimjaeseung.morningbees.createlink.CreateLinkActivity
-import com.jasen.kimjaeseung.morningbees.main.model.*
 import com.jasen.kimjaeseung.morningbees.missioncreate.MissionCreateActivity
 import com.jasen.kimjaeseung.morningbees.missionparticipate.MissionParticipateActivity
+import com.jasen.kimjaeseung.morningbees.model.beeinfo.BeeInfoResponse
+import com.jasen.kimjaeseung.morningbees.model.main.MainResponse
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
+import com.jasen.kimjaeseung.morningbees.setting.SettingActivity
 import com.jasen.kimjaeseung.morningbees.util.Dlog
-import com.jasen.kimjaeseung.morningbees.util.URIPathHelper
 import com.jasen.kimjaeseung.morningbees.util.showToast
+import jp.wasabeef.glide.transformations.BlurTransformation
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_mission_participate.view.*
 import org.json.JSONException
@@ -45,308 +51,391 @@ import retrofit2.Response
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
-import java.net.HttpURLConnection
 import java.text.SimpleDateFormat
 import java.util.*
 import java.net.URL
+import com.google.firebase.dynamiclinks.ktx.dynamicLinks
+import com.google.firebase.dynamiclinks.ktx.shortLinkAsync
+import com.jasen.kimjaeseung.morningbees.util.GlideApp
 
-class MainActivity : AppCompatActivity(), View.OnClickListener{
-    private val service =  MorningBeesService.create()
-    private lateinit var accessToken : String
-    var beeId : Int = -1
-    private lateinit var targetDate : String
-    private lateinit var todayDate : String
-    private var difficulty : Int = -1
+class MainActivity : AppCompatActivity(), View.OnClickListener {
+    private val service = MorningBeesService.create()
+    private lateinit var userAccessToken: String
+    var beeId: Int = -1
+    private lateinit var targetDateStr: String
+    private lateinit var todayDateStr: String
+    private var targetDateInt: Int = 0
+    private var todayDateInt: Int = 0
+    private var difficulty: Int = -1
 
     //meServer response
-    var alreadyJoin : Boolean = false
-    var myNickname : String = ""
+    var alreadyJoin: Boolean? = false
+    var myNickname: String? = null
 
     //mainServer response
-    lateinit var missionImgURL : String
-    var todayBee : String? = null
-
-    //beeInfoServer response
-    var beeAccessToken : String = ""
-    var isManager : Boolean = false // if manager == true
-    var title = ""
-    var missionTitle = ""
-    var totalPay = 0
-    var todayUser = ""
+    var todayBee: String? = null
 
     //recyclerView
     private lateinit var adapter: MainRecyclerViewAdapter
     private lateinit var layoutManager: LinearLayoutManager
+    var urlList = mutableListOf<URL?>(null, null, null)
 
-    //today mission imgview state
-    val EXIST_MISSION = 1
-    val NOT_EXIST_MISSION = 2
+    //mission participate
+    var tempFile: File? = null             // 카메라로 찍은 사진 File (갤러리에 저장)
+    private var bitmap: Bitmap? = null     // 갤러리에서 가져온 사진 bitmap
+    var image: File? = null                // 갤러리에서 가져온 사진 File
+    lateinit var bottomSheetDialog: BottomSheetDialog
 
-    var urlList = mutableListOf<URL?>(null)
+    //beeinfo response
+    var isManager : Boolean? = null
+    var title : String? = null
+    var missionTitle : String? = null
+    var totalPay : Int? = 0
+    var todayUser : String? = null
 
-    //mission participate dialog
-    var tempFile : File? = null     // 카메라로 찍은 사진 File (갤러리에 저장)
-    private var bitmap : Bitmap? = null     // 갤러리에서 가져온 사진 bitmap
-    var image : File? = null // 갤러리에서 가져온 사진 File
-    lateinit var bottomSheetDialog : BottomSheetDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        if(intent.hasExtra("accessToken")) {
-            accessToken = intent.getStringExtra("accessToken")
+        if (intent.hasExtra("accessToken")) {
+            userAccessToken = intent.getStringExtra("accessToken")
         }
 
-        initRecyclerView(urlList)
         initButtonListeners()
-
+        changeIconColor()
         setTargetDate()
-        meServer(accessToken)
+        meServer()
+        //beeInfoServer()
         scrollview.scrollTo(0, scroll.top)
+        initRecyclerView()
     }
 
-    private val permissionCheckCamera by lazy{
+    private fun initButtonListeners() {
+        go_mission_create_btn.setOnClickListener(this)
+        go_mission_participate_btn.setOnClickListener(this)
+        calendar_btn.setOnClickListener(this)
+        go_createlink_btn.setOnClickListener(this)
+        setting_button.setOnClickListener(this)
+    }
+
+    private fun changeIconColor(){
+        setting_button.setColorFilter(Color.parseColor("#7E7E7E"))
+        notification_button.setColorFilter(Color.parseColor("#7E7E7E"))
+        calendar_btn.setColorFilter(Color.parseColor("#7E7E7E"))
+        mission_participate_img_btn.setColorFilter(Color.parseColor("#7E7E7E"))
+    }
+
+    private val permissionCheckCamera by lazy {
         ContextCompat.checkSelfPermission(
             this,
             Manifest.permission.CAMERA
         )
     }
 
-    private fun setTargetDate(){
+    private fun setTargetDate() {
         val curDate = Date()
-        val simpleDate = SimpleDateFormat("yyyy-MM-dd").format(curDate)
-        targetDate = simpleDate
-        today_date.text = targetDate
-        todayDate = targetDate
-        Log.d(TAG, "targetDate: $targetDate")
+        todayDateInt = SimpleDateFormat("yyyyMMdd").format(curDate).toInt()
+        targetDateInt = SimpleDateFormat("yyyyMMdd").format(curDate).toInt()
+        todayDateStr = SimpleDateFormat("yyyy-MM-dd").format(curDate)
+        targetDateStr = SimpleDateFormat("yyyy-MM-dd").format(curDate)
+        today_date.text = todayDateStr
     }
 
     override fun onClick(v: View) {
-        val i = v.id
-        when(i){
+        when (v.id) {
             R.id.go_mission_create_btn -> gotoMissionCreate()
             R.id.go_mission_participate_btn -> missionParticipateDialog()
             R.id.calendar_btn -> changeTargetDate()
-            R.id.go_createlink_btn -> goCreateLink()
+            R.id.go_createlink_btn -> createDynamicLink()
+            R.id.setting_button -> gotoSetting()
         }
     }
 
-    private fun goCreateLink(){
-        val intent = Intent(this, CreateLinkActivity::class.java)
-        intent.putExtra("beeid", beeId)
+    private fun gotoSetting(){
+        val intent = Intent(this, SettingActivity::class.java)
+        intent.putExtra("nickName", myNickname)
+        intent.putExtra("accessToken", userAccessToken)
+        intent.putExtra("beeId", beeId)
         startActivity(intent)
     }
 
-    private fun changeTargetDate(){
-        val dialogFragment = CalendarDialog()
-        dialogFragment.show(supportFragmentManager, "signature")
-
-        dialogFragment.setDialogResult(object : CalendarDialog.OnMyDialogResult {
-            override fun finish(str: String) {
-                targetDate = str
-                today_date.text = targetDate
-                mainServer(accessToken, beeId)
+    private fun createDynamicLink() {
+        val shortLinkTask = Firebase.dynamicLinks.shortLinkAsync {
+            link = Uri.parse("https://www.app.thragoo.com?beeId=$beeId")
+            domainUriPrefix = "https://thragoo.page.link"
+        }.addOnCompleteListener(this,  OnCompleteListener<ShortDynamicLink>(){
+            if (it.isSuccessful){
+                val shortLink = it.result?.shortLink
+                val strLink = shortLink.toString()
+                shareLink(strLink)
             }
         })
     }
 
-    private fun mainServer(accessToken: String, beeId : Int){
-        Log.d(TAG, "mainServer accesstoken:$accessToken")
-        service.main(accessToken, targetDate, beeId)
-            .enqueue(object : Callback<MainResponse>{
+    private fun shareLink(shortLink : String){
+        val intent = Intent()
+        intent.action = Intent.ACTION_SEND
+        intent.type = "text/plain"
+        intent.putExtra(Intent.EXTRA_TEXT, "Try this amazing app: $shortLink")
+        startActivity(Intent.createChooser(intent, "Share Link"))
+    }
+
+    private fun changeTargetDate() {
+        val dialogFragment = CalendarDialog()
+        dialogFragment.show(supportFragmentManager, "signature")
+
+        dialogFragment.setDialogResult(object : CalendarDialog.OnMyDialogResult {
+            override fun finish(str: String, _str: String) {
+                targetDateStr = str
+                targetDateInt = _str.toInt()
+                today_date.text = targetDateStr
+                mainServer(beeId)
+            }
+        })
+    }
+
+    private fun mainServer(beeId: Int) {
+        service.main(userAccessToken, targetDateStr, beeId)
+            .enqueue(object : Callback<MainResponse> {
                 override fun onFailure(call: Call<MainResponse>, t: Throwable) {
                     Dlog().d(t.toString())
-                    Log.d(TAG, "onFailure()")
                 }
 
-                override fun onResponse(call: Call<MainResponse>, response: Response<MainResponse>) {
-                    when(response.code()){
-                        200-> {
-                            try {
-                                val responseStr = response.body().toString()
-                                val mainResponse = MainResponse(response.body()?.missions, response.body()?.beeInfos)
+                override fun onResponse(
+                    call: Call<MainResponse>,
+                    response: Response<MainResponse>
+                ) {
+                    when (response.code()) {
+                        200 -> {
+                            val mainResponse = MainResponse(response.body()?.missions, response.body()?.beeInfo)
+                            val missionsResponse = mainResponse.missions
+                            val beeInfoResponse = mainResponse.beeInfo
 
-                                //null check
-                                val missionsResponse = mainResponse.missions
-                                Log.d(TAG, "missions:${response.body()?.missions}")
-                                val beeInfos = mainResponse.beeInfos
-                                Log.d(TAG, "beeInfos:${response.body()?.beeInfos}")
+                            // missionsResponse
+                            if(missionsResponse == null) {
+                                urlList = mutableListOf(null, null, null)
+                                initRecyclerView()
+                                //mission 생성 X
+                                when {
+                                    todayDateInt == targetDateInt -> {
+                                        mission_img_txt.text = getString(R.string.today_mission_photo)
+                                        applyImageUrl(null)
+                                        setLayoutToMission(NOT_EXIST_MISSION)
+                                    }
 
-                                if (missionsResponse == null) {
-                                    // 오늘의 미션이 설정되지 않았음
-                                    setImgView(NOT_EXIST_MISSION)
-                                } else {
-                                    for (i in 0 until (missionsResponse.size() - 1)) {
-                                        val item = missionsResponse.get(i)
-                                        val tempCreatedAt =
-                                            item.asJsonObject.get("createdAt").asString
-                                        val dateFormat = SimpleDateFormat("yyyy-MM-dd")
-                                        val date = dateFormat.parse(tempCreatedAt)
-                                        val createdAt = dateFormat.format(date)
+                                    todayDateInt > targetDateInt -> {
+                                        mission_img_txt.text = getString(R.string.past_mission_photo)
+                                        not_upload_mission_text.text = getString(R.string.need_to_register_mission)
+                                        setLayoutToMission(NOT_EXIST_ANOTHER_MISSION)
+                                    }
 
-                                        val type = item.asJsonObject.get("type").asInt
-
-                                        Log.d(TAG, "createdAt: $createdAt")
-                                        Log.d(TAG, "targetDate: $targetDate")
-
-                                        if (createdAt == targetDate && type == 1) { // test 끝난후에 ||를 &&로 바꾸기
-                                            Log.d(TAG, "show mission guide img")
-                                            val missionId = item.asJsonObject.get("missionId").asInt
-                                            val imageUrl =
-                                                item.asJsonObject.get("imageUrl").asString
-                                            val nickname =
-                                                item.asJsonObject.get("nickname").asString
-                                            val difficulty =
-                                                item.asJsonObject.get("difficulty").asInt
-                                            val createdAt =
-                                                item.asJsonObject.get("createdAt").asString
-                                            val agreeCount =
-                                                item.asJsonObject.get("agreeCount").asInt
-                                            val disagreeCount =
-                                                item.asJsonObject.get("disagreeCount").asInt
-
-                                            //apply activity_main.xml
-                                            Glide.with(this@MainActivity)
-                                                .load(imageUrl)
-                                                .centerCrop()
-                                                .apply(RequestOptions.bitmapTransform(RoundedCorners(30)))
-                                                .override(312, 400)
-                                                .error(R.drawable.not_upload_mission_img_view)
-                                                .into(today_mission_image)
-
-                                            setImgView(EXIST_MISSION)
-                                            missionImgURL = imageUrl
-
-                                            Log.d(TAG, "imageUrl: $imageUrl")
-                                        }
-
-                                        if (type == 2) {
-                                            // 미션 성공 사진
-                                            Log.d(TAG, "show mission success img")
-                                            val missionId = item.asJsonObject.get("missionId").asInt
-                                            val imageUrl =
-                                                item.asJsonObject.get("imageUrl").asString
-                                            val nickname =
-                                                item.asJsonObject.get("nickname").asString
-                                            val difficulty =
-                                                item.asJsonObject.get("difficulty").asInt
-                                            val createdAt =
-                                                item.asJsonObject.get("createdAt").asString
-                                            val agreeCount =
-                                                item.asJsonObject.get("agreeCount").asInt
-                                            val disagreeCount =
-                                                item.asJsonObject.get("disagreeCount").asInt
-
-                                            val url = URL(imageUrl)
-                                            urlList.add(url)
-                                        }
+                                    todayDateInt < targetDateInt -> {
+                                        mission_img_txt.text = getString(R.string.future_mission_photo)
+                                        not_upload_mission_text.text = getString(R.string.no_exist_mission)
+                                        setLayoutToMission(NOT_EXIST_ANOTHER_MISSION)
                                     }
                                 }
-                                //apply recycler view
-                                // 여기서 recyclerview adapter에 아까 만든 url list 객체 던지기 + missionCnt 변수
-                               //initRecyclerView(urlList)
-                                if (beeInfos == null) {
-                                    // bee가 만들어지지 않았음
-                                    setImgView(NOT_EXIST_MISSION)
-                                } else {
+                            }
+                            else {
+                                // mission 생성 O
+                                for(i in 0 until missionsResponse.size()){
+                                    val item = missionsResponse.get(i)
 
-                                    val totalPenalty = beeInfos.get("totalPenalty").asInt
-                                    val memberCounts = beeInfos.get("memberCounts").asInt
+                                    val missionId = item.asJsonObject.get("missionId").asInt
+                                    val imageUrl = item.asJsonObject.get("imageUrl").asString
+                                    val type = item.asJsonObject.get("type").asInt
+                                    val createdAt = item.asJsonObject.get("createdAt").asString
 
-                                    val todayQuestioner = beeInfos.get("todayQuestioner")
-                                    val todayNickname =
-                                        todayQuestioner.asJsonObject.get("nickname").toString()
-                                    val todayProfileImage= todayQuestioner.asJsonObject.get("profileImage").toString()
+                                    if(type != 2){
+                                        // 미션 출제일 경우
+                                        val dateFormatInt = SimpleDateFormat("yyyyMMdd")
+                                        targetDateInt = dateFormatInt.format(dateFormatInt.parse(createdAt)).toInt()
 
-                                    val todayDifficulty =
-                                        beeInfos.get("todayDifficulty").asInt // nullable
-                                    val startTime = beeInfos.get("startTime").asInt
-                                    val endTime = beeInfos.get("endTime").asInt
-                                    val title = beeInfos.get("title").asString
+                                        when {
+                                            todayDateInt == targetDateInt -> {
+                                                mission_img_txt.text = getString(R.string.today_mission_photo)
+                                                mission_upload_text.text =getString(R.string.today_mission)
+                                                applyImageUrl(imageUrl)
+                                                setLayoutToMission(EXIST_MISSION)
+                                            }
 
-                                    val nextQuestioner = beeInfos.get("nextQuestioner")
-                                    val nextNickname =
-                                        nextQuestioner.asJsonObject.get("nickname").toString()
-                                    val nextProfileImage= todayQuestioner.asJsonObject.get("profileImage").toString()
+                                            todayDateInt > targetDateInt -> {
+                                                mission_img_txt.text = getString(R.string.past_mission_photo)
+                                                mission_upload_text.text = getString(R.string.past_mission_photo)
+                                                applyImageUrl(imageUrl)
+                                                setLayoutToMission(EXIST_ANOTHER_MISSION)
+                                            }
 
-                                    //apply activity_main.xm
-                                    if (todayDifficulty == null) {
-                                        wrap_define_difficulty_btn.visibility = View.INVISIBLE
-                                        wrap_undefine_difficulty_btn.visibility = View.VISIBLE
+                                            todayDateInt < targetDateInt -> {
+                                                mission_img_txt.text = getString(R.string.future_mission_photo)
+                                                mission_upload_text.text = getString(R.string.future_mission_photo)
+                                                mission_desc_text.text = getString(R.string.tomorrow_mission_desc_text)
 
+                                                val multi = MultiTransformation<Bitmap>(
+                                                    BlurTransformation(25),
+                                                    RoundedCorners(30)
+                                                )
+
+                                                GlideApp.with(this@MainActivity)
+                                                    .load(imageUrl)
+                                                    .centerCrop()
+                                                    .apply(RequestOptions.bitmapTransform(multi))
+                                                    .override(312, 400)
+                                                    .error(R.drawable.not_upload_mission_img_view)
+                                                    .into(today_mission_image)
+                                                setLayoutToMission(EXIST_ANOTHER_MISSION)
+                                            }
+                                        }
                                     } else {
-                                        wrap_define_difficulty_btn.visibility = View.VISIBLE
-                                        wrap_undefine_difficulty_btn.visibility = View.INVISIBLE
-                                        setDifficulty(todayDifficulty)
-                                        difficulty = todayDifficulty
+                                        val url = URL(imageUrl)
+                                        urlList.add(url) // 추가 해야함
                                     }
-
-                                    if (startTime == null || endTime == null) {
-                                        wrap_defined_time_btn.visibility = View.INVISIBLE
-                                        wrap_undefined_time_btn.visibility = View.VISIBLE
-                                    } else {
-                                        wrap_defined_time_btn.visibility = View.VISIBLE
-                                        wrap_undefined_time_btn.visibility = View.INVISIBLE
-                                        mission_start_time_txt.text = startTime.toString()
-                                        mission_end_time_txt.text = endTime.toString()
-                                    }
-
-                                    today_mission_text2.text = title
-                                    total_member_number.text = memberCounts.toString()
-                                    total_pay.text = " " + totalPenalty + "원"
-                                    total_member_number_text.text = memberCounts.toString()
-
-                                    todayBee = todayNickname
-                                    setImgView(EXIST_MISSION)
-
-                                    Glide.with(this@MainActivity)
-                                        .load(todayProfileImage)
-                                        .circleCrop()
-                                        .apply(RequestOptions.bitmapTransform(RoundedCorners(100)))
-                                        .override(45, 45)
-                                        .error(R.drawable.not_upload_mission_img_view)
-                                        .into(today_bee_img)
-
-
-
-                                    Glide.with(this@MainActivity)
-                                        .load(nextProfileImage)
-                                        .circleCrop()
-                                        .apply(RequestOptions.bitmapTransform(RoundedCorners(100)))
-                                        .override(30, 30)
-                                        .error(R.drawable.not_upload_mission_img_view)
-                                        .into(next_bee_img)
-
-                                    today_user_nickname.text = todayBee
                                 }
-                            }catch (e: JSONException){}
+                                initRecyclerView()
+                            }
+                            //beeInfo
+                            if(beeInfoResponse != null){
+                                val totalPenalty = beeInfoResponse.get("totalPenalty").asInt
+                                val memberCounts = beeInfoResponse.get("memberCounts").asInt
+                                val startTime = beeInfoResponse.get("startTime").asInt
+                                val endTime = beeInfoResponse.get("endTime").asInt
+                                val title = beeInfoResponse.get("title").asString
+                                val todayDifficulty = beeInfoResponse.get("todayDifficulty").asInt
 
+                                val todayQuestioner = beeInfoResponse.get("todayQuestioner")
+                                val todayNickname = todayQuestioner.asJsonObject.get("nickname").toString()
+                                val todayProfileImage = todayQuestioner.asJsonObject.get("profileImage").toString()
+
+                                val nextQuestioner = beeInfoResponse.get("nextQuestioner")
+                                val nextNickname = nextQuestioner.asJsonObject.get("nickname").toString()
+                                val nextProfileImage = nextQuestioner.asJsonObject.get("profileImage").toString()
+                                difficulty = todayDifficulty
+                                todayBee = todayNickname
+                                setLayoutToBeeInfo(title, todayDifficulty, startTime, endTime, memberCounts, totalPenalty, todayProfileImage, nextProfileImage)
+                            }
                         }
 
-                        400->{
-                            val jsonObject = JSONObject(response.errorBody()!!.string())
-                            val timestamp = jsonObject.getString("timestamp")
-                            val status = jsonObject.getString("status")
+                        400 -> {
+                            val jsonObject = JSONObject(response.errorBody()?.string())
                             val message = jsonObject.getString("message")
-                            val code = jsonObject.getInt("code")
                             showToast { message }
-                            finish()
+
+                            applyImageUrl(null)
+                            setLayoutToMission(NOT_EXIST_MISSION)
+
+                            // or Error Pop UP 출력
                         }
-                        500->{
+                        500 -> {
                             val jsonObject = JSONObject(response.errorBody()!!.string())
-                            val timestamp = jsonObject.getString("timestamp")
-                            val status = jsonObject.getString("status")
                             val message = jsonObject.getString("message")
-                            val code = jsonObject.getInt("code")
-                            showToast { message }
+                            //applyImageUrl(null)
+                            today_mission_image.setImageResource(R.drawable.not_upload_mission_img_view)
+                            setLayoutToMission(NOT_EXIST_MISSION)
+                            Log.d(TAG, message)
                         }
                     }
                 }
             })
     }
 
-    fun setDifficulty(difficulty : Int){
+    private fun setLayoutToBeeInfo(title : String, todayDifficulty : Int, startTime : Int, endTime : Int, memberCounts : Int, totalPenalty : Int, todayProfileImage : String, nextProfileImage : String){
+        wrap_define_difficulty_btn.visibility = View.VISIBLE
+        wrap_undefine_difficulty_btn.visibility = View.INVISIBLE
+        setDifficulty(todayDifficulty)
+
+        wrap_defined_time_btn.visibility = View.VISIBLE
+        wrap_undefined_time_btn.visibility = View.INVISIBLE
+        mission_start_time_txt.text = startTime.toString()
+        mission_end_time_txt.text = endTime.toString()
+
+        bee_title_text.text = title
+        bee_total_number_text.text = memberCounts.toString()
+        total_pay.text = " ${totalPenalty}원"
+
+        GlideApp.with(this@MainActivity)
+            .load(todayProfileImage)
+            .circleCrop()
+            .apply(RequestOptions.bitmapTransform(RoundedCorners(100)))
+            .override(45, 45)
+            .error(R.drawable.round_today_bee_img)
+            .into(today_bee_img)
+
+        GlideApp.with(this@MainActivity)
+            .load(nextProfileImage)
+            .circleCrop()
+            .apply(RequestOptions.bitmapTransform(RoundedCorners(100)))
+            .override(30, 30)
+            .error(R.drawable.round_next_bee_img)
+            .into(next_bee_img)
+
+        today_user_nickname.text = todayBee
+    }
+
+    private fun setLayoutToMission(state: Int) {
+        if (state == EXIST_MISSION) {
+            if (myNickname == todayBee) {
+                wrap_upload_mission_view.visibility = View.VISIBLE
+                wrap_not_upload_mission_view.visibility = View.INVISIBLE
+                go_mission_create_btn.visibility = View.INVISIBLE
+                go_mission_participate_btn.visibility = View.VISIBLE
+            } else {
+                wrap_upload_mission_view.visibility = View.VISIBLE
+                wrap_not_upload_mission_view.visibility = View.INVISIBLE
+                go_mission_create_btn.visibility = View.INVISIBLE
+                go_mission_participate_btn.visibility = View.VISIBLE
+            }
+        } else if (state == NOT_EXIST_MISSION) {
+            if (myNickname == todayBee) {
+                Log.d(TAG, "state: myNickname == todayBee")
+                wrap_upload_mission_view.visibility = View.INVISIBLE
+                wrap_not_upload_mission_view.visibility = View.VISIBLE
+                go_mission_create_btn.visibility = View.VISIBLE
+                go_mission_participate_btn.visibility = View.INVISIBLE
+                not_upload_mission_text.text = getString(R.string.need_to_register_mission)
+            } else {
+                wrap_upload_mission_view.visibility = View.INVISIBLE
+                wrap_not_upload_mission_view.visibility = View.VISIBLE
+                //go_mission_create_btn.visibility = View.INVISIBLE
+                //go_mission_participate_btn.visibility = View.INVISIBLE
+                //not_upload_mission_text.text = getString(R.string.no_exist_mission)
+
+                // 임시 create btn visibility
+                not_upload_mission_text.text = getString(R.string.need_to_register_mission)
+                go_mission_create_btn.visibility = View.VISIBLE
+                go_mission_participate_btn.visibility = View.INVISIBLE
+            }
+        } else if (state == EXIST_ANOTHER_MISSION) {
+            wrap_upload_mission_view.visibility = View.VISIBLE
+            wrap_not_upload_mission_view.visibility = View.INVISIBLE
+            go_mission_create_btn.visibility = View.INVISIBLE
+            go_mission_participate_btn.visibility = View.INVISIBLE
+
+        } else if (state == NOT_EXIST_ANOTHER_MISSION) {
+            wrap_upload_mission_view.visibility = View.INVISIBLE
+            wrap_not_upload_mission_view.visibility = View.VISIBLE
+            go_mission_create_btn.visibility = View.INVISIBLE
+            go_mission_participate_btn.visibility = View.INVISIBLE
+            not_upload_mission_text.text = getString(R.string.no_exist_mission)
+        }
+    }
+
+    private fun applyImageUrl(imageUrl : String?){
+        GlideApp.with(this@MainActivity)
+            .load(imageUrl)
+            .override(312, 400)
+            .centerCrop()
+            .apply(
+                RequestOptions.bitmapTransform(
+                    RoundedCorners(30)
+                )
+            )
+            .error(R.drawable.not_upload_mission_img_view)
+            .into(today_mission_image)
+
+    }
+
+    private fun setDifficulty(difficulty: Int) {
         when (difficulty) {
             0 -> mission_difficulty_img.setImageDrawable(getDrawable(R.drawable.low_level))
             1 -> mission_difficulty_img.setImageDrawable(getDrawable(R.drawable.middle_level))
@@ -354,204 +443,119 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{
         }
     }
 
-    private fun meServer(accessToken : String) {
-        service.me(accessToken)
-            .enqueue(object : Callback<MeResponse>{
+    private fun meServer() {
+        service.me(userAccessToken)
+            .enqueue(object : Callback<MeResponse> {
                 override fun onResponse(call: Call<MeResponse>, response: Response<MeResponse>) {
-
-                    when(response.code()){
-                        200 ->{
-                            val meResponse : MeResponse = response.body()!!
-                            myNickname = meResponse.nickname
-                            alreadyJoin = meResponse.alreadyJoin
-                            beeId = meResponse.beeId
-
-                            Log.d(TAG, "meserver accesstoken:$accessToken")
-                            mainServer(accessToken, beeId)
+                    when (response.code()) {
+                        200 -> {
+                            val meResponse: MeResponse? = response.body()
+                            myNickname = meResponse?.nickname
+                            alreadyJoin = meResponse?.alreadyJoin
+                            beeId = meResponse!!.beeId
+                            mainServer(beeId)
                         }
 
                         400 -> {
-                            val jsonObject = JSONObject(response.errorBody()!!.string())
-                            val timestamp = jsonObject.getString("timestamp")
-                            val status = jsonObject.getString("status")
+                            val jsonObject = JSONObject(response.errorBody()?.string())
                             val message = jsonObject.getString("message")
-                            val code = jsonObject.getInt("code")
-
                             showToast { message }
                             finish()
                         }
 
                         500 -> {
-                            val jsonObject = JSONObject(response.errorBody()!!.string())
-                            val timestamp = jsonObject.getString("timestamp")
-                            val status = jsonObject.getString("status")
+                            val jsonObject = JSONObject(response.errorBody()?.string())
                             val message = jsonObject.getString("message")
-                            val code = jsonObject.getInt("code")
-
                             showToast { message }
                         }
                     }
                 }
+
                 override fun onFailure(call: Call<MeResponse>, t: Throwable) {
                     Dlog().d(t.toString())
                 }
             })
     }
 
-    private fun beeInfoServer(accessToken: String){
-        service.beeInfo(accessToken)
+    private fun beeInfoServer(){
+        service.beeInfo(userAccessToken, beeId)
             .enqueue(object : Callback<BeeInfoResponse>{
-                override fun onFailure(call: Call<BeeInfoResponse>, t: Throwable) {
-                    Dlog().d(t.toString())
-                }
-
-                override fun onResponse(
-                    call: Call<BeeInfoResponse>,
-                    response: Response<BeeInfoResponse>
-                ) {
+                override fun onResponse(call: Call<BeeInfoResponse>, response: Response<BeeInfoResponse>){
                     when(response.code()){
                         200 -> {
-                            val beeInfoResponse : BeeInfoResponse = response.body()!!
-                            if(beeInfoResponse.isManager == true){
-                                beeAccessToken = beeInfoResponse.accessToken
-                            }
-                            else{
-                                isManager = false
-                            }
+                            try {
+                                val beeInfoResponse : BeeInfoResponse? = response.body()
+                                val accessToken = beeInfoResponse?.accessToken
+                                isManager = beeInfoResponse?.isManager
+                                title = beeInfoResponse?.title
+                                missionTitle = beeInfoResponse?.missionTitle
+                                totalPay = beeInfoResponse?.totalPay
+                                todayUser = beeInfoResponse?.todayUser
 
-                            title = beeInfoResponse.title
-                            missionTitle = beeInfoResponse.missionTitle
-                            totalPay = beeInfoResponse.totalPay
-                            todayUser = beeInfoResponse.todayUser
-
-                            today_mission_text2.text = missionTitle
-                            total_pay.text = " " + totalPay + "원"
-                            todayBee = todayUser
+                                meServer()
+                            } catch (e: JSONException) {
+                            }
                         }
 
                         400 -> {
-                            val jsonObject = JSONObject(response.errorBody()!!.string())
-                            val timestamp = jsonObject.getString("timestamp")
-                            val status = jsonObject.getString("status")
+                            val jsonObject = JSONObject(response.errorBody()?.string())
                             val message = jsonObject.getString("message")
-                            val code = jsonObject.getInt("code")
-
                             showToast { message }
                         }
 
                         500 -> {
-                            val jsonObject = JSONObject(response.errorBody()!!.string())
-                            val timestamp = jsonObject.getString("timestamp")
-                            val status = jsonObject.getString("status")
+                            val jsonObject = JSONObject(response.errorBody()?.string())
                             val message = jsonObject.getString("message")
-                            val code = jsonObject.getInt("code")
-
                             showToast { message }
                         }
                     }
                 }
+
+                override fun onFailure(call: Call<BeeInfoResponse>, t: Throwable) {
+                    Dlog().d(t.toString())
+                }
+
             })
     }
 
-    private fun setImgView(state : Int){
-        if(state == EXIST_MISSION ){
-            Log.d(TAG, "state: EXIST_MISSION")
-            if(myNickname == todayBee){
-                wrap_upload_mission_view.visibility = View.VISIBLE
-                wrap_not_upload_mission_view.visibility = View.INVISIBLE
-                go_mission_create_btn.visibility = View.VISIBLE
-            }
-            else{
-                wrap_upload_mission_view.visibility = View.VISIBLE
-                wrap_not_upload_mission_view.visibility = View.INVISIBLE
-                go_mission_create_btn.visibility = View.INVISIBLE
-            }
-        }
-        else if (state == NOT_EXIST_MISSION){
-            Log.d(TAG, "state: NOT_EXIST_MISSION")
-            Log.d(TAG, "myNickname: $myNickname")
-            Log.d(TAG, "todayBee: $todayBee")
-
-            if(myNickname == todayBee){
-                Log.d(TAG, "state: myNickname == todayBee")
-                wrap_upload_mission_view.visibility = View.INVISIBLE
-                wrap_not_upload_mission_view.visibility = View.VISIBLE
-
-                // 제대로 구현했을 시, 이렇게 되어야함 !
-                go_mission_create_btn.visibility = View.VISIBLE
-                go_mission_participate_btn.visibility = View.INVISIBLE
-            }
-            else{
-                Log.d(TAG, "state: myNickname != todayBee")
-                //정상 구현
-                wrap_upload_mission_view.visibility = View.INVISIBLE
-                wrap_not_upload_mission_view.visibility = View.VISIBLE
-
-                // 임시
-                /*
-                wrap_upload_mission_view.visibility = View.VISIBLE
-                wrap_not_upload_mission_view.visibility = View.INVISIBLE
-                */
-
-                // 제대로 구현했을 시, 이렇게 되어야함 !
-                go_mission_create_btn.visibility = View.INVISIBLE
-                go_mission_participate_btn.visibility = View.INVISIBLE
-
-
-                // 임시
-                /*
-                go_mission_create_btn.visibility = View.INVISIBLE
-                go_mission_participate_btn.visibility = View.VISIBLE
-                */
-            }
-
-        }
-    }
-
-    private fun initButtonListeners(){
-        go_mission_create_btn.setOnClickListener(this)
-        go_mission_participate_btn.setOnClickListener(this)
-        calendar_btn.setOnClickListener(this)
-        go_createlink_btn.setOnClickListener(this)
-    }
-
-    private fun gotoMissionCreate(){
-        if(beeId == 0){
-            showToast{"가입된 bee가 없습니다. "}
-        }
-        else{
+    private fun gotoMissionCreate() {
+        if (beeId == 0) {
+            showToast { getString(R.string.no_registered_bee) }
+        } else {
             val nextIntent = Intent(this, MissionCreateActivity::class.java)
-            nextIntent.putExtra("accessToken", accessToken)
+            nextIntent.putExtra("accessToken", userAccessToken)
             nextIntent.putExtra("beeId", beeId)
             nextIntent.putExtra("type", 1)
             startActivity(nextIntent)
         }
     }
 
-    private fun missionParticipateDialog(){
-        if(beeId == 0){
-            showToast{"가입된 bee가 없습니다. "}
-        }
-        else{
+    private fun missionParticipateDialog() {
+        if (beeId == 0) {
+            showToast { getString(R.string.no_registered_bee) }
+        } else {
             bottomSheetDialog = BottomSheetDialog(
                 this, R.style.BottomSheetDialogTheme
             )
 
             val bottomSheetView = LayoutInflater.from(applicationContext)
-                .inflate(R.layout.activity_mission_participate, findViewById(R.id.layout_mission_participate))
+                .inflate(
+                    R.layout.activity_mission_participate,
+                    findViewById(R.id.layout_mission_participate)
+                )
 
             bottomSheetDialog.setContentView(bottomSheetView)
             bottomSheetDialog.show()
 
             chkPermission()
 
-            bottomSheetView.pc_get_picture_btn.setOnClickListener(object : View.OnClickListener{
+            bottomSheetView.pc_get_picture_btn.setOnClickListener(object : View.OnClickListener {
                 override fun onClick(p0: View?) {
                     gotoGallery()
                 }
             })
 
-            bottomSheetView.pc_take_picture_btn.setOnClickListener(object: View.OnClickListener {
+            bottomSheetView.pc_take_picture_btn.setOnClickListener(object : View.OnClickListener {
                 override fun onClick(v: View) {
                     gotoCamera()
                 }
@@ -559,33 +563,29 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{
         }
     }
 
-    private fun gotoGallery(){
+    private fun gotoGallery() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         intent.type = "image/*"
         startActivityForResult(intent, PICK_FROM_ALBUM)
     }
 
-    private fun gotoCamera(){
-        val state : String = Environment.getExternalStorageState()
-        if(!state.equals(Environment.MEDIA_MOUNTED)){
+    private fun gotoCamera() {
+        val state: String = Environment.getExternalStorageState()
+        if (state != Environment.MEDIA_MOUNTED) {
             Log.d(TAG, "SD card is not mounted")
             return
         }
-
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-
         tempFile = createImageFile()
-        tempFile?.let{
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
-                //fileProvider를 이용해 파일 주소를 감싸주는 코드 사용
+        tempFile?.let {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 val photoUri = FileProvider.getUriForFile(
                     this@MainActivity, "${application.packageName}.provider",
                     it
                 )
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
                 startActivityForResult(intent, PICK_FROM_CAMERA)
-            }
-            else{
+            } else {
                 val photoUri = Uri.fromFile(it)
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
                 startActivityForResult(intent, PICK_FROM_CAMERA)
@@ -593,21 +593,20 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{
         }
     }
 
-    private fun createImageFile() : File? {
-        val timestamp : String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+    private fun createImageFile(): File? {
+        val timestamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
         val imageFileName = "morningbees"
         val path = getExternalFilesDir(Environment.DIRECTORY_PICTURES)?.absolutePath
         val storageDir = File(path)
 
-        if(!storageDir.exists()){
+        if (!storageDir.exists()) {
             storageDir.mkdirs()
         }
-
-        try{
+        try {
             val tempFile = File.createTempFile(imageFileName, ".jpg", storageDir)
             Log.d(TAG, "tempFile: $tempFile")
             return tempFile
-        } catch (e : IOException){
+        } catch (e: IOException) {
             e.printStackTrace()
         }
         return null
@@ -615,64 +614,60 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        Log.d(TAG, "requestCode: $requestCode")
 
-        if(requestCode == PICK_FROM_ALBUM && resultCode == Activity.RESULT_OK && data != null && data.data != null){
-            val selectedImageUri : Uri = data.data!!
+        if (requestCode == PICK_FROM_ALBUM && resultCode == Activity.RESULT_OK && data != null && data.data != null) {
+            val selectedImageUri: Uri = data.data!!
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 val source = ImageDecoder.createSource(contentResolver, selectedImageUri)
                 val bitmap = ImageDecoder.decodeBitmap(source)
                 gotoMissionParticipate(bitmap)
-            }
-            else {
+            } else {
                 val bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, selectedImageUri)
                 gotoMissionParticipate(bitmap)
             }
-        }
-        else if(requestCode == PICK_FROM_CAMERA && resultCode == Activity.RESULT_OK){
-            // 카메라에서는 intent, data == null
+        } else if (requestCode == PICK_FROM_CAMERA && resultCode == Activity.RESULT_OK) {
             val selectedImage = BitmapFactory.decodeFile(tempFile?.absolutePath)
             bitmap = selectedImage
             image = tempFile
             gotoMissionParticipate(bitmap)
-        }
-        else if (requestCode == GO_TO_PARTICIPATE && resultCode == FINISH){
+        } else if (requestCode == GO_TO_PARTICIPATE && resultCode == FINISH) {
             bottomSheetDialog.dismiss()
         }
     }
 
-    private fun gotoMissionParticipate(bitmap: Bitmap?){
+    private fun gotoMissionParticipate(bitmap: Bitmap?) {
         val intent = Intent(this, MissionParticipateActivity::class.java)
         val stream = ByteArrayOutputStream()
 
-        if(bitmap != null) {
+        if (bitmap != null) {
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
-            val byte : ByteArray = stream.toByteArray()
+            val byte: ByteArray = stream.toByteArray()
             intent.putExtra("missionImage", byte)
-            intent.putExtra("accessToken", accessToken)
+            intent.putExtra("accessToken", userAccessToken)
             intent.putExtra("beeId", beeId)
             intent.putExtra("difficulty", difficulty)
             startActivityForResult(intent, GO_TO_PARTICIPATE)
         }
     }
 
-    private fun chkPermission(){
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-            if(permissionCheckCamera == PackageManager.PERMISSION_DENIED){
+    private fun chkPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (permissionCheckCamera == PackageManager.PERMISSION_DENIED) {
                 showRequestPermission()
-            }
-            else{
+            } else {
                 Log.d(TAG, "---- already have permission ----")
             }
         }
     }
 
-    private fun showRequestPermission(){
+    private fun showRequestPermission() {
         ActivityCompat.requestPermissions(
             this,
             arrayOf(
-                Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE
+                Manifest.permission.CAMERA,
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
             ),
             REQUEST_PERMISSION
         )
@@ -683,20 +678,21 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{
         permissions: Array<out String>,
         grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == REQUEST_PERMISSION){
-            for (value in grantResults){
-                if( value != PackageManager.PERMISSION_GRANTED){
+        if (requestCode == REQUEST_PERMISSION) {
+            for (value in grantResults) {
+                if (value != PackageManager.PERMISSION_GRANTED) {
                     Log.d(TAG, "permission reject")
                 }
             }
         }
     }
 
-    private fun initRecyclerView(list : MutableList<URL?>){
-        adapter = MainRecyclerViewAdapter(list, this)
+    private fun initRecyclerView() {
+        adapter = MainRecyclerViewAdapter(urlList, this)
         main_recycler_view.adapter = adapter
         layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, true)
         main_recycler_view.layoutManager = layoutManager
+        main_recycler_view.scrollToPosition(urlList.size-1)
     }
 
     companion object {
@@ -704,8 +700,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{
         private const val PICK_FROM_ALBUM = 1001
         private const val PICK_FROM_CAMERA = 1002
         private const val GO_TO_PARTICIPATE = 1003
-        private const val RELOAD = 120
         private const val FINISH = 121
+        private const val EXIST_MISSION = 1
+        private const val NOT_EXIST_MISSION = 2
+        private const val EXIST_ANOTHER_MISSION = 3
+        private const val NOT_EXIST_ANOTHER_MISSION = 4
         private const val TAG = "MainActivity"
     }
 }

@@ -63,7 +63,7 @@ class CalendarDialog : DialogFragment(), View.OnClickListener{
                     _targetDate += "$position"
                 }
 
-                mDialogFragment.finish(targetDate)
+                mDialogFragment.finish(targetDate, _targetDate)
                 dialog!!.dismiss()
             }
         })
@@ -75,7 +75,6 @@ class CalendarDialog : DialogFragment(), View.OnClickListener{
             calendarAdapter.changeToNextMonth()
         }
 
-        //today date
         val curDate = Date()
         val simpleDate = SimpleDateFormat("yyyyMMdd").format(curDate)
         todayDate = simpleDate
@@ -101,7 +100,7 @@ class CalendarDialog : DialogFragment(), View.OnClickListener{
     }
 
     interface OnMyDialogResult{
-        fun finish(str : String)
+        fun finish(str : String, _str : String)
     }
 
     companion object{
