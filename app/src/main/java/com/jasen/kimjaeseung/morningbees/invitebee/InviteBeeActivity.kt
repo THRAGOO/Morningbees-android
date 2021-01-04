@@ -13,8 +13,10 @@ import com.jasen.kimjaeseung.morningbees.beforejoin.BeforeJoinActivity
 import com.jasen.kimjaeseung.morningbees.login.LoginActivity
 import com.jasen.kimjaeseung.morningbees.main.MainActivity
 import com.jasen.kimjaeseung.morningbees.model.joinbee.JoinBeeRequest
+import com.jasen.kimjaeseung.morningbees.model.me.MeResponse
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import com.jasen.kimjaeseung.morningbees.util.Dlog
+import com.jasen.kimjaeseung.morningbees.util.Singleton
 import com.jasen.kimjaeseung.morningbees.util.showToast
 
 import kotlinx.android.synthetic.main.activity_invite_bee.*
@@ -26,8 +28,8 @@ import retrofit2.Response
 class InviteBeeActivity : AppCompatActivity(), View.OnClickListener{
     private val service = MorningBeesService.create()
     private var accessToken : String = ""
-    private var userid : Int = 0
-    private var beeid : Int = 0
+    private var userId : Int = 0
+    private var beeId : Int = 0
     private lateinit var title : String
     private var parameter : String = ""
 
@@ -36,6 +38,7 @@ class InviteBeeActivity : AppCompatActivity(), View.OnClickListener{
         setContentView(R.layout.activity_invite_bee)
         getDynamicLink()
         initButtonListener()
+        accessToken = Singleton.getAccessToken()
     }
 
     private fun getDynamicLink(){
@@ -46,7 +49,7 @@ class InviteBeeActivity : AppCompatActivity(), View.OnClickListener{
                 if (pendingDynamicLinkData != null) {
                     deepLink = pendingDynamicLinkData.link
                     parameter = deepLink?.getQueryParameter("beeId").orEmpty()
-                    Log.d(TAG, "parameter: $parameter")
+                    beeId = Integer.parseInt(parameter)
                     beeNameText.text = ("${parameter}에 참여하여")
                 }
             }
@@ -61,25 +64,56 @@ class InviteBeeActivity : AppCompatActivity(), View.OnClickListener{
     private fun getAccessToken(){
         if(accessToken == ""){
             startActivity(
-                Intent(this, LoginActivity::class.java).putExtra("beeId", beeid)
+                Intent(this, LoginActivity::class.java).putExtra("beeId", beeId)
             )
         } else {
             joinBeeServer()
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when(requestCode){
-            100 -> {
+    private fun setUserId() {
+        service.me(accessToken)
+            .enqueue(object : Callback<MeResponse>{
+                override fun onFailure(call: Call<MeResponse>, t: Throwable) {
+                    Dlog().d(t.toString())
+                }
 
-            }
-        }
+                override fun onResponse(call: Call<MeResponse>, response: Response<MeResponse>) {
+                    when(response.code()){
+                        200 -> {
+                            val meResponse : MeResponse? = response.body()
+                            val tempArray = meResponse?.nickname?.toByteArray()
+                            var str = ""
+                            if (tempArray != null) {
+                                for (i in tempArray){
+                                    val num = i.toInt()
+                                    val char = num.toString()
+                                    str += char
+                                }
+                            }
+                            userId = Integer.parseInt(str)
+                            Log.d(TAG, "userId: $userId")
+                        }
+
+                        400 -> {
+                            val jsonObject = JSONObject(response.errorBody()!!.string())
+                            val message = jsonObject.getString("message")
+                            showToast { message }
+                        }
+
+                        500 -> {
+                            val jsonObject = JSONObject(response.errorBody()!!.string())
+                            val message = jsonObject.getString("message")
+                            showToast { message }
+                        }
+                    }
+                }
+            })
     }
 
     private fun joinBeeServer(){
-        val joinBeeRequest = JoinBeeRequest(beeid, userid, title)
-        service.joinBee(accessToken, joinBeeRequest)
+        setUserId()
+        service.joinBee(accessToken, beeId, userId)
             .enqueue(object: Callback<Void> {
                 override fun onFailure(call: Call<Void>, t: Throwable) {
                     Dlog().d(t.toString())

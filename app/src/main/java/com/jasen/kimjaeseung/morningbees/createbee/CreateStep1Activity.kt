@@ -6,34 +6,21 @@ import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.beforejoin.BeforeJoinActivity
-import com.jasen.kimjaeseung.morningbees.login.LoginActivity
 import kotlinx.android.synthetic.main.activity_create_step1.*
 
 
 class CreateStep1Activity:AppCompatActivity(), View.OnClickListener {
     var beename : String? = ""
-    lateinit var accessToken : String
-    lateinit var refreshToken: String
-
-    private val REQUEST_TEST = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_step1)
 
         delete_beename_text_button.visibility = View.INVISIBLE
-
-        if (intent.hasExtra("accessToken")) {
-            accessToken = intent.getStringExtra("accessToken") }
-
-        if (intent.hasExtra("refreshToken")) {
-            refreshToken = intent.getStringExtra("refreshToken") }
-
         initButtonListeners()
         initEditTextListeners()
     }
@@ -46,20 +33,7 @@ class CreateStep1Activity:AppCompatActivity(), View.OnClickListener {
                 if (intent.hasExtra("beename")) {
                     create_beename_text.setText(intent.getStringExtra("beename"))
                 }
-
-                if (intent.hasExtra("accessToken")) {
-                    accessToken = intent.getStringExtra("accessToken")
-                    //만료된 accessToken
-                    //accessToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtb3JuaW5nYmVlcyIsIm5pY2tuYW1lIjoiaGlydSIsImV4cCI6MTY3MTk4MTY2MywidG9rZW5UeXBlIjowLCJpYXQiOjE1ODU1ODE2NjMsInVzZXJJZCI6MjF9.8u5Triq7OVqfcwDVwpscteDCQ1k9ptM13W4f49-zT_I"
-                }
-
-                if (intent.hasExtra("refreshToken")) {
-                    refreshToken = intent.getStringExtra("refreshToken")
-                }
-
                 beename = create_beename_text.text.toString()
-                Log.d(TAG, "accessToken: $accessToken")
-                Log.d(TAG, "refreshToken: $refreshToken")
             }
         }
     }
@@ -69,7 +43,7 @@ class CreateStep1Activity:AppCompatActivity(), View.OnClickListener {
         when (i) {
             R.id.go_back_start_button -> onBackPressed()
             R.id.create_step1_next_button -> gotoStep2()
-            R.id.delete_beename_text_button -> beenameTextDelete()
+            R.id.delete_beename_text_button -> beeNameTextDelete()
         }
     }
 
@@ -107,44 +81,32 @@ class CreateStep1Activity:AppCompatActivity(), View.OnClickListener {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) { }
 
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                // 입력이 끝났을 때 -> 다음 넘어가도 됨
                 beename = create_beename_text.text.toString()
             }
         })
     }
 
-    private fun beenameTextDelete(){
+    private fun beeNameTextDelete(){
         create_beename_text.text = null
         create_step1_next_button.isEnabled = false
         create_step1_next_button.background = applicationContext.getDrawable(R.color.deactive_button)
-        Log.d(TAG, "create_beename_text: $create_beename_text.text")
     }
 
 
     private fun gotoStep2(){
-        val nextIntent = Intent(this, CreateStep2Activity::class.java)
-        nextIntent.putExtra("beename",beename)
-        nextIntent.putExtra("accessToken", accessToken)
-        nextIntent.putExtra("refreshToken", refreshToken)
-        Log.d(TAG, "beename: ${beename}")
-
-        startActivityForResult(nextIntent, REQUEST_TEST)
+        startActivityForResult(
+            Intent(this, CreateStep2Activity::class.java).putExtra("beename", beename), REQUEST_TEST
+        )
     }
 
     override fun onBackPressed(){
         val nextIntent = Intent(this, BeforeJoinActivity::class.java)
-        nextIntent.putExtra("accessToken", accessToken)
-        nextIntent.putExtra("refreshToken", refreshToken)
-
         setResult(Activity.RESULT_OK, nextIntent)
         finish()
     }
 
-    private fun showInfo(){
-
-    }
-
     companion object {
         private const val TAG = "CreateStep1Activity"
+        private const val REQUEST_TEST = 1
     }
 }

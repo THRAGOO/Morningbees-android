@@ -19,11 +19,13 @@ import com.jasen.kimjaeseung.morningbees.model.me.MeResponse
 import com.jasen.kimjaeseung.morningbees.model.signin.SignInRequest
 import com.jasen.kimjaeseung.morningbees.model.signin.SignInResponse
 import com.jasen.kimjaeseung.morningbees.main.MainActivity
+import com.jasen.kimjaeseung.morningbees.model.joinbee.JoinBeeRequest
 
 import com.jasen.kimjaeseung.morningbees.signup.SignUpActivity
 import com.jasen.kimjaeseung.morningbees.mvp.BaseActivity
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import com.jasen.kimjaeseung.morningbees.util.Dlog
+import com.jasen.kimjaeseung.morningbees.util.Singleton
 import com.jasen.kimjaeseung.morningbees.util.showToast
 
 import com.nhn.android.naverlogin.OAuthLogin
@@ -40,11 +42,11 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
     private lateinit var mGoogleSignInClient: GoogleSignInClient    //google sign in client
     private lateinit var mOAuthLoginModule: OAuthLogin  //naver sign in module
 
-    private lateinit var mAccessToken : String
-    private lateinit var mRefreshToken : String
     private lateinit var provider : String
+    private var beeId : Int = 0
+    private var userId : Int = 0
 
-    val service =  MorningBeesService.create()
+    private val service =  MorningBeesService.create()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,6 +63,11 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
             signOut()
             showToast { "signOut" }
         }
+
+        if (intent.hasExtra("beeId")){
+            beeId = intent.getIntExtra("beeId", 0)
+        }
+        Log.d(TAG, "intent beeId: $beeId")
     }
 
     override fun onDestroy() {
@@ -120,6 +127,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
         mGoogleSignInClient.signOut().addOnCompleteListener(this) {
             Dlog().d("Google Sign Out")
         }
+
         mOAuthLoginModule.logout(this)
         Dlog().d("Naver Sign Out")
     }
@@ -134,9 +142,8 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
             Dlog().d("Status don't need Naver Login")
             //네이버 access token으로 앱 로그인
             val accessToken = mOAuthLoginModule.getAccessToken(this) // social access token 받아오는 것이기 때문에 access token을 받아와야함 -> 에러 원인
-            //val refreshToken = mOAuthLoginModule.getRefreshToken(this)
-            //meServer(accessToken, refreshToken)
-            gotoMainActivity(accessToken)
+            val refreshToken = mOAuthLoginModule.getRefreshToken(this)
+            meServer(accessToken, refreshToken)
         } else {
             Dlog().d("Status need login")
             mOAuthLoginModule.startOauthLoginActivity(this, @SuppressLint("HandlerLeak")
@@ -170,6 +177,37 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
                 }
             })
         }
+    }
+
+    private fun joinBeeServer(accessToken: String, refreshToken: String, beeId : Int, userId : Int){
+        service.joinBee(accessToken, beeId, userId)
+            .enqueue(object: Callback<Void> {
+                override fun onFailure(call: Call<Void>, t: Throwable) {
+                    Dlog().d(t.toString())
+                }
+                override fun onResponse(
+                    call: Call<Void>,
+                    response: Response<Void>
+                ) {
+                    when(response.code()){
+                        200 -> {
+                            gotoMainActivity(accessToken, refreshToken)
+                        }
+
+                        400 -> {
+                            val jsonObject = JSONObject(response.errorBody()!!.string())
+                            val message = jsonObject.getString("message")
+                            showToast { message }
+                        }
+
+                        500 -> {
+                            val jsonObject = JSONObject(response.errorBody()!!.string())
+                            val message = jsonObject.getString("message")
+                            showToast { message }
+                        }
+                    }
+                }
+            })
     }
 
     override fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
@@ -215,8 +253,6 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
                                 //SignIn process
                                 val accessToken = signInResponse.accessToken
                                 val refreshToken = signInResponse.refreshToken
-                                mAccessToken = accessToken
-                                mRefreshToken = refreshToken
                                 meServer(accessToken, refreshToken)
                             }
                             0 -> {
@@ -241,43 +277,47 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
 
     private fun meServer(accessToken : String, refreshToken : String){
         var alreadyJoin : Boolean?
-
         service.me(accessToken)
             .enqueue(object : Callback<MeResponse>{
                 override fun onResponse(call: Call<MeResponse>, response: Response<MeResponse>) {
-                    val i = response.code()
-
-                    when(i){
+                    when(response.code()){
                         200 ->{
                             val meResponse : MeResponse? = response.body()
                             alreadyJoin = meResponse?.alreadyJoin
 
                             if(alreadyJoin == true){
                                 Log.d(TAG,"already bee join")
-                                gotoMainActivity(accessToken)
+                                gotoMainActivity(accessToken, refreshToken)
                             } else {
                                 Log.d(TAG, "not already bee join")
-                                gotoBeeCreate(accessToken, refreshToken)
+                                if(beeId == 0)
+                                    gotoBeforeJoin(accessToken, refreshToken)
+                                else {
+                                    val tempArray = meResponse?.nickname?.toByteArray()
+                                    var str = ""
+                                    if (tempArray != null) {
+                                        for (i in tempArray){
+                                            val num = i.toInt()
+                                            val char = num.toString()
+                                            str += char
+                                        }
+                                    }
+                                    userId = Integer.parseInt(str)
+                                    Log.d(TAG, "userId: $userId")
+                                    joinBeeServer(accessToken, refreshToken, beeId, userId)
+                                }
                             }
                         }
 
                         400 -> {
                             val jsonObject = JSONObject(response.errorBody()!!.string())
-                            val timestamp = jsonObject.getString("timestamp")
-                            val status = jsonObject.getString("status")
                             val message = jsonObject.getString("message")
-                            val code = jsonObject.getInt("code")
-
                             showToast { message }
                         }
 
                         500 -> {
                             val jsonObject = JSONObject(response.errorBody()!!.string())
-                            val timestamp = jsonObject.getString("timestamp")
-                            val status = jsonObject.getString("status")
                             val message = jsonObject.getString("message")
-                            val code = jsonObject.getInt("code")
-
                             showToast { message }
                         }
                     }
@@ -289,12 +329,13 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
             })
     }
 
-    private fun gotoMainActivity(accessToken: String){
+    private fun gotoMainActivity(accessToken: String, refreshToken: String){
+        Singleton.getInstance(accessToken, refreshToken)
         startActivity(
             Intent(
                 this,
                 MainActivity::class.java
-            ).putExtra("accessToken", accessToken).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            ).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         )
     }
 
@@ -303,14 +344,15 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
         val nextIntent = Intent(this, SignUpActivity::class.java)
         nextIntent.putExtra("socialAccessToken", signInRequest.socialAccessToken)
         nextIntent.putExtra("provider", signInRequest.provider)
+        nextIntent.putExtra("beeId", beeId)
         startActivity(nextIntent)
     }
 
-    private fun gotoBeeCreate(accessToken: String, refreshToken: String){
-        val nextIntent = Intent(this, BeforeJoinActivity::class.java)
-        nextIntent.putExtra("accessToken", accessToken)
-        nextIntent.putExtra("refreshToken", refreshToken)
-        startActivity(nextIntent)
+    private fun gotoBeforeJoin(accessToken: String, refreshToken: String){
+        Singleton.getInstance(accessToken, refreshToken)
+        startActivity(
+            Intent(this, BeforeJoinActivity::class.java)
+        )
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -327,7 +369,6 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
                     Dlog().d(account!!.displayName!!)
                     handleSignInResult(task)
                 } catch (e: ApiException) {
-                    // Google Sign In failed, update UI appropriately
                     Dlog().w("Google sign in failed" + e)
                 }
             }

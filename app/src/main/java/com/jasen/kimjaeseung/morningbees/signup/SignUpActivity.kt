@@ -12,17 +12,26 @@ import com.jasen.kimjaeseung.morningbees.util.showToast
 import kotlinx.android.synthetic.main.activity_signup.*
 import android.widget.Toast
 import com.jasen.kimjaeseung.morningbees.beforejoin.BeforeJoinActivity
+import com.jasen.kimjaeseung.morningbees.main.MainActivity
 import com.jasen.kimjaeseung.morningbees.model.signup.SignUpRequest
 import java.util.regex.Pattern
 
 class SignUpActivity : BaseActivity(), SignUpContract.View, View.OnClickListener {
     private lateinit var signupPresenter : SignUpPresenter
+    private var beeId : Int = 0
+    private var socialAccessToken : String = ""
+    private var provider: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "onCreate callback")
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_signup)
+
+        socialAccessToken = intent.getStringExtra("socialAccessToken")
+        provider = intent.getStringExtra("provider")
+        beeId = intent.getIntExtra("beeId", 0)
+
         initButtonListeners()
         signupPresenter.takeView(this)
     }
@@ -85,21 +94,13 @@ class SignUpActivity : BaseActivity(), SignUpContract.View, View.OnClickListener
             }
 
             signupPresenter.validCheck -> {
-                val intentSocialAccessToken: String? = intent.getStringExtra("socialAccessToken")
-                val intentProvider: String? = intent.getStringExtra("provider")
-
-                if (intentSocialAccessToken == null || intentProvider == null) {
+                if (socialAccessToken == "" || provider == "") {
                     Log.d(TAG, "need intent value from signInActivity")
                     showToast{getString(R.string.social_login_recheck)}
                 } else {
                     signupPresenter.signUpMorningbeesServer(
-                        SignUpRequest(
-                            intentSocialAccessToken,
-                            intentProvider,
-                            signupPresenter.mNickname
-                        )
+                        SignUpRequest(socialAccessToken, provider, signupPresenter.mNickname), beeId
                     )
-                    Log.d(TAG, signupPresenter.mNickname)
                 }
             }
         }
@@ -130,11 +131,16 @@ class SignUpActivity : BaseActivity(), SignUpContract.View, View.OnClickListener
         }
     }
 
-    override fun gotoBeeCreate(accessToken: String, refreshToken: String){
-        val nextIntent = Intent(this, BeforeJoinActivity::class.java)
-        nextIntent.putExtra("accessToken", accessToken)
-        nextIntent.putExtra("refreshToken", refreshToken)
-       startActivity(nextIntent)
+    override fun gotoBeforeJoin(accessToken: String, refreshToken: String){
+        startActivity(
+            Intent(this,BeforeJoinActivity::class.java)
+        )
+    }
+
+    override fun gotoMain(accessToken: String, refreshToken: String){
+        startActivity(
+            Intent(this, MainActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        )
     }
 
     private fun closeKeyboard() {

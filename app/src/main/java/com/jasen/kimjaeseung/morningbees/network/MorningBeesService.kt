@@ -61,7 +61,8 @@ interface MorningBeesService {
     @GET("/api/bees/join")
     fun joinBee(
         @Header ("X-BEES-ACCESS-TOKEN") accessToken : String,
-        @Body joinBeeRequest: JoinBeeRequest
+        @Query("beeid") beeId: Int,
+        @Query("userid") userId : Int
     ): Call<Void>
 
     @Headers("Content-Type:application/json")

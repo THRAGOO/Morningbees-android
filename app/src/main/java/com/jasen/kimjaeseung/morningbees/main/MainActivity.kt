@@ -21,8 +21,10 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.bumptech.glide.load.MultiTransformation
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -38,8 +40,6 @@ import com.jasen.kimjaeseung.morningbees.model.beeinfo.BeeInfoResponse
 import com.jasen.kimjaeseung.morningbees.model.main.MainResponse
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import com.jasen.kimjaeseung.morningbees.setting.SettingActivity
-import com.jasen.kimjaeseung.morningbees.util.Dlog
-import com.jasen.kimjaeseung.morningbees.util.showToast
 import jp.wasabeef.glide.transformations.BlurTransformation
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_mission_participate.view.*
@@ -55,13 +55,15 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.net.URL
 import com.google.firebase.dynamiclinks.ktx.dynamicLinks
+import com.google.firebase.dynamiclinks.ktx.iosParameters
 import com.google.firebase.dynamiclinks.ktx.shortLinkAsync
-import com.jasen.kimjaeseung.morningbees.util.GlideApp
+import com.jasen.kimjaeseung.morningbees.util.*
+import retrofit2.http.Url
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
     private val service = MorningBeesService.create()
     private lateinit var userAccessToken: String
-    var beeId: Int = -1
+    private var beeId: Int = 0
     private lateinit var targetDateStr: String
     private lateinit var todayDateStr: String
     private var targetDateInt: Int = 0
@@ -93,14 +95,12 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     var totalPay : Int? = 0
     var todayUser : String? = null
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        if (intent.hasExtra("accessToken")) {
-            userAccessToken = intent.getStringExtra("accessToken")
-        }
+        userAccessToken = Singleton.getAccessToken()
+        Log.d(TAG, "userAccessToken: $userAccessToken")
 
         initButtonListeners()
         changeIconColor()
@@ -164,6 +164,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         val shortLinkTask = Firebase.dynamicLinks.shortLinkAsync {
             link = Uri.parse("https://www.app.thragoo.com?beeId=$beeId")
             domainUriPrefix = "https://thragoo.page.link"
+            iosParameters("com.thragoo.Morningbees-iOS") {}
         }.addOnCompleteListener(this,  OnCompleteListener<ShortDynamicLink>(){
             if (it.isSuccessful){
                 val shortLink = it.result?.shortLink
@@ -277,7 +278,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                                                     RoundedCorners(30)
                                                 )
 
-                                                GlideApp.with(this@MainActivity)
+                                                Glide.with(this@MainActivity)
                                                     .load(imageUrl)
                                                     .centerCrop()
                                                     .apply(RequestOptions.bitmapTransform(multi))
@@ -353,23 +354,23 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         bee_total_number_text.text = memberCounts.toString()
         total_pay.text = " ${totalPenalty}원"
 
-        GlideApp.with(this@MainActivity)
+
+        Glide.with(this)
             .load(todayProfileImage)
-            .circleCrop()
+            //.circleCrop()
             .apply(RequestOptions.bitmapTransform(RoundedCorners(100)))
             .override(45, 45)
             .error(R.drawable.round_today_bee_img)
             .into(today_bee_img)
 
-        GlideApp.with(this@MainActivity)
+        Glide.with(this)
             .load(nextProfileImage)
-            .circleCrop()
+            //.circleCrop()
             .apply(RequestOptions.bitmapTransform(RoundedCorners(100)))
             .override(30, 30)
             .error(R.drawable.round_next_bee_img)
             .into(next_bee_img)
 
-        today_user_nickname.text = todayBee
     }
 
     private fun setLayoutToMission(state: Int) {
@@ -421,7 +422,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun applyImageUrl(imageUrl : String?){
-        GlideApp.with(this@MainActivity)
+        Glide.with(this@MainActivity)
             .load(imageUrl)
             .override(312, 400)
             .centerCrop()
@@ -432,7 +433,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             )
             .error(R.drawable.not_upload_mission_img_view)
             .into(today_mission_image)
-
     }
 
     private fun setDifficulty(difficulty: Int) {
