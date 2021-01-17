@@ -113,6 +113,9 @@ interface MorningBeesService {
         fun create(): MorningBeesService{
             val interceptor = HttpLoggingInterceptor()
                 .apply { level=HttpLoggingInterceptor.Level.BODY }
+                .apply {
+
+                }
 
             val client =
                 OkHttpClient.Builder().addInterceptor(interceptor).build()
