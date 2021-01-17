@@ -11,7 +11,7 @@
         android:orientation="horizontal">
 
         <ImageButton
-            android:id="@+id/go_setting_btn"
+            android:id="@+id/toSettingRoyalJellyActivity"
             android:layout_width="12dp"
             android:layout_height="19dp"
             android:layout_centerVertical="true"
@@ -25,7 +25,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="로얄젤리 "
+            android:text="@string/royal_jelly"
             android:textColor="#222222"
             android:textSize="17dp"
             android:textStyle="bold" />
@@ -164,12 +164,12 @@
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/royaljelly_recycler_view"
+        android:id="@+id/RoyalJellyRecycler"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="24dp"
-        tools:listitem="@layout/item_bee_list" />
+        tools:listitem="@layout/item_royal_jelly" />
 
 </LinearLayout>

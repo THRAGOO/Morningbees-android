@@ -7,6 +7,7 @@ import com.jasen.kimjaeseung.morningbees.model.joinbee.JoinBeeRequest
 import com.jasen.kimjaeseung.morningbees.model.signin.SignInRequest
 import com.jasen.kimjaeseung.morningbees.model.signin.SignInResponse
 import com.jasen.kimjaeseung.morningbees.model.beeinfo.BeeInfoResponse
+import com.jasen.kimjaeseung.morningbees.model.beemember.BeeMemberResponse
 import com.jasen.kimjaeseung.morningbees.model.main.MainResponse
 import com.jasen.kimjaeseung.morningbees.model.missioninfo.MissionInfoRequest
 import com.jasen.kimjaeseung.morningbees.model.missioninfo.MissionInfoResponse
@@ -58,11 +59,12 @@ interface MorningBeesService {
         @Header ("X-BEES-ACCESS-TOKEN") accessToken : String
     ):Call<MeResponse>
 
-    @GET("/api/bees/join")
+    @POST("/api/bees/join")
     fun joinBee(
         @Header ("X-BEES-ACCESS-TOKEN") accessToken : String,
-        @Query("beeid") beeId: Int,
-        @Query("userid") userId : Int
+        @Body joinBeeRequest: JoinBeeRequest
+//        @Query("beeid") beeId: Int,
+//        @Query("userid") userId : Int
     ): Call<Void>
 
     @Headers("Content-Type:application/json")
@@ -100,6 +102,12 @@ interface MorningBeesService {
         @Header ("X-BEES-ACCESS-TOKEN") accessToken : String,
         @Path (value = "id", encoded = true) beeId: Int
      ): Call<BeeInfoResponse>
+
+    @GET("/api/bees/{id}/members")
+    fun beeMember(
+        @Header ("X-BEES-ACCESS-TOKEN") accessToken : String,
+        @Path (value = "id", encoded = true) beeId: Int
+    ): Call<BeeMemberResponse>
 
     companion object{
         fun create(): MorningBeesService{

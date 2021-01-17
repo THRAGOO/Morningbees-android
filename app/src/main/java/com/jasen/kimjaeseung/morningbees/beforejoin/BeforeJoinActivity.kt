@@ -5,7 +5,9 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.jasen.kimjaeseung.morningbees.R
+import com.jasen.kimjaeseung.morningbees.app.GlobalApp
 import com.jasen.kimjaeseung.morningbees.createbee.CreateStep1Activity
+import com.jasen.kimjaeseung.morningbees.login.LoginActivity
 import kotlinx.android.synthetic.main.activity_beforejoin.*
 
 class BeforeJoinActivity : AppCompatActivity(), View.OnClickListener {
@@ -15,6 +17,13 @@ class BeforeJoinActivity : AppCompatActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_beforejoin)
         initButtonListeners()
+        initBeeInfo()
+    }
+
+    private fun initBeeInfo(){
+        GlobalApp.prefsBeeInfo.beeTitle = ""
+        GlobalApp.prefsBeeInfo.startTime = 0
+        GlobalApp.prefsBeeInfo.endTime = 0
     }
 
     override fun onClick(v: View) {
@@ -28,8 +37,15 @@ class BeforeJoinActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun gotoBeeCreate() {
-        startActivityForResult(
-            Intent(this, CreateStep1Activity::class.java), REQUEST_TEST
+        startActivity(
+            Intent(this, CreateStep1Activity::class.java)
+        )
+    }
+
+    override fun onBackPressed() {
+        startActivity(
+            Intent(this, LoginActivity::class.java)
+                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         )
     }
 

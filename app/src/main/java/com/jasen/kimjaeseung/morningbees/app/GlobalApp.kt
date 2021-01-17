@@ -1,16 +1,25 @@
-package com.jasen.kimjaeseung.morningbees
+package com.jasen.kimjaeseung.morningbees.app
 
 import android.app.Application
 import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
-
+import com.jasen.kimjaeseung.morningbees.util.BeeInfoManager
+import com.jasen.kimjaeseung.morningbees.util.SharedPreference
 
 
 class GlobalApp : Application() {
     var DEBUG = true   //for log in debug mode
 
+    companion object {
+        lateinit var prefs: SharedPreference
+        lateinit var prefsBeeInfo: BeeInfoManager
+    }
+
     override fun onCreate() {
+        prefs = SharedPreference(applicationContext)
+        prefsBeeInfo = BeeInfoManager(applicationContext)
+
         super.onCreate()
         this.DEBUG = isDebuggable(this);
     }

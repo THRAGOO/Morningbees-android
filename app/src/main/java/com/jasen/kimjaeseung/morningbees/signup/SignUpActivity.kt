@@ -11,14 +11,17 @@ import com.jasen.kimjaeseung.morningbees.mvp.BaseActivity
 import com.jasen.kimjaeseung.morningbees.util.showToast
 import kotlinx.android.synthetic.main.activity_signup.*
 import android.widget.Toast
+import com.jasen.kimjaeseung.morningbees.app.GlobalApp
 import com.jasen.kimjaeseung.morningbees.beforejoin.BeforeJoinActivity
+import com.jasen.kimjaeseung.morningbees.login.LoginActivity
 import com.jasen.kimjaeseung.morningbees.main.MainActivity
 import com.jasen.kimjaeseung.morningbees.model.signup.SignUpRequest
+import com.jasen.kimjaeseung.morningbees.util.GlideApp
 import java.util.regex.Pattern
 
 class SignUpActivity : BaseActivity(), SignUpContract.View, View.OnClickListener {
-    private lateinit var signupPresenter : SignUpPresenter
-    private var beeId : Int = 0
+    private lateinit var signUpPresenter : SignUpPresenter
+//    private var beeId : Int = 0
     private var socialAccessToken : String = ""
     private var provider: String = ""
 
@@ -30,10 +33,9 @@ class SignUpActivity : BaseActivity(), SignUpContract.View, View.OnClickListener
 
         socialAccessToken = intent.getStringExtra("socialAccessToken")
         provider = intent.getStringExtra("provider")
-        beeId = intent.getIntExtra("beeId", 0)
 
         initButtonListeners()
-        signupPresenter.takeView(this)
+        signUpPresenter.takeView(this)
     }
 
     override fun onStart() {
@@ -43,11 +45,11 @@ class SignUpActivity : BaseActivity(), SignUpContract.View, View.OnClickListener
 
     override fun onDestroy() {
         super.onDestroy()
-        signupPresenter.dropView()
+        signUpPresenter.dropView()
     }
 
     override fun initPresenter(){
-        signupPresenter = SignUpPresenter(this)
+        signUpPresenter = SignUpPresenter(this)
     }
 
     private fun initButtonListeners(){
@@ -70,7 +72,7 @@ class SignUpActivity : BaseActivity(), SignUpContract.View, View.OnClickListener
             val filteredNickname = nicknameFilter(usrNickname)
 
             if(filteredNickname != "")
-                signupPresenter.nameValidMorningbeesServer(filteredNickname)
+                signUpPresenter.nameValidMorningbeesServer(filteredNickname)
         }
     }
 
@@ -88,20 +90,15 @@ class SignUpActivity : BaseActivity(), SignUpContract.View, View.OnClickListener
     private fun signUpStart(){
         closeKeyboard()
         when{
-            !signupPresenter.validCheck -> {
+            !signUpPresenter.validCheck -> {
                 Log.d(TAG, "need validcheck")
                 showToast { getString(R.string.no_nickname_duplicate_check) }
             }
 
-            signupPresenter.validCheck -> {
-                if (socialAccessToken == "" || provider == "") {
-                    Log.d(TAG, "need intent value from signInActivity")
-                    showToast{getString(R.string.social_login_recheck)}
-                } else {
-                    signupPresenter.signUpMorningbeesServer(
-                        SignUpRequest(socialAccessToken, provider, signupPresenter.mNickname), beeId
-                    )
-                }
+            signUpPresenter.validCheck -> {
+                signUpPresenter.signUpMorningbeesServer(
+                    SignUpRequest(socialAccessToken, provider, signUpPresenter.mNickname)
+                )
             }
         }
     }
@@ -131,15 +128,23 @@ class SignUpActivity : BaseActivity(), SignUpContract.View, View.OnClickListener
         }
     }
 
-    override fun gotoBeforeJoin(accessToken: String, refreshToken: String){
+    override fun gotoBeforeJoin(){
         startActivity(
             Intent(this,BeforeJoinActivity::class.java)
         )
     }
 
-    override fun gotoMain(accessToken: String, refreshToken: String){
+    override fun gotoMain(){
         startActivity(
             Intent(this, MainActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        )
+    }
+
+    override fun gotoLogOut(){
+        startActivity(
+            Intent(this, LoginActivity::class.java)
+                .putExtra("RequestLogOut", "")
+                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         )
     }
 
@@ -153,6 +158,9 @@ class SignUpActivity : BaseActivity(), SignUpContract.View, View.OnClickListener
         }
     }
 
+    override fun finish(){
+        finish()
+    }
 
     companion object {
         private const val TAG = "SignUpActivity"

@@ -9,17 +9,18 @@ interface SignUpContract {
     //presenter에서 view를 업데이트하기 위한 이벤트
     interface View : BaseView{
         fun showToastView(toastMessage : () -> String)
-        fun gotoMain(accessToken : String, refreshToken : String)
+        fun gotoMain()
         fun nicknameValidCheck(i: Int)
-        fun gotoBeforeJoin(accessToken: String, refreshToken: String)
+        fun gotoBeforeJoin()
+        fun gotoLogOut()
+        fun finish()
     }
 
     //view에서 호출할때 이벤트
     interface Presenter : BasePresenter<View>{
         fun nameValidMorningbeesServer(tempName: String)
         fun signUpMorningbeesServer(
-            signUpRequest: SignUpRequest, beeId : Int
-        )
+            signUpRequest: SignUpRequest)
         //fun meServer(accessToken : String, refreshToken : String)
     }
 

@@ -1,16 +1,11 @@
 package com.jasen.kimjaeseung.morningbees.missioncreate
 
 import android.Manifest
-import android.content.Context
-import android.content.ContextWrapper
-import java.io.FileOutputStream
-import java.io.OutputStream
 
 
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.*
-import android.graphics.drawable.GradientDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -20,11 +15,14 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import android.view.ViewTreeObserver
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.jasen.kimjaeseung.morningbees.R
+import com.jasen.kimjaeseung.morningbees.app.GlobalApp
+import com.jasen.kimjaeseung.morningbees.login.LoginActivity
 import com.jasen.kimjaeseung.morningbees.main.MainActivity
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import com.jasen.kimjaeseung.morningbees.util.Dlog
@@ -41,16 +39,13 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.io.File
 import java.io.IOException
-import java.nio.ByteBuffer
 import java.text.SimpleDateFormat
 import java.util.*
 
 class MissionCreateActivity : AppCompatActivity(), View.OnClickListener {
-    private lateinit var accessToken: String
     val service = MorningBeesService.create()
     var difficulty: Int = -1
     var description: String = ""
-    val type: Int = 1
     private var beeId: Int = 0
     var tempFile: File? = null     // 카메라로 찍은 사진 File (갤러리에 저장)
     var bitmap: Bitmap? = null     // 갤러리에서 가져온 사진 bitmap
@@ -64,63 +59,75 @@ class MissionCreateActivity : AppCompatActivity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_mission_create)
-        if (intent.hasExtra("accessToken")) {
-            accessToken = intent.getStringExtra("accessToken")
-        }
-        if (intent.hasExtra("beeId")) {
-            beeId = intent.getIntExtra("beeId", 0)
-        }
+
+        beeId = GlobalApp.prefsBeeInfo.beeId
+
         initButtonListeners()
         initEditTextListeners()
         initEditTextListeners()
         chkPermission()
 
-        mission_create_btn.isEnabled = false
-        hard_click_btn.isSelected = false
-        normal_click_btn.isSelected = false
-        easy_click_btn.isSelected = false
+        missionCreateRegisterButton.isEnabled = false
+        hardButton.isSelected = false
+        normalButton.isSelected = false
+        easyButton.isSelected = false
 
-        wrap_click_img_view.visibility = View.VISIBLE
-        wrap_load_img_view.visibility = View.INVISIBLE
+        missionImageUploadWrapLayout.visibility = View.VISIBLE
+        missionLoadWrapLayout.visibility = View.INVISIBLE
 
-        reload_img.setColorFilter(Color.parseColor("#AAAAAA"))
+        reloadMissionIcon.setColorFilter(Color.parseColor("#AAAAAA"))
+
+        initGlobalLayoutListener()
     }
 
-    override fun onClick(v: View) {
-        val i = v.id
-        when (i) {
-            R.id.cancel_btn -> gotoMain(accessToken)
-            R.id.mission_create_btn -> missionCreateServer()
-            R.id.take_picture_btn -> gotoCamera()
-            R.id.get_picture_btn -> gotoGallery()
-            R.id.reload_img_btn -> changeWrapView(CLICK_IMAGEVIEW)
+    private fun initGlobalLayoutListener() {
+        difficultyBackground.viewTreeObserver.addOnGlobalLayoutListener(object :
+            ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                Log.d(TAG, "difficultyButtonWrapLayout: ${difficultyButtonWrapLayout.height}")
+                Log.d(TAG, "difficultyBackground: ${difficultyBackground.height}")
 
-            R.id.hard_click_btn -> setMissionDifficulty(2)
-            R.id.normal_click_btn -> setMissionDifficulty(1)
-            R.id.easy_click_btn -> setMissionDifficulty(0)
+                difficultyButtonWrapLayout.layoutParams.height = difficultyBackground.height
+                difficultyBackground.viewTreeObserver.removeOnGlobalLayoutListener(this)
+            }
+        })
+    }
+
+
+    override fun onClick(v: View) {
+        when (v.id) {
+            R.id.missionCreateCancelButton -> gotoMain()
+            R.id.missionCreateRegisterButton -> missionCreateServer()
+            R.id.takePictureButton -> gotoCamera()
+            R.id.getGalleryButton -> gotoGallery()
+            R.id.reloadMissionButton -> changeWrapView(CLICK_IMAGEVIEW)
+
+            R.id.hardButton -> setMissionDifficulty(2)
+            R.id.normalButton -> setMissionDifficulty(1)
+            R.id.easyButton -> setMissionDifficulty(0)
         }
     }
 
     private fun initButtonListeners() {
-        cancel_btn.setOnClickListener(this)
-        mission_create_btn.setOnClickListener(this)
-        take_picture_btn.setOnClickListener(this)
-        get_picture_btn.setOnClickListener(this)
-        reload_img_btn.setOnClickListener(this)
+        missionCreateCancelButton.setOnClickListener(this)
+        missionCreateRegisterButton.setOnClickListener(this)
+        takePictureButton.setOnClickListener(this)
+        getGalleryButton.setOnClickListener(this)
+        reloadMissionButton.setOnClickListener(this)
 
-        hard_click_btn.setOnClickListener(this)
-        normal_click_btn.setOnClickListener(this)
-        easy_click_btn.setOnClickListener(this)
+        hardButton.setOnClickListener(this)
+        normalButton.setOnClickListener(this)
+        easyButton.setOnClickListener(this)
     }
 
     private fun initEditTextListeners() {
-        description_mission.addTextChangedListener(object : TextWatcher {
+        missionDescription.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(edit: Editable) {
 
-                if (description_mission.text.toString().trim().isEmpty()) {
-                    mission_create_btn.setTextColor(Color.parseColor("#CCCCCC"))
-                    mission_create_btn.isEnabled = false
-                } else if (description_mission.text.toString().trim().length in 2..10) {
+                if (missionDescription.text.toString().trim().isEmpty()) {
+                    missionCreateRegisterButton.setTextColor(Color.parseColor("#CCCCCC"))
+                    missionCreateRegisterButton.isEnabled = false
+                } else if (missionDescription.text.toString().trim().length in 2..10) {
                     isActivateButton()
                 }
             }
@@ -129,7 +136,7 @@ class MissionCreateActivity : AppCompatActivity(), View.OnClickListener {
 
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 // 입력이 끝났을 때 -> 다음 넘어가도 됨
-                description = description_mission.text.toString()
+                description = missionDescription.text.toString()
             }
         })
     }
@@ -140,11 +147,11 @@ class MissionCreateActivity : AppCompatActivity(), View.OnClickListener {
         Log.d(TAG, "difficulty: $difficulty")
 
         if ((description != "") && (image != null) && (difficulty != -1)) {
-            mission_create_btn.setTextColor(Color.parseColor("#F6CD00"))
-            mission_create_btn.isEnabled = true
+            missionCreateRegisterButton.setTextColor(Color.parseColor("#F6CD00"))
+            missionCreateRegisterButton.isEnabled = true
         } else {
-            mission_create_btn.setTextColor(Color.parseColor("#CCCCCC"))
-            mission_create_btn.isEnabled = false
+            missionCreateRegisterButton.setTextColor(Color.parseColor("#CCCCCC"))
+            missionCreateRegisterButton.isEnabled = false
         }
     }
 
@@ -167,7 +174,14 @@ class MissionCreateActivity : AppCompatActivity(), View.OnClickListener {
                     imageFile.asRequestBody("image/*".toMediaTypeOrNull())
                 )
 
-                service.missionCreate(accessToken, testImage, beeId, description, type, difficulty)
+                service.missionCreate(
+                    GlobalApp.prefs.accessToken,
+                    testImage,
+                    beeId,
+                    description,
+                    1,
+                    difficulty
+                )
                     .enqueue(object : Callback<Void> {
                         override fun onFailure(call: Call<Void>, t: Throwable) {
                             Dlog().d(t.toString())
@@ -179,26 +193,44 @@ class MissionCreateActivity : AppCompatActivity(), View.OnClickListener {
                         ) {
                             when (response.code()) {
                                 201 -> {
-                                    gotoMain(accessToken)
+                                    gotoMain()
                                 }
 
                                 400 -> {
                                     val jsonObject = JSONObject(response.errorBody()?.string())
                                     val message = jsonObject.getString("message")
-                                    showToast { message }
-                                    gotoMain(accessToken)
+                                    val code = jsonObject.getInt("code")
+
+                                    if (code == 120) {
+                                        val oldAccessToken = GlobalApp.prefs.accessToken
+                                        GlobalApp.prefs.requestRenewalApi()
+                                        val renewalAccessToken = GlobalApp.prefs.accessToken
+
+                                        if (oldAccessToken == renewalAccessToken) {
+                                            showToast { "다시 로그인해주세요." }
+                                            gotoLogOut()
+                                        } else
+                                            missionCreateServer()
+                                    } else {
+                                        showToast { message }
+                                        goFinish()
+                                    }
                                 }
                                 500 -> { //internal server error
                                     val jsonObject = JSONObject(response.errorBody()?.string())
                                     val message = jsonObject.getString("message")
                                     showToast { message }
-                                    gotoMain(accessToken)
+                                    goFinish()
                                 }
                             }
                         }
                     })
             }
         }
+    }
+
+    private fun goFinish(){
+        finish()
     }
 
     override fun onRequestPermissionsResult(
@@ -214,6 +246,14 @@ class MissionCreateActivity : AppCompatActivity(), View.OnClickListener {
                 }
             }
         }
+    }
+
+    private fun gotoLogOut(){
+        startActivity(
+            Intent(this, LoginActivity::class.java)
+                .putExtra("RequestLogOut", "")
+                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        )
     }
 
     private fun gotoGallery() {
@@ -285,7 +325,7 @@ class MissionCreateActivity : AppCompatActivity(), View.OnClickListener {
                     }
                 }
 
-                upload_img_view.setImageBitmap(
+                loadMissionView.setImageBitmap(
                     Bitmap.createScaledBitmap(
                         selectedImage,
                         120,
@@ -293,7 +333,7 @@ class MissionCreateActivity : AppCompatActivity(), View.OnClickListener {
                         false
                     )
                 )
-                upload_img_view.clipToOutline = true
+                loadMissionView.clipToOutline = true
 
                 bitmap = selectedImage!!
                 image = File(URIPathHelper().getPath(this, photoUri))
@@ -302,7 +342,7 @@ class MissionCreateActivity : AppCompatActivity(), View.OnClickListener {
         } else if (requestCode == PICK_FROM_CAMERA) {
             // 카메라에서는 intent, data == null
             val selectedImage = BitmapFactory.decodeFile(tempFile?.absolutePath)
-            upload_img_view.setImageBitmap(
+            loadMissionView.setImageBitmap(
                 Bitmap.createScaledBitmap(
                     selectedImage,
                     120,
@@ -310,7 +350,7 @@ class MissionCreateActivity : AppCompatActivity(), View.OnClickListener {
                     false
                 )
             )
-            upload_img_view.clipToOutline = true
+            loadMissionView.clipToOutline = true
             bitmap = selectedImage
             image = tempFile
             isActivateButton()
@@ -326,26 +366,26 @@ class MissionCreateActivity : AppCompatActivity(), View.OnClickListener {
     private fun changeWrapView(status: Int) { // wrap view change
         Log.d(TAG, "status : $status")
         if (status == CLICK_IMAGEVIEW) {
-            wrap_click_img_view.visibility = View.VISIBLE
-            wrap_load_img_view.visibility = View.INVISIBLE
-            mission_create_btn.setTextColor(Color.parseColor("#F6CD00"))
-            mission_create_btn.isEnabled = true
+            missionImageUploadWrapLayout.visibility = View.VISIBLE
+            missionLoadWrapLayout.visibility = View.INVISIBLE
+            missionCreateRegisterButton.setTextColor(Color.parseColor("#F6CD00"))
+            missionCreateRegisterButton.isEnabled = true
             image = null
         }
         if (status == LOAD_IMAGEVIEW) {
-            wrap_load_img_view.visibility = View.VISIBLE
-            wrap_click_img_view.visibility = View.INVISIBLE
-            mission_create_btn.setTextColor(Color.parseColor("#CCCCCC"))
-            mission_create_btn.isEnabled = false
+            missionLoadWrapLayout.visibility = View.VISIBLE
+            missionImageUploadWrapLayout.visibility = View.INVISIBLE
+            missionCreateRegisterButton.setTextColor(Color.parseColor("#CCCCCC"))
+            missionCreateRegisterButton.isEnabled = false
         }
     }
 
-    private fun gotoMain(accessToken: String) {
+    private fun gotoMain() {
         startActivity(
             Intent(
                 this,
                 MainActivity::class.java
-            ).putExtra("accessToken", accessToken).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            ).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         )
     }
 
@@ -353,60 +393,69 @@ class MissionCreateActivity : AppCompatActivity(), View.OnClickListener {
         when (mDifficulty) {
             2 -> {
                 //상
-                hard_click_btn.isSelected = true
-                normal_click_btn.isSelected = false
-                easy_click_btn.isSelected = false
+                hardButton.background =
+                    applicationContext.getDrawable(R.drawable.difficulty_selected_button)
+                normalButton.background =
+                    applicationContext.getDrawable(R.drawable.difficulty_unselected_button)
+                easyButton.background =
+                    applicationContext.getDrawable(R.drawable.difficulty_unselected_button)
 
-                hard_price_txt.setTextColor(Color.parseColor("#b29227"))
-                hard_txt.setTextColor(Color.parseColor("#444444"))
+                hardPriceText.setTextColor(Color.parseColor("#b29227"))
+                hardText.setTextColor(Color.parseColor("#444444"))
 
-                normal_price_txt.setTextColor(Color.parseColor("#cccccc"))
-                normal_txt.setTextColor(Color.parseColor("#cccccc"))
+                normalPriceButton.setTextColor(Color.parseColor("#cccccc"))
+                normalText.setTextColor(Color.parseColor("#cccccc"))
 
-                easy_price_txt.setTextColor(Color.parseColor("#cccccc"))
-                easy_txt.setTextColor(Color.parseColor("#cccccc"))
+                easyPriceText.setTextColor(Color.parseColor("#cccccc"))
+                easyText.setTextColor(Color.parseColor("#cccccc"))
 
-                hard_click_btn.elevation = 10f
-                normal_click_btn.elevation = 0f
-                easy_click_btn.elevation = 0f
+                hardButton.elevation = 10f
+                normalButton.elevation = 0f
+                easyButton.elevation = 0f
             }
             1 -> {
                 //중
-                hard_click_btn.isSelected = false
-                normal_click_btn.isSelected = true
-                easy_click_btn.isSelected = false
+                hardButton.background =
+                    applicationContext.getDrawable(R.drawable.difficulty_unselected_button)
+                normalButton.background =
+                    applicationContext.getDrawable(R.drawable.difficulty_selected_button)
+                easyButton.background =
+                    applicationContext.getDrawable(R.drawable.difficulty_unselected_button)
 
-                hard_price_txt.setTextColor(Color.parseColor("#cccccc"))
-                hard_txt.setTextColor(Color.parseColor("#cccccc"))
+                hardPriceText.setTextColor(Color.parseColor("#cccccc"))
+                hardText.setTextColor(Color.parseColor("#cccccc"))
 
-                normal_price_txt.setTextColor(Color.parseColor("#b29227"))
-                normal_txt.setTextColor(Color.parseColor("#444444"))
+                normalPriceButton.setTextColor(Color.parseColor("#b29227"))
+                normalText.setTextColor(Color.parseColor("#444444"))
 
-                easy_price_txt.setTextColor(Color.parseColor("#cccccc"))
-                easy_txt.setTextColor(Color.parseColor("#cccccc"))
+                easyPriceText.setTextColor(Color.parseColor("#cccccc"))
+                easyText.setTextColor(Color.parseColor("#cccccc"))
 
-                hard_click_btn.elevation = 0f
-                normal_click_btn.elevation = 10f
-                easy_click_btn.elevation = 0f
+                hardButton.elevation = 0f
+                normalButton.elevation = 10f
+                easyButton.elevation = 0f
             }
             0 -> {
                 //하
-                hard_click_btn.isSelected = false
-                normal_click_btn.isSelected = false
-                easy_click_btn.isSelected = true
+                hardButton.background =
+                    applicationContext.getDrawable(R.drawable.difficulty_unselected_button)
+                normalButton.background =
+                    applicationContext.getDrawable(R.drawable.difficulty_unselected_button)
+                easyButton.background =
+                    applicationContext.getDrawable(R.drawable.difficulty_selected_button)
 
-                hard_price_txt.setTextColor(Color.parseColor("#cccccc"))
-                hard_txt.setTextColor(Color.parseColor("#cccccc"))
+                hardPriceText.setTextColor(Color.parseColor("#cccccc"))
+                hardText.setTextColor(Color.parseColor("#cccccc"))
 
-                normal_price_txt.setTextColor(Color.parseColor("#cccccc"))
-                normal_txt.setTextColor(Color.parseColor("#cccccc"))
+                normalPriceButton.setTextColor(Color.parseColor("#cccccc"))
+                normalText.setTextColor(Color.parseColor("#cccccc"))
 
-                easy_price_txt.setTextColor(Color.parseColor("#b29227"))
-                easy_txt.setTextColor(Color.parseColor("#444444"))
+                easyPriceText.setTextColor(Color.parseColor("#b29227"))
+                easyText.setTextColor(Color.parseColor("#444444"))
 
-                hard_click_btn.elevation = 0f
-                normal_click_btn.elevation = 0f
-                easy_click_btn.elevation = 10f
+                hardButton.elevation = 0f
+                normalButton.elevation = 0f
+                easyButton.elevation = 10f
             }
         }
         difficulty = mDifficulty

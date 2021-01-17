@@ -11,6 +11,7 @@ import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.jasen.kimjaeseung.morningbees.R
+import com.jasen.kimjaeseung.morningbees.app.GlobalApp
 import com.jasen.kimjaeseung.morningbees.missioncreate.MissionCreateActivity
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import com.jasen.kimjaeseung.morningbees.util.Dlog
@@ -43,7 +44,7 @@ class MissionParticipateActivity : AppCompatActivity(), View.OnClickListener {
         setContentView(R.layout.activity_mission_participate_upload)
 
         val byteArray : ByteArray = intent.getByteArrayExtra("missionImage")
-        accessToken = intent.getStringExtra("accessToken")
+        accessToken = GlobalApp.prefs.accessToken
         beeId = intent.getIntExtra("beeId", 0)
         difficulty = intent.getIntExtra("difficulty", -1)
         val bitmap : Bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)

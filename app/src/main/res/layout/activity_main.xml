@@ -1,20 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
-            android:id="@+id/collapsing_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             app:layout_scrollFlags="scroll|enterAlwaysCollapsed">
 
             <FrameLayout
@@ -35,30 +32,24 @@
                     android:layout_marginTop="24dp"
                     android:layout_marginEnd="24dp">
 
-                    <Button
-                        android:id="@+id/go_createlink_btn"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="create link" />
-
                     <ImageButton
-                        android:id="@+id/notification_button"
+                        android:id="@+id/mainNotificationButton"
                         android:layout_width="18dp"
                         android:layout_height="18dp"
                         android:layout_marginEnd="24dp"
-                        android:layout_toStartOf="@id/setting_button"
-                        android:src="@drawable/icon_notification_default"
+                        android:layout_toStartOf="@id/goToSettingButton"
+                        android:background="#00ff0000"
                         android:scaleType="fitCenter"
-                        android:background="#00ff0000"/>
+                        android:src="@drawable/icon_notification_default" />
 
                     <ImageButton
-                        android:id="@+id/setting_button"
+                        android:id="@+id/goToSettingButton"
                         android:layout_width="18dp"
                         android:layout_height="18dp"
                         android:layout_alignParentEnd="true"
-                        android:src="@drawable/icon_settings"
+                        android:background="#00ff0000"
                         android:scaleType="fitCenter"
-                        android:background="#00ff0000" />
+                        android:src="@drawable/icon_settings" />
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -68,7 +59,7 @@
                     android:layout_marginEnd="24dp">
 
                     <TextView
-                        android:id="@+id/bee_title_text"
+                        android:id="@+id/beeTitleView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="142dp"
@@ -80,8 +71,9 @@
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/bee_title_text"
+                        android:layout_below="@id/beeTitleView"
                         android:orientation="horizontal">
+
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -90,7 +82,7 @@
                             android:textSize="13dp" />
 
                         <TextView
-                            android:id="@+id/bee_total_number_text"
+                            android:id="@+id/beeTotalMemberView"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textColor="#444444"
@@ -98,40 +90,32 @@
                     </LinearLayout>
                 </RelativeLayout>
             </FrameLayout>
-
-
         </com.google.android.material.appbar.CollapsingToolbarLayout>
-
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
-        android:id="@+id/scrollview"
+        android:id="@+id/mainNestedScrollView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:elevation="3dp"
-        tools:context=".main.MainActivity"
-        android:background="@drawable/rounded_scrollview"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-       >
+        app:behavior_overlapTop="120dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="36dp"
-            android:layout_marginTop="25dp"
+            android:background="@drawable/rounded_scrollview"
             android:orientation="vertical">
 
             <RelativeLayout
-                android:id="@+id/scroll"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
-                android:layout_marginBottom="32dp"
                 android:layout_marginStart="24dp"
-                android:layout_marginEnd="24dp">
+                android:layout_marginTop="25dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="32dp">
 
                 <ImageView
-                    android:id="@+id/amount_royal_jelly_img"
+                    android:id="@+id/totalJellyImage"
                     android:layout_width="21dp"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
@@ -139,29 +123,30 @@
                     android:src="@drawable/oval" />
 
                 <TextView
-                    android:id="@+id/amount_royal_jelly_txt"
+                    android:id="@+id/totalJellyText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginEnd="8dp"
-                    android:layout_toEndOf="@id/amount_royal_jelly_img"
+                    android:layout_toEndOf="@id/totalJellyImage"
                     android:text="누적 로얄젤리"
                     android:textColor="#444444"
                     android:textSize="14sp" />
 
                 <TextView
-                    android:id="@+id/total_pay"
+                    android:id="@+id/totalJelly"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginEnd="8dp"
-                    android:layout_toEndOf="@id/amount_royal_jelly_txt"
+                    android:layout_toEndOf="@id/totalJellyText"
                     android:textStyle="bold" />
 
                 <RelativeLayout
                     android:layout_width="72dp"
                     android:layout_height="28dp"
-                    android:layout_alignParentEnd="true">
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true">
 
                     <ImageView
                         android:layout_width="wrap_content"
@@ -175,18 +160,17 @@
                         android:text="내역 확인"
                         android:textSize="12dp" />
                 </RelativeLayout>
-
             </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
                 android:layout_marginStart="24dp"
-                android:layout_marginEnd="24dp">
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="24dp">
 
                 <RelativeLayout
-                    android:id="@+id/mission_time_wrap"
+                    android:id="@+id/missionTimeWrapLayout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
@@ -194,17 +178,17 @@
                     android:layout_marginEnd="32dp">
 
                     <TextView
-                        android:id="@+id/mission_time"
+                        android:id="@+id/missionTimeText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerHorizontal="true"
                         android:text="미션시간 " />
 
                     <RelativeLayout
-                        android:id="@+id/mission_time_img"
+                        android:id="@+id/missionTimeImageWrapLayout"
                         android:layout_width="wrap_content"
                         android:layout_height="86dp"
-                        android:layout_below="@id/mission_time"
+                        android:layout_below="@id/missionTimeText"
                         android:layout_alignParentStart="true"
                         android:layout_centerInParent="true"
                         android:layout_centerHorizontal="true">
@@ -216,7 +200,7 @@
                             android:layout_centerHorizontal="true">
 
                             <RelativeLayout
-                                android:id="@+id/wrap_defined_time_btn"
+                                android:id="@+id/missionTimeDefinedWrapLayout"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content">
 
@@ -238,7 +222,7 @@
                                     android:layout_centerInParent="true">
 
                                     <TextView
-                                        android:id="@+id/mission_start_time_txt"
+                                        android:id="@+id/missionStartTimeText"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_alignParentStart="true"
@@ -247,20 +231,20 @@
                                         android:textStyle="bold" />
 
                                     <TextView
-                                        android:id="@+id/mission_time_txt"
+                                        android:id="@+id/missionTimeHyphenText"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:layout_toEndOf="@id/mission_start_time_txt"
+                                        android:layout_toEndOf="@id/missionStartTimeText"
                                         android:text="-"
                                         android:textColor="#FFFFFFFF"
                                         android:textSize="18dp"
                                         android:textStyle="bold" />
 
                                     <TextView
-                                        android:id="@+id/mission_end_time_txt"
+                                        android:id="@+id/missionEndTimeText"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:layout_toEndOf="@id/mission_time_txt"
+                                        android:layout_toEndOf="@id/missionTimeHyphenText"
                                         android:textColor="#FFFFFFFF"
                                         android:textSize="18dp"
                                         android:textStyle="bold" />
@@ -268,11 +252,12 @@
                             </RelativeLayout>
 
                             <RelativeLayout
-                                android:id="@+id/wrap_undefined_time_btn"
+                                android:id="@+id/missionTimeUnDefinedWrapLayout"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent">
 
                                 <ImageView
+                                    android:id="@+id/missionTimeUnDefinedImage"
                                     android:layout_width="60dp"
                                     android:layout_height="60dp"
                                     android:layout_centerInParent="true"
@@ -292,14 +277,14 @@
                 </RelativeLayout>
 
                 <RelativeLayout
-                    android:id="@+id/bar1_main_img"
+                    android:id="@+id/mainBarFirst"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="32dp"
-                    android:layout_toEndOf="@id/mission_time_wrap">
+                    android:layout_toEndOf="@id/missionTimeWrapLayout">
 
                     <TextView
-                        android:id="@+id/blank_text1"
+                        android:id="@+id/mainBarTextFirst"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerHorizontal="true" />
@@ -307,7 +292,7 @@
                     <RelativeLayout
                         android:layout_width="wrap_content"
                         android:layout_height="86dp"
-                        android:layout_below="@id/blank_text1"
+                        android:layout_below="@id/mainBarTextFirst"
                         android:layout_centerHorizontal="true"
                         android:layout_centerVertical="true">
 
@@ -320,14 +305,14 @@
                 </RelativeLayout>
 
                 <RelativeLayout
-                    android:id="@+id/today_user_wrap"
+                    android:id="@+id/todayQuestionerWrapLayout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="32dp"
-                    android:layout_toEndOf="@id/bar1_main_img">
+                    android:layout_toEndOf="@id/mainBarFirst">
 
                     <TextView
-                        android:id="@+id/today_user"
+                        android:id="@+id/todayQuestionerText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentTop="true"
@@ -336,54 +321,56 @@
                         android:text="오늘의 꿀벌 " />
 
                     <RelativeLayout
-                        android:id="@+id/today_user_img"
+                        android:id="@+id/todayQuestionerImageWrapLayout"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/today_user"
+                        android:layout_below="@id/todayQuestionerText"
                         android:layout_centerHorizontal="true"
                         android:layout_marginBottom="6dp">
-                        <FrameLayout
+
+                        <RelativeLayout
                             android:layout_width="45dp"
                             android:layout_height="45dp"
                             android:layout_centerVertical="true">
+
                             <ImageView
-                                android:id="@+id/today_bee_img"
+                                android:id="@+id/todayQuestionerImage"
                                 android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:background="@drawable/round_today_bee_img" />
-                        </FrameLayout>
-                        <FrameLayout
+                                android:layout_height="match_parent" />
+                        </RelativeLayout>
+
+                        <RelativeLayout
                             android:layout_width="30dp"
                             android:layout_height="30dp"
                             android:layout_centerVertical="true"
                             android:layout_marginStart="30dp">
+
                             <ImageView
-                                android:id="@+id/next_bee_img"
+                                android:id="@+id/nextQuestionerImage"
                                 android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:background="@drawable/round_next_bee_img" />
-                        </FrameLayout>
+                                android:layout_height="match_parent" />
+                        </RelativeLayout>
                     </RelativeLayout>
 
                     <TextView
-                        android:id="@+id/today_user_nickname"
+                        android:id="@+id/todayQuestionerNickname"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/today_user_img"
+                        android:layout_below="@id/todayQuestionerImageWrapLayout"
                         android:layout_centerHorizontal="true" />
 
                 </RelativeLayout>
 
                 <RelativeLayout
-                    android:id="@+id/bar2_main_img"
+                    android:id="@+id/mainBarSecond"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="32dp"
-                    android:layout_toStartOf="@id/mission_difficulty_wrap"
-                    android:layout_toEndOf="@id/today_user_wrap">
+                    android:layout_toStartOf="@id/missionDifficultyWrapLayout"
+                    android:layout_toEndOf="@id/todayQuestionerWrapLayout">
 
                     <TextView
-                        android:id="@+id/blank_text2"
+                        android:id="@+id/mainBarTextSecond"
                         android:layout_width="1dp"
                         android:layout_height="11dp"
                         android:layout_centerHorizontal="true"
@@ -392,7 +379,7 @@
                     <RelativeLayout
                         android:layout_width="wrap_content"
                         android:layout_height="86dp"
-                        android:layout_below="@id/blank_text2"
+                        android:layout_below="@id/mainBarTextSecond"
                         android:layout_centerHorizontal="true">
 
                         <ImageView
@@ -404,14 +391,14 @@
                 </RelativeLayout>
 
                 <RelativeLayout
-                    android:id="@+id/mission_difficulty_wrap"
+                    android:id="@+id/missionDifficultyWrapLayout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_marginEnd="13dp">
 
                     <TextView
-                        android:id="@+id/mission_difficulty"
+                        android:id="@+id/missionDifficultyText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerHorizontal="true"
@@ -420,21 +407,21 @@
                     <RelativeLayout
                         android:layout_width="wrap_content"
                         android:layout_height="86dp"
-                        android:layout_below="@id/mission_difficulty"
+                        android:layout_below="@id/missionDifficultyText"
                         android:layout_centerHorizontal="true">
 
                         <FrameLayout
+                            android:id="@+id/missionDifficultyImageWrapLayout"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerInParent="true">
 
                             <RelativeLayout
-                                android:id="@+id/wrap_define_difficulty_btn"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent">
 
                                 <ImageView
-                                    android:id="@+id/mission_difficulty_img"
+                                    android:id="@+id/missionDifficultyDefinedImage"
                                     android:layout_width="60dp"
                                     android:layout_height="60dp"
                                     android:layout_centerInParent="true" />
@@ -460,23 +447,20 @@
                                     android:textSize="15dp"
                                     android:textStyle="bold" />
                             </RelativeLayout>
-
                         </FrameLayout>
                     </RelativeLayout>
-
-
                 </RelativeLayout>
             </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="19dp"
                 android:layout_marginStart="24dp"
-                android:layout_marginEnd="24dp">
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="19dp">
 
                 <TextView
-                    android:id="@+id/mission_img_txt"
+                    android:id="@+id/targetDateMissionText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
@@ -485,16 +469,16 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/today_date"
+                    android:id="@+id/targetDateText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_toStartOf="@id/calendar_btn"
+                    android:layout_toStartOf="@id/changeTargetDateButton"
                     android:scaleType="fitCenter"
                     android:textSize="13dp" />
 
                 <ImageButton
-                    android:id="@+id/calendar_btn"
+                    android:id="@+id/changeTargetDateButton"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_alignParentEnd="true"
@@ -508,117 +492,132 @@
 
             <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="400dp"
-                android:layout_marginStart="24dp"
-                android:layout_marginEnd="24dp">
+                android:layout_height="wrap_content">
 
-                <RelativeLayout
-                    android:id="@+id/wrap_not_upload_mission_view"
+                <androidx.cardview.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/missionNotUploadWrapLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@drawable/not_upload_mission_img_view" />
-
-                    <TextView
-                        android:id="@+id/not_upload_mission_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"
-                        android:textColor="#aaaaaa"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    card_view:cardCornerRadius="30dp">
 
                     <RelativeLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_alignParentBottom="true">
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
 
-                        <ImageButton
-                            android:id="@+id/go_mission_create_btn"
-                            android:layout_width="98dp"
-                            android:layout_height="98dp"
-                            android:layout_marginEnd="26dp"
-                            android:layout_marginBottom="29dp"
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
                             android:adjustViewBounds="true"
-                            android:background="#00ff0000"
-                            android:scaleType="fitCenter"
-                            android:src="@drawable/participate_in_mission" />
-                    </RelativeLayout>
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/wrap_upload_mission_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <ImageView
-                        android:id="@+id/today_mission_image"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@drawable/upload_mission_img_view"
-                        android:scaleType="fitXY" />
-
-                    <RelativeLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentBottom="true">
+                            android:scaleType="fitXY"
+                            android:src="@drawable/not_upload_mission_img_view" />
 
                         <TextView
-                            android:id="@+id/mission_upload_text"
+                            android:id="@+id/missionNotUploadText"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="29dp"
-                            android:layout_marginBottom="12dp"
-                            android:textColor="#ffffff"
-                            android:textSize="14dp" />
-
-                        <TextView
-                            android:id="@+id/mission_desc_text"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_below="@+id/mission_upload_text"
-                            android:layout_marginStart="29dp"
-                            android:layout_marginBottom="29dp"
-                            android:textColor="#ffffff"
-                            android:textSize="24dp"
+                            android:layout_centerInParent="true"
+                            android:textColor="#aaaaaa"
+                            android:textSize="15sp"
                             android:textStyle="bold" />
+
+                        <RelativeLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_alignParentBottom="true">
+
+                            <ImageButton
+                                android:id="@+id/goMissionCreateButton"
+                                android:layout_width="98dp"
+                                android:layout_height="98dp"
+                                android:layout_marginEnd="26dp"
+                                android:layout_marginBottom="29dp"
+                                android:adjustViewBounds="true"
+                                android:background="#00ff0000"
+                                android:scaleType="fitCenter"
+                                android:src="@drawable/participate_in_mission" />
+                        </RelativeLayout>
                     </RelativeLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/missionUploadWrapLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    card_view:cardCornerRadius="30dp">
 
                     <RelativeLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_alignParentBottom="true">
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
 
-                        <ImageButton
-                            android:id="@+id/go_mission_participate_btn"
-                            android:layout_width="98dp"
-                            android:layout_height="98dp"
-                            android:layout_marginEnd="26dp"
-                            android:layout_marginBottom="29dp"
+                        <ImageView
+                            android:id="@+id/missionImage"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
                             android:adjustViewBounds="true"
-                            android:background="#00ff0000"
-                            android:scaleType="fitCenter"
-                            android:src="@drawable/participate_in_mission" />
-                    </RelativeLayout>
-                </RelativeLayout>
+                            android:scaleType="fitXY"
+                            android:src="@drawable/upload_mission_img_view" />
 
+                        <RelativeLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentBottom="true">
+
+                            <TextView
+                                android:id="@+id/missionTargetDateText"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="29dp"
+                                android:layout_marginBottom="12dp"
+                                android:textColor="#ffffff"
+                                android:textSize="14dp" />
+
+                            <TextView
+                                android:id="@+id/missionDescriptionText"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@+id/missionTargetDateText"
+                                android:layout_marginStart="29dp"
+                                android:layout_marginBottom="29dp"
+                                android:textColor="#ffffff"
+                                android:textSize="24dp"
+                                android:textStyle="bold" />
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_alignParentBottom="true">
+
+                            <ImageButton
+                                android:id="@+id/goMissionParticipateButton"
+                                android:layout_width="98dp"
+                                android:layout_height="98dp"
+                                android:layout_marginEnd="26dp"
+                                android:layout_marginBottom="29dp"
+                                android:adjustViewBounds="true"
+                                android:background="#00ff0000"
+                                android:scaleType="fitCenter"
+                                android:src="@drawable/participate_in_mission" />
+                        </RelativeLayout>
+                    </RelativeLayout>
+                </androidx.cardview.widget.CardView>
             </FrameLayout>
 
             <RelativeLayout
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="36dp"
-                android:layout_marginBottom="20dp"
                 android:layout_marginStart="24dp"
-                android:layout_marginEnd="24dp">
+                android:layout_marginTop="36dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="20dp">
 
                 <TextView
-                    android:id="@+id/mission_participate_img_txt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
@@ -635,7 +634,7 @@
                     android:layout_centerVertical="true">
 
                     <ImageButton
-                        android:id="@+id/mission_participate_img_btn"
+                        android:id="@+id/missionParticipateButton"
                         android:layout_width="18dp"
                         android:layout_height="16dp"
                         android:layout_marginEnd="3dp"
@@ -647,15 +646,14 @@
             </RelativeLayout>
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/main_recycler_view"
+                android:id="@+id/missionParticipateRecyclerView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="36dp"
                 android:layout_marginStart="24dp"
                 android:layout_marginEnd="24dp"
+                android:layout_marginBottom="36dp"
                 android:nestedScrollingEnabled="false"
-                android:overScrollMode="never"
-                tools:listitem="@layout/item_main_recycler" />
+                android:overScrollMode="never" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

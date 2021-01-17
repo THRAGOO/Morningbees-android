@@ -25,7 +25,8 @@
                 android:src="@drawable/icon_arrow_left_back"
                 android:padding="0sp"
                 android:scaleType="fitCenter"
-                android:layout_alignParentStart="true"/>
+                android:layout_alignParentStart="true"
+                android:background="#00ff0000"/>
         </RelativeLayout>
 
         <LinearLayout
@@ -65,51 +66,52 @@
 
                 <Button
                     android:id="@+id/clock_6_button"
-                    android:layout_width="54dp"
-                    android:layout_height="54dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:background="@drawable/clock_6_custom_button"
                     android:layout_marginEnd="6dp"
                     android:scaleType="fitCenter"
-                    android:text="6"/>
-
+                    android:text="6"
+                    android:layout_weight="1"/>
 
                 <Button
                     android:id="@+id/clock_7_button"
-                    android:layout_width="54dp"
-                    android:layout_height="54dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_marginEnd="6dp"
                     android:background="@drawable/clock_7_custom_button"
                     android:gravity="center"
-                    android:text="7"/>
+                    android:text="7"
+                    android:layout_weight="1"/>
 
                 <Button
                     android:id="@+id/clock_8_button"
-                    android:layout_width="54dp"
-                    android:layout_height="54dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_marginEnd="6dp"
                     android:background="@drawable/clock_8_custom_button"
-                    android:text="8"/>
+                    android:text="8"
+                    android:layout_weight="1"/>
 
                 <Button
                     android:id="@+id/clock_9_button"
-                    android:layout_width="54dp"
-                    android:layout_height="54dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:background="@drawable/clock_9_custom_button"
                     android:layout_marginEnd="6dp"
-                    android:text="9"/>
+                    android:text="9"
+                    android:layout_weight="1"/>
 
                 <Button
                     android:id="@+id/clock_10_button"
-                    android:layout_width="54dp"
-                    android:layout_height="54dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:background="@drawable/clock_10_custom_button"
                     android:textAlignment="center"
-                    android:text="10"/>
-
+                    android:text="10"
+                    android:layout_weight="1"/>
             </LinearLayout>
-
         </LinearLayout>
-
     </LinearLayout>
 
     <Button

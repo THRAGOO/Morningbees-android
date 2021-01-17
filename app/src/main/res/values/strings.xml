@@ -28,4 +28,12 @@
     <string name="tomorrow_mission_desc_text">자정 이후에/n공개됩니다.</string>
     <string name="need_to_register_mission">미션을 등록해주세요.</string>
     <string name="no_exist_mission">아직 미션이 등록되지 않았습니다.</string>
+    <string name="dismantle_bee">모임 해체하기</string>
+    <string name="withdrawal_bee">모임 탈퇴하기</string>
+    <string name="mission_time">미션 시간</string>
+    <string name="total_bee_member">전체 꿀벌</string>
+    <string name="royal_jelly">로얄젤리</string>
+    <string name="bee_member_list">꿀벌 목록</string>
+    <string name="copy_invite_link">+ 초대 링크 복사</string>
+    <string name="export_from_bee">강퇴하기</string>
 </resources>

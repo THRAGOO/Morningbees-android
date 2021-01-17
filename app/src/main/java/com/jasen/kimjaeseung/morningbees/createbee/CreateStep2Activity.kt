@@ -4,30 +4,29 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.jasen.kimjaeseung.morningbees.R
+import com.jasen.kimjaeseung.morningbees.app.GlobalApp
 import kotlinx.android.synthetic.main.activity_create_step2.*
 
 class CreateStep2Activity : AppCompatActivity(), View.OnClickListener {
-    var firstMissionTime: Int = 0
-    var lastMissionTime: Int = 0
+    var startTime = 0
+    var endTime = 0
     var count = 0
     private var checkNextButtonText: Boolean = false
     var missionTimeArr: Array<Boolean> = arrayOf(false, false, false, false, false, false)
-    private var beeName: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_step2)
         initButtonListeners()
-        beeName = intent.getStringExtra("beename")
+        buttonPressed(GlobalApp.prefsBeeInfo.startTime)
+        buttonPressed(GlobalApp.prefsBeeInfo.endTime)
     }
 
     override fun onClick(v: View) {
-        val i = v.id
-        when (i) {
+        when (v.id) {
             R.id.clock_6_button -> buttonPressed(6)
             R.id.clock_7_button -> buttonPressed(7)
             R.id.clock_8_button -> buttonPressed(8)
@@ -68,7 +67,7 @@ class CreateStep2Activity : AppCompatActivity(), View.OnClickListener {
             }
 
         } else if (count == 2) {
-            lastMissionTime = pressedButton
+            endTime = pressedButton
             create_step2_next_button.text = "다음 2/3"
             create_step2_next_button.isEnabled = true
             create_step2_next_button.setTextColor(Color.parseColor("#222222"))
@@ -132,58 +131,48 @@ class CreateStep2Activity : AppCompatActivity(), View.OnClickListener {
     private fun missionTimeCheck() {
         for (i in 0..4) {
             if (missionTimeArr[i]) {
-                if (firstMissionTime == 0) {
-                    firstMissionTime = i + 6
+                if (startTime == 0) {
+                    startTime = i + 6
                 } else
-                    lastMissionTime = i + 6
+                    endTime = i + 6
             }
         }
     }
 
     private fun gotoStep3() {
         missionTimeCheck()
-        startActivityForResult(
+        GlobalApp.prefsBeeInfo.startTime = startTime
+        GlobalApp.prefsBeeInfo.endTime = endTime
+        startActivity(
             Intent(this, CreateStep3Activity::class.java)
-                .putExtra("beename", beeName)
-                .putExtra("firstMissionTime", firstMissionTime)
-                .putExtra("lastMissionTime", lastMissionTime)
-            , REQUEST_TEST
         )
     }
 
     override fun onBackPressed() {
         super.onBackPressed()
-
-        val nextIntent = Intent(this, CreateStep1Activity::class.java)
-        nextIntent.putExtra("beename", beeName)
-        setResult(Activity.RESULT_OK, nextIntent)
-        finish()
-
+        startActivity(
+            Intent(this, CreateStep1Activity::class.java)
+                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        )
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == REQUEST_TEST) {
-            if (resultCode == Activity.RESULT_OK) {
-                if (intent.hasExtra("beename")) {
-                    intent.getStringExtra("beename")?.let {
-                        beeName = intent.getStringExtra("beename")
-                    }
-                } else
-                    beeName = ""
-                if (intent.hasExtra("firstMissionTime")) {
-                    firstMissionTime = intent.getIntExtra("firstMissionTime", 0)
-                    buttonPressed(firstMissionTime)
-                }
-
-                if (intent.hasExtra("lastMissionTime")) {
-                    lastMissionTime = intent.getIntExtra("lastMissionTime", 0)
-                    buttonPressed(lastMissionTime)
-                }
-            }
-        }
-    }
+//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+//        super.onActivityResult(requestCode, resultCode, data)
+//
+//        if (requestCode == REQUEST_TEST) {
+//            if (resultCode == Activity.RESULT_OK) {
+//                if (intent.hasExtra("firstMissionTime")) {
+//                    startTime = intent.getIntExtra("firstMissionTime", 0)
+//                    buttonPressed(startTime)
+//                }
+//
+//                if (intent.hasExtra("lastMissionTime")) {
+//                    endTime = intent.getIntExtra("lastMissionTime", 0)
+//                    buttonPressed(endTime)
+//                }
+//            }
+//        }
+//    }
 
     companion object {
         private const val TAG = "CreateStep2Activity"

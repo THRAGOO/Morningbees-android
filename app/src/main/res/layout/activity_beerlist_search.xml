@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="540dp"
-    android:background="@drawable/beelist_search_dialog">
+    android:background="@drawable/bee_list_search_dialog">
 
     <RelativeLayout
         android:layout_width="match_parent"

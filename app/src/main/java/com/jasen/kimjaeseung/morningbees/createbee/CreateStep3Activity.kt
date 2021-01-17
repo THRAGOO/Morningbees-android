@@ -1,21 +1,17 @@
 package com.jasen.kimjaeseung.morningbees.createbee
 
-import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.jasen.kimjaeseung.morningbees.R
+import com.jasen.kimjaeseung.morningbees.app.GlobalApp
 import com.jasen.kimjaeseung.morningbees.model.createbee.CreateBeeRequest
-import com.jasen.kimjaeseung.morningbees.model.renewal.RenewalResponse
-import com.jasen.kimjaeseung.morningbees.login.LoginActivity
 import com.jasen.kimjaeseung.morningbees.main.MainActivity
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import com.jasen.kimjaeseung.morningbees.util.Dlog
-import com.jasen.kimjaeseung.morningbees.util.Singleton
 import com.jasen.kimjaeseung.morningbees.util.showToast
 import kotlinx.android.synthetic.main.activity_create_step3.*
 import org.json.JSONObject
@@ -28,36 +24,33 @@ class CreateStep3Activity : AppCompatActivity(), View.OnClickListener {
     private var jellyCnt: Int = 0
 
     //intent variables
-    private var beename: String = ""
-    var firstMissionTime: Int = 0
-    var lastMissionTime: Int = 0
+    private var beeTitle = ""
+    var startTime = 0
+    var endTime = 0
     private lateinit var accessToken: String
     private lateinit var refreshToken: String
 
     private val service = MorningBeesService.create()
-    private var royalJellyArray: Array<Int> = arrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_step3)
         initButtonListeners()
-        accessToken = Singleton.getAccessToken()
-        refreshToken = Singleton.getRefreshToken()
+        accessToken = GlobalApp.prefs.accessToken
+        refreshToken = GlobalApp.prefs.refreshToken
 
-        beename = intent.getStringExtra("beename")
-        firstMissionTime = intent.getIntExtra("firstMissionTime", 0)
-        lastMissionTime = intent.getIntExtra("lastMissionTime", 0)
+        beeTitle = GlobalApp.prefsBeeInfo.beeTitle
+
+        startTime = GlobalApp.prefsBeeInfo.startTime
+        endTime = GlobalApp.prefsBeeInfo.endTime
     }
 
     override fun onBackPressed() {
         super.onBackPressed()
-        val nextIntent = Intent(this, CreateStep2Activity::class.java)
-        nextIntent.putExtra("beename", beename)
-        nextIntent.putExtra("firstMissionTime", firstMissionTime)
-        nextIntent.putExtra("lastMissionTime", lastMissionTime)
-        nextIntent.putExtra("refreshToken", refreshToken)
-        setResult(Activity.RESULT_OK, nextIntent)
-        finish()
+        startActivity(
+            Intent(this, CreateStep2Activity::class.java)
+                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        )
     }
 
 
@@ -367,8 +360,8 @@ class CreateStep3Activity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun createBeeServer() {
-        val mPay: Int = (jellyCnt * 1000)
-        val createBeeRequest = CreateBeeRequest(beename, firstMissionTime, lastMissionTime, mPay, " ")
+        val pay: Int = (jellyCnt * 1000)
+        val createBeeRequest = CreateBeeRequest(beeTitle, startTime, endTime, pay, " ")
         service.createBee(accessToken, createBeeRequest)
             .enqueue(object : Callback<Void> {
                 override fun onFailure(call: Call<Void>, t: Throwable) {
@@ -387,86 +380,16 @@ class CreateStep3Activity : AppCompatActivity(), View.OnClickListener {
 
                         400 -> {
                             val jsonObject = JSONObject(response.errorBody()!!.string())
-                            val timestamp = jsonObject.getString("timestamp")
-                            val status = jsonObject.getString("status")
                             val message = jsonObject.getString("message")
-                            val code = jsonObject.getInt("code")
 
-                            if (code == 101) { // access token 만료 error handling
-                                showToast { "token 만료" }
-                                renewalServer()
-                            } else {
-                                showToast { message }
-                            }
-                        }
-
-                        500 -> { //internal server error
-                            val jsonObject = JSONObject(response.errorBody()!!.string())
-                            val timestamp = jsonObject.getString("timestamp")
-                            val status = jsonObject.getString("status")
-                            val message = jsonObject.getString("message")
-                            val code = jsonObject.getInt("code")
-
-                            if (code == 101) { // access token 만료 error handling
-                                //showToast { "token 만료" }
-                                renewalServer()
-                            } else {
-                                showToast { message }
-                            }
-                        }
-                    }
-                }
-            })
-    }
-
-    private fun renewalServer() {
-        Log.d(TAG, "renewalServer")
-        service.renewal(accessToken, refreshToken)
-            .enqueue(object : Callback<RenewalResponse> {
-                override fun onFailure(call: Call<RenewalResponse>, t: Throwable) {
-                    Dlog().d(t.toString())
-                }
-
-                override fun onResponse(
-                    call: Call<RenewalResponse>,
-                    response: Response<RenewalResponse>
-                ) {
-                    when (response.code()) {
-                        200 -> {
-                            val renewalResponse = response.body()
-                            accessToken = renewalResponse!!.accessToken
-                            Singleton.getInstance(accessToken, refreshToken)
-                            createBeeServer()
-                        }
-
-                        400 -> {
-                            val jsonObject = JSONObject(response.errorBody()!!.string())
-                            val timestamp = jsonObject.getString("timestamp")
-                            val status = jsonObject.getString("status")
-                            val message = jsonObject.getString("message")
-                            val code = jsonObject.getInt("code")
-
-                            if (code == 101) {
-                                //refresh token 만료
-                                showToast { message }
-                                gotoLogin()
-                            }
+                            showToast { message }
                         }
 
                         500 -> {
                             val jsonObject = JSONObject(response.errorBody()!!.string())
-                            val timestamp = jsonObject.getString("timestamp")
-                            val status = jsonObject.getString("status")
                             val message = jsonObject.getString("message")
-                            val code = jsonObject.getInt("code")
 
-                            if (code == 101) {
-                                //refresh token 만료
-                                showToast { message }
-                                gotoLogin()
-
-                            } else
-                                showToast { message }
+                            showToast { message }
                         }
                     }
                 }
@@ -474,21 +397,12 @@ class CreateStep3Activity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun gotoMain() {
-        val nextIntent = Intent(this, MainActivity::class.java)
-        nextIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-        startActivity(nextIntent)
-    }
-
-
-    private fun gotoLogin() {
-        val nextIntent = Intent(this, LoginActivity::class.java)
-        nextIntent.putExtra("refreshTokenExpiration", "refreshTokenExpiration")
-        startActivity(nextIntent)
+        startActivity(Intent(this, MainActivity::class.java)
+            .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
     }
 
     companion object {
         private const val TAG = "CreateStep3Activity"
-
     }
 }
 

@@ -1,7 +1,7 @@
 package com.jasen.kimjaeseung.morningbees.model.joinbee
 
 data class JoinBeeRequest (
-    var beeid : Int,
-    var userid : Int,
-    var title : String
+    var beeId : Int,
+    var userId : Int,
+    var title : String?
 )

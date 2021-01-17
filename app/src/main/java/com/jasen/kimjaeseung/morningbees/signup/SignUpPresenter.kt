@@ -3,6 +3,7 @@ package com.jasen.kimjaeseung.morningbees.signup
 import android.content.Context
 import android.util.Log
 import com.jasen.kimjaeseung.morningbees.R
+import com.jasen.kimjaeseung.morningbees.app.GlobalApp
 import com.jasen.kimjaeseung.morningbees.model.joinbee.JoinBeeRequest
 import com.jasen.kimjaeseung.morningbees.model.me.MeResponse
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
@@ -29,6 +30,8 @@ class SignUpPresenter(context: Context) : SignUpContract.Presenter{
     lateinit var mNickname: String
     var validCheck: Boolean = false
     var mContext : Context = context
+
+    private var userId = 0
 
     override fun takeView(view: SignUpContract.View){
         signUpView = view
@@ -88,7 +91,7 @@ class SignUpPresenter(context: Context) : SignUpContract.Presenter{
     }
 
     override fun signUpMorningbeesServer(
-        signUpRequest: SignUpRequest, beeId : Int
+        signUpRequest: SignUpRequest
     ){
         service.signUp(signUpRequest)
             .enqueue(object : Callback<SignUpResponse> {
@@ -109,14 +112,13 @@ class SignUpPresenter(context: Context) : SignUpContract.Presenter{
                     when (response.code()) {
                         200 -> {
                             signUpResponse = response.body()
-                            val accessToken : String = signUpResponse!!.accessToken
-                            val refreshToken : String  = signUpResponse!!.refreshToken
-                            Singleton.getInstance(accessToken, refreshToken)
-                            if(beeId == 0){
-                                signUpView!!.gotoBeforeJoin(accessToken, refreshToken)
+                            GlobalApp.prefs.accessToken = signUpResponse!!.accessToken
+                            GlobalApp.prefs.refreshToken = signUpResponse!!.refreshToken
+
+                            if(GlobalApp.prefsBeeInfo.beeId == 0){
+                                signUpView!!.gotoBeforeJoin()
                             } else {
-                                val userId = signUpRequest.nickname.toInt()
-                                joinBeeServer(accessToken, refreshToken, beeId, userId)
+                                meServer()
                             }
                         }
                         400 -> {
@@ -134,8 +136,59 @@ class SignUpPresenter(context: Context) : SignUpContract.Presenter{
             })
     }
 
-    private fun joinBeeServer(accessToken : String, refreshToken : String, beeId: Int, userId : Int){
-        service.joinBee(accessToken, beeId, userId)
+    private fun meServer(){
+        service.me(GlobalApp.prefs.accessToken)
+            .enqueue(object : Callback<MeResponse>{
+                override fun onFailure(call: Call<MeResponse>, t: Throwable) {
+                    Dlog().d(t.toString())
+                }
+
+                override fun onResponse(call: Call<MeResponse>, response: Response<MeResponse>) {
+                    when(response.code()){
+                        200 -> {
+                            val meResponse : MeResponse? = response.body()
+                            userId = meResponse!!.userId
+                            joinBeeServer(userId)
+                        }
+
+                        400 -> {
+                            val jsonObject = JSONObject(response.errorBody()!!.string())
+                            val message = jsonObject.getString("message")
+                            val code = jsonObject.getInt("code")
+
+                            if (code == 110) {
+                                val oldAccessToken = GlobalApp.prefs.accessToken
+                                GlobalApp.prefs.requestRenewalApi()
+                                val renewalAccessToken = GlobalApp.prefs.accessToken
+
+                                if (oldAccessToken == renewalAccessToken) {
+                                    signUpView!!.showToastView{message}
+                                    signUpView!!.gotoLogOut()
+                                } else{
+                                    meServer()
+                                    signUpView!!.finish()
+                                }
+
+
+                            } else {
+                                signUpView!!.showToastView{message}
+                            }
+                        }
+
+                        500 -> {
+                            val jsonObject = JSONObject(response.errorBody()!!.string())
+                            val message = jsonObject.getString("message")
+                            signUpView!!.showToastView{message}
+                        }
+                    }
+                }
+            })
+    }
+
+    private fun joinBeeServer(userId : Int){
+        val joinBeeRequest = JoinBeeRequest(GlobalApp.prefsBeeInfo.beeId, userId, "")
+//        service.joinBee(accessToken, beeId, userId)
+        service.joinBee(GlobalApp.prefs.accessToken, joinBeeRequest)
             .enqueue(object: Callback<Void> {
                 override fun onFailure(call: Call<Void>, t: Throwable) {
                     Dlog().d(t.toString())
@@ -146,7 +199,7 @@ class SignUpPresenter(context: Context) : SignUpContract.Presenter{
                 ) {
                     when(response.code()){
                         200 -> {
-                            signUpView!!.gotoMain(accessToken, refreshToken)
+                            signUpView!!.gotoMain()
                         }
 
                         400 -> {
@@ -164,58 +217,6 @@ class SignUpPresenter(context: Context) : SignUpContract.Presenter{
                 }
             })
     }
-
-
-//    override fun meServer(accessToken : String, refreshToken : String){
-//        var alreadyJoin : Boolean?
-//
-//        service.me(accessToken)
-//            .enqueue(object : Callback<MeResponse>{
-//                override fun onResponse(call: Call<MeResponse>, response: Response<MeResponse>) {
-//                    val i = response.code()
-//
-//                    when(i){
-//                        200 ->{
-//                            val meResponse : MeResponse? = response.body()
-//                            alreadyJoin = meResponse?.alreadyJoin
-//
-//                            if(alreadyJoin == true){
-//                                Log.d(TAG,"already bee join")
-//                            }
-//                            else {
-//                                Log.d(TAG, "not already bee join")
-//                                signUpView!!.gotoBeeCreate(accessToken, refreshToken)
-//                            }
-//                        }
-//
-//                        400 -> {
-//                            val jsonObject = JSONObject(response.errorBody()!!.string())
-//                            val timestamp = jsonObject.getString("timestamp")
-//                            val status = jsonObject.getString("status")
-//                            val message = jsonObject.getString("message")
-//                            val code = jsonObject.getInt("code")
-//
-//                            signUpView!!.showToastView{message}
-//                        }
-//
-//                        500 -> {
-//                            val jsonObject = JSONObject(response.errorBody()!!.string())
-//                            val timestamp = jsonObject.getString("timestamp")
-//                            val status = jsonObject.getString("status")
-//                            val message = jsonObject.getString("message")
-//                            val code = jsonObject.getInt("code")
-//
-//                            signUpView!!.showToastView{message}
-//                        }
-//                    }
-//                }
-//
-//                override fun onFailure(call: Call<MeResponse>, t: Throwable) {
-//                    Dlog().d(t.toString())
-//                }
-//            })
-//    }
-
 
     companion object {
         private const val TAG = "SignUpPresenter"

@@ -113,7 +113,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="24dp"
-                android:text="미션 시간 "
+                android:text="@string/mission_time"
                 android:textColor="#444444"
                 android:textSize="15dp" />
 
@@ -129,12 +129,11 @@
                     android:id="@+id/setting_mission_time_txt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="7시-10시 "
                     android:textColor="#777777"
                     android:textSize="13dp" />
 
                 <ImageButton
-                    android:id="@+id/setting_mission_time_btn"
+                    android:id="@+id/setting_mission_time_button"
                     android:layout_width="6dp"
                     android:layout_height="10dp"
                     android:layout_centerVertical="true"
@@ -172,7 +171,6 @@
                     android:id="@+id/setting_royaljelly_txt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="4,000원 "
                     android:textColor="#777777"
                     android:textSize="13dp" />
 
@@ -185,8 +183,6 @@
                     android:layout_toEndOf="@id/setting_royaljelly_txt"
                     android:background="@drawable/icon_arrow_right_back" />
             </RelativeLayout>
-
-
         </RelativeLayout>
 
         <RelativeLayout
@@ -199,12 +195,12 @@
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="24dp"
-                android:text="전체 꿀벌 "
+                android:text="@string/total_bee_member"
                 android:textColor="#444444"
                 android:textSize="15dp" />
 
             <ImageButton
-                android:id="@+id/total_bee_button"
+                android:id="@+id/total_bee_member_button"
                 android:layout_width="6dp"
                 android:layout_height="10dp"
                 android:layout_alignParentEnd="true"
@@ -260,7 +256,8 @@
                 android:layout_centerVertical="true"
                 android:layout_marginStart="24dp"
                 android:textColor="#444444"
-                android:textSize="15dp" />
+                android:textSize="15dp"
+                android:text="@string/dismantle_bee"/>
 
             <ImageButton
                 android:id="@+id/bee_dismantle_button"
@@ -285,7 +282,8 @@
                 android:layout_centerVertical="true"
                 android:layout_marginStart="24dp"
                 android:textColor="#444444"
-                android:textSize="15dp" />
+                android:textSize="15dp"
+                android:text="@string/withdrawal_bee"/>
 
             <ImageButton
                 android:id="@+id/bee_withdrawal_button"
@@ -297,6 +295,4 @@
                 android:background="@drawable/icon_arrow_right_back" />
         </RelativeLayout>
     </FrameLayout>
-
-
 </LinearLayout>

@@ -15,7 +15,7 @@ interface LoginContract {
         fun googleSignIn()
         fun naverSignIn()
         fun handleSignInResult(completedTask: Task<GoogleSignInAccount>)
-        fun signInMorningbeesServer(signInRequest: SignInRequest)
+        fun requestSignInApi(signInRequest: SignInRequest)
     }
 
     interface Presenter : BasePresenter<View> {

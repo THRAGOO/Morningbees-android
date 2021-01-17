@@ -4,30 +4,32 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.Window
+import android.view.*
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.jasen.kimjaeseung.morningbees.R
+import kotlinx.android.synthetic.main.item_calendar.view.*
 import kotlinx.android.synthetic.main.popup_calendar.*
 import java.text.SimpleDateFormat
 import java.util.*
 
-class CalendarDialog : DialogFragment(), View.OnClickListener{
-    lateinit var calendarAdapter : CalendarRecyclerViewAdapter
+class CalendarDialog : DialogFragment() {
+    lateinit var calendarAdapter: CalendarRecyclerViewAdapter
     lateinit var mDialogFragment: OnMyDialogResult
-    var targetDate : String = ""
-    var todayDate : String = ""
-    var _targetDate : String = ""
+    var hyphenTargetDate: String = ""
+    var targetDate: String = ""
+    var todayDate: String = ""
 
     override fun onResume() {
         super.onResume()
-
         val width = resources.getDimensionPixelSize(R.dimen.calendar_width)
         val height = resources.getDimensionPixelSize(R.dimen.calendar_height)
-        dialog!!.window!!.setLayout(width, height)
+        dialog?.window?.setLayout(width, height)
+    }
+
+    fun Date.toString(type: String): String {
+        return SimpleDateFormat(type).format(this)
     }
 
     override fun onCreateView( //view가 생성되는 동안 실행
@@ -35,43 +37,53 @@ class CalendarDialog : DialogFragment(), View.OnClickListener{
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view : View = inflater.inflate(R.layout.popup_calendar, container, false)
-        dialog!!.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog!!.setContentView(R.layout.popup_calendar)
-
-        dialog!!.window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        val view: View = inflater.inflate(R.layout.popup_calendar, container, false)
+        dialog?.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog?.setContentView(R.layout.popup_calendar)
+        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         return view
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) { // view가 생성되고 난 뒤 실행
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         calendarAdapter = CalendarRecyclerViewAdapter(this)
-        calendar_recyclerview.adapter = calendarAdapter
-        calendar_recyclerview.layoutManager = GridLayoutManager(activity!!.applicationContext, BaseCalendar.DAYS_OF_WEEK)
+        calendarRecyclerView.adapter = calendarAdapter
+        calendarRecyclerView.layoutManager =
+            GridLayoutManager(activity!!.applicationContext, BaseCalendar.DAYS_OF_WEEK)
 
-        calendarAdapter.setItemClickListener(object : CalendarRecyclerViewAdapter.ItemClickListener{
-            override fun onClick(view: View, position: Int) {
+        calendarRecyclerView.addOnItemTouchListener(object : RecyclerView.OnItemTouchListener {
+            override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
+                val child = rv.findChildViewUnder(e.x, e.y)
+                val position = rv.getChildAdapterPosition(child!!)
 
-                if (position in 1..9){
-                    targetDate += "-0$position"
-                    _targetDate += "0$position"
+                when (e.action){
+                    MotionEvent.ACTION_DOWN -> {
+                        Log.d(TAG, "action_down: position: $position")
+                        child.itemCalendarDateText?.background = activity?.applicationContext?.getDrawable(R.drawable.background_item_calendar_grey)
+                    }
+
+                    MotionEvent.ACTION_UP -> {
+                        Log.d(TAG, "action_up: position: $position")
+                        child.itemCalendarDateText?.background = activity?.applicationContext?.getDrawable(R.drawable.background_item_calendar_yellow)
+                        val date = calendarAdapter.getDate(position)
+                        finishFragment(date)
+                    }
                 }
-                else{
-                    targetDate += "-$position"
-                    _targetDate += "$position"
-                }
-
-                mDialogFragment.finish(targetDate, _targetDate)
-                dialog!!.dismiss()
+                return false
             }
+
+            override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) {}
+
+            override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {}
         })
-        tv_prev_month.setOnClickListener{
+
+        goPrevMonthButton.setOnClickListener {
             calendarAdapter.changeToPrevMonth()
         }
 
-        tv_next_month.setOnClickListener{
+        goNextMonthButton.setOnClickListener {
             calendarAdapter.changeToNextMonth()
         }
 
@@ -80,30 +92,36 @@ class CalendarDialog : DialogFragment(), View.OnClickListener{
         todayDate = simpleDate
     }
 
-    override fun onClick(p0: View?) {
+    private fun finishFragment(position: Int) {
+        if (position in 1..9) {
+            hyphenTargetDate += "-0$position"
+            targetDate += "0$position"
+        } else {
+            hyphenTargetDate += "-$position"
+            targetDate += "$position"
+            Log.d(TAG, "hyphenTargetDate: $hyphenTargetDate")
+            Log.d(TAG, "targetDate: $targetDate")
+        }
 
+        mDialogFragment.finish(hyphenTargetDate, targetDate)
+        dialog!!.dismiss()
     }
 
-    fun refreshCurrentMonth(calendar: Calendar){
-        val sdf = SimpleDateFormat("MMMM yyyy", Locale.ENGLISH)
-        tv_current_month.text = sdf.format(calendar.time)
-
-        val _tarDate = SimpleDateFormat("yyyy-MM", Locale.KOREAN)
-        targetDate = _tarDate.format(calendar.time)
-
-        val _tDate = SimpleDateFormat("yyyyMM", Locale.KOREAN)
-        _targetDate = _tDate.format(calendar.time)
+    fun refreshCurrentMonth(calendar: Calendar) {
+        currentMonthText.text = calendar.time.toString("MMMM yyyy").format(calendar.time)
+        this.hyphenTargetDate = calendar.time.toString("yyyy-MM")
+        this.targetDate = calendar.time.toString("yyyyMM")
     }
 
-    fun setDialogResult(dialogResult : OnMyDialogResult){
+    fun setDialogResult(dialogResult: OnMyDialogResult) {
         mDialogFragment = dialogResult
     }
 
-    interface OnMyDialogResult{
-        fun finish(str : String, _str : String)
+    interface OnMyDialogResult {
+        fun finish(str: String, _str: String)
     }
 
-    companion object{
+    companion object {
         const val TAG = "CalendarActivity"
     }
 }

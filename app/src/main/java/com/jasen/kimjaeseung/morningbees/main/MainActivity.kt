@@ -24,26 +24,22 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.MultiTransformation
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
-import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.firebase.dynamiclinks.ShortDynamicLink
-
-import com.google.firebase.ktx.Firebase
+import com.google.gson.JsonObject
 import com.jasen.kimjaeseung.morningbees.R
+import com.jasen.kimjaeseung.morningbees.app.GlobalApp
 import com.jasen.kimjaeseung.morningbees.model.me.MeResponse
 import com.jasen.kimjaeseung.morningbees.calendar.CalendarDialog
+import com.jasen.kimjaeseung.morningbees.login.LoginActivity
 import com.jasen.kimjaeseung.morningbees.missioncreate.MissionCreateActivity
 import com.jasen.kimjaeseung.morningbees.missionparticipate.MissionParticipateActivity
-import com.jasen.kimjaeseung.morningbees.model.beeinfo.BeeInfoResponse
 import com.jasen.kimjaeseung.morningbees.model.main.MainResponse
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import com.jasen.kimjaeseung.morningbees.setting.SettingActivity
 import jp.wasabeef.glide.transformations.BlurTransformation
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_mission_participate.view.*
-import org.json.JSONException
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
@@ -53,78 +49,39 @@ import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
-import java.net.URL
-import com.google.firebase.dynamiclinks.ktx.dynamicLinks
-import com.google.firebase.dynamiclinks.ktx.iosParameters
-import com.google.firebase.dynamiclinks.ktx.shortLinkAsync
 import com.jasen.kimjaeseung.morningbees.util.*
-import retrofit2.http.Url
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
+// MARK:~ Sign Up (코틀린 룰 찾아보기)
+// 주석이 필요한 이유
+
+// temp 단어 가급적이면 사용하지 말 것
 class MainActivity : AppCompatActivity(), View.OnClickListener {
+
+    // MARK:~ Properties
+
     private val service = MorningBeesService.create()
-    private lateinit var userAccessToken: String
-    private var beeId: Int = 0
-    private lateinit var targetDateStr: String
-    private lateinit var todayDateStr: String
-    private var targetDateInt: Int = 0
-    private var todayDateInt: Int = 0
-    private var difficulty: Int = -1
+    private var userAccessToken = ""
+    private var beeId = 0
 
-    //meServer response
-    var alreadyJoin: Boolean? = false
-    var myNickname: String? = null
+    private val todayDate = LocalDate.now()
+    private lateinit var targetDate: LocalDate
 
-    //mainServer response
-    var todayBee: String? = null
+    private var difficulty = -1
+    var myNickname = ""
+    var todayBee = ""
+    var nextBee = ""
+    var isParticipateMission = false
 
-    //recyclerView
-    private lateinit var adapter: MainRecyclerViewAdapter
-    private lateinit var layoutManager: LinearLayoutManager
-    var urlList = mutableListOf<URL?>(null, null, null)
+    var urlList = mutableListOf<String?>()
 
-    //mission participate
-    var tempFile: File? = null             // 카메라로 찍은 사진 File (갤러리에 저장)
-    private var bitmap: Bitmap? = null     // 갤러리에서 가져온 사진 bitmap
-    var image: File? = null                // 갤러리에서 가져온 사진 File
+    var imageFile: File? = null
+    private var bitmap: Bitmap? = null
+    var image: File? = null
     lateinit var bottomSheetDialog: BottomSheetDialog
 
-    //beeinfo response
-    var isManager : Boolean? = null
-    var title : String? = null
-    var missionTitle : String? = null
-    var totalPay : Int? = 0
-    var todayUser : String? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
-        userAccessToken = Singleton.getAccessToken()
-        Log.d(TAG, "userAccessToken: $userAccessToken")
-
-        initButtonListeners()
-        changeIconColor()
-        setTargetDate()
-        meServer()
-        //beeInfoServer()
-        scrollview.scrollTo(0, scroll.top)
-        initRecyclerView()
-    }
-
-    private fun initButtonListeners() {
-        go_mission_create_btn.setOnClickListener(this)
-        go_mission_participate_btn.setOnClickListener(this)
-        calendar_btn.setOnClickListener(this)
-        go_createlink_btn.setOnClickListener(this)
-        setting_button.setOnClickListener(this)
-    }
-
-    private fun changeIconColor(){
-        setting_button.setColorFilter(Color.parseColor("#7E7E7E"))
-        notification_button.setColorFilter(Color.parseColor("#7E7E7E"))
-        calendar_btn.setColorFilter(Color.parseColor("#7E7E7E"))
-        mission_participate_img_btn.setColorFilter(Color.parseColor("#7E7E7E"))
-    }
+    private var beeTitle = ""
 
     private val permissionCheckCamera by lazy {
         ContextCompat.checkSelfPermission(
@@ -133,71 +90,67 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         )
     }
 
-    private fun setTargetDate() {
-        val curDate = Date()
-        todayDateInt = SimpleDateFormat("yyyyMMdd").format(curDate).toInt()
-        targetDateInt = SimpleDateFormat("yyyyMMdd").format(curDate).toInt()
-        todayDateStr = SimpleDateFormat("yyyy-MM-dd").format(curDate)
-        targetDateStr = SimpleDateFormat("yyyy-MM-dd").format(curDate)
-        today_date.text = todayDateStr
+    // MARK:~ Life Cycle
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        userAccessToken = GlobalApp.prefs.accessToken
+
+        initButtonListeners()
+        changeIconColor()
+        setTargetDate()
+        requestMeApi()
+
+        window.statusBarColor
+    }
+
+    // MARK:~ Method Extension
+
+    private fun Date.getString(): String {
+        return SimpleDateFormat("yyyy-MM-dd").format(this)
+    }
+
+    fun Date.toString(type: String): String {
+        return SimpleDateFormat(type).format(this)
+    }
+
+    // MARK:~ Button Click
+
+    private fun initButtonListeners() {
+        goMissionCreateButton.setOnClickListener(this)
+        goMissionParticipateButton.setOnClickListener(this)
+        changeTargetDateButton.setOnClickListener(this)
+        goToSettingButton.setOnClickListener(this)
     }
 
     override fun onClick(v: View) {
         when (v.id) {
-            R.id.go_mission_create_btn -> gotoMissionCreate()
-            R.id.go_mission_participate_btn -> missionParticipateDialog()
-            R.id.calendar_btn -> changeTargetDate()
-            R.id.go_createlink_btn -> createDynamicLink()
-            R.id.setting_button -> gotoSetting()
+            R.id.goMissionCreateButton -> gotoMissionCreate()
+            R.id.goMissionParticipateButton -> participateMissionDialog()
+            R.id.changeTargetDateButton -> changeTargetDate()
+            R.id.goToSettingButton -> gotoSetting()
         }
     }
 
-    private fun gotoSetting(){
-        val intent = Intent(this, SettingActivity::class.java)
-        intent.putExtra("nickName", myNickname)
-        intent.putExtra("accessToken", userAccessToken)
-        intent.putExtra("beeId", beeId)
-        startActivity(intent)
+    // MARK:~ Setting
+
+    private fun gotoSetting() {
+        startActivity(
+            Intent(this, SettingActivity::class.java)
+                .putExtra("myNickname", myNickname)
+        )
     }
 
-    private fun createDynamicLink() {
-        val shortLinkTask = Firebase.dynamicLinks.shortLinkAsync {
-            link = Uri.parse("https://www.app.thragoo.com?beeId=$beeId")
-            domainUriPrefix = "https://thragoo.page.link"
-            iosParameters("com.thragoo.Morningbees-iOS") {}
-        }.addOnCompleteListener(this,  OnCompleteListener<ShortDynamicLink>(){
-            if (it.isSuccessful){
-                val shortLink = it.result?.shortLink
-                val strLink = shortLink.toString()
-                shareLink(strLink)
-            }
-        })
-    }
+    // MARK:~ Main API Request
 
-    private fun shareLink(shortLink : String){
-        val intent = Intent()
-        intent.action = Intent.ACTION_SEND
-        intent.type = "text/plain"
-        intent.putExtra(Intent.EXTRA_TEXT, "Try this amazing app: $shortLink")
-        startActivity(Intent.createChooser(intent, "Share Link"))
-    }
-
-    private fun changeTargetDate() {
-        val dialogFragment = CalendarDialog()
-        dialogFragment.show(supportFragmentManager, "signature")
-
-        dialogFragment.setDialogResult(object : CalendarDialog.OnMyDialogResult {
-            override fun finish(str: String, _str: String) {
-                targetDateStr = str
-                targetDateInt = _str.toInt()
-                today_date.text = targetDateStr
-                mainServer(beeId)
-            }
-        })
-    }
-
-    private fun mainServer(beeId: Int) {
-        service.main(userAccessToken, targetDateStr, beeId)
+    private fun requestMainApi() {
+        service.main(
+            userAccessToken,
+            targetDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+            beeId
+        )
             .enqueue(object : Callback<MainResponse> {
                 override fun onFailure(call: Call<MainResponse>, t: Throwable) {
                     Dlog().d(t.toString())
@@ -209,69 +162,94 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 ) {
                     when (response.code()) {
                         200 -> {
-                            val mainResponse = MainResponse(response.body()?.missions, response.body()?.beeInfo)
+                            val mainResponse =
+                                MainResponse(response.body()?.missions, response.body()?.beeInfo)
                             val missionsResponse = mainResponse.missions
                             val beeInfoResponse = mainResponse.beeInfo
 
+                            //beeInfo
+                            if (beeInfoResponse != null) {
+                                setLayoutToBeeInfo(beeInfoResponse)
+
+                                val manager = beeInfoResponse.get("manager").asJsonObject
+                                val managerId = manager.get("id").asInt
+                                val managerNickname = manager.get("nickname").asString
+                                val managerProfileImage =
+                                    manager.get("profileImage").asString
+
+                                GlobalApp.prefsBeeInfo.beeManagerNickname = managerNickname
+                            }
+
                             // missionsResponse
-                            if(missionsResponse == null) {
-                                urlList = mutableListOf(null, null, null)
-                                initRecyclerView()
-                                //mission 생성 X
+                            if (missionsResponse == null || missionsResponse.size() == 0) {
+                                // Not Exist Mission
+                                Log.d(TAG, "todayDate: $todayDate")
                                 when {
-                                    todayDateInt == targetDateInt -> {
-                                        mission_img_txt.text = getString(R.string.today_mission_photo)
+                                    todayDate == targetDate -> {
+                                        targetDateMissionText.text =
+                                            getString(R.string.today_mission_photo)
                                         applyImageUrl(null)
                                         setLayoutToMission(NOT_EXIST_MISSION)
                                     }
 
-                                    todayDateInt > targetDateInt -> {
-                                        mission_img_txt.text = getString(R.string.past_mission_photo)
-                                        not_upload_mission_text.text = getString(R.string.need_to_register_mission)
-                                        setLayoutToMission(NOT_EXIST_ANOTHER_MISSION)
+                                    todayDate > targetDate -> {
+                                        targetDateMissionText.text =
+                                            getString(R.string.past_mission_photo)
+                                        setLayoutToMission(NOT_EXIST_PAST_MISSION)
                                     }
 
-                                    todayDateInt < targetDateInt -> {
-                                        mission_img_txt.text = getString(R.string.future_mission_photo)
-                                        not_upload_mission_text.text = getString(R.string.no_exist_mission)
-                                        setLayoutToMission(NOT_EXIST_ANOTHER_MISSION)
+                                    todayDate < targetDate -> {
+                                        targetDateMissionText.text =
+                                            getString(R.string.future_mission_photo)
+                                        setLayoutToMission(NOT_EXIST_FUTURE_MISSION)
                                     }
                                 }
-                            }
-                            else {
-                                // mission 생성 O
-                                for(i in 0 until missionsResponse.size()){
-                                    val item = missionsResponse.get(i)
+                            } else {
+                                // Exist Mission
+                                Log.d(TAG, "exist - todayDate: $todayDate")
+                                for (i in 0 until missionsResponse.size()) {
+                                    val missionItem = missionsResponse.get(i).asJsonObject
 
-                                    val missionId = item.asJsonObject.get("missionId").asInt
-                                    val imageUrl = item.asJsonObject.get("imageUrl").asString
-                                    val type = item.asJsonObject.get("type").asInt
-                                    val createdAt = item.asJsonObject.get("createdAt").asString
+                                    val missionId = missionItem.get("missionId").asInt
+                                    val imageUrl = missionItem.get("imageUrl").asString
+                                    val type = missionItem.get("type").asInt
+                                    val createdAt = missionItem.get("createdAt").asString
+                                    val nickname = missionItem.get("nickname").asString
 
-                                    if(type != 2){
-                                        // 미션 출제일 경우
-                                        val dateFormatInt = SimpleDateFormat("yyyyMMdd")
-                                        targetDateInt = dateFormatInt.format(dateFormatInt.parse(createdAt)).toInt()
+                                    if (type == 2) {
+                                        urlList.add(imageUrl)
+                                        if (nickname == myNickname) {
+                                            isParticipateMission = true
+                                        }
+                                    }
 
+                                    if (type == 1) {
                                         when {
-                                            todayDateInt == targetDateInt -> {
-                                                mission_img_txt.text = getString(R.string.today_mission_photo)
-                                                mission_upload_text.text =getString(R.string.today_mission)
+                                            todayDate == targetDate -> {
+                                                targetDateMissionText.text =
+                                                    getString(R.string.today_mission_photo)
+                                                missionTargetDateText.text =
+                                                    getString(R.string.today_mission)
                                                 applyImageUrl(imageUrl)
                                                 setLayoutToMission(EXIST_MISSION)
                                             }
 
-                                            todayDateInt > targetDateInt -> {
-                                                mission_img_txt.text = getString(R.string.past_mission_photo)
-                                                mission_upload_text.text = getString(R.string.past_mission_photo)
+                                            todayDate > targetDate -> {
+                                                targetDateMissionText.text =
+                                                    getString(R.string.past_mission_photo)
+                                                missionTargetDateText.text =
+                                                    getString(R.string.past_mission_photo)
                                                 applyImageUrl(imageUrl)
-                                                setLayoutToMission(EXIST_ANOTHER_MISSION)
+                                                setLayoutToMission(EXIST_PAST_MISSION)
                                             }
 
-                                            todayDateInt < targetDateInt -> {
-                                                mission_img_txt.text = getString(R.string.future_mission_photo)
-                                                mission_upload_text.text = getString(R.string.future_mission_photo)
-                                                mission_desc_text.text = getString(R.string.tomorrow_mission_desc_text)
+                                            todayDate < targetDate -> {
+                                                targetDateMissionText.text =
+                                                    getString(R.string.future_mission_photo)
+                                                missionTargetDateText.text =
+                                                    getString(R.string.future_mission_photo)
+                                                missionDescriptionText.text =
+                                                    getString(R.string.tomorrow_mission_desc_text)
 
                                                 val multi = MultiTransformation<Bitmap>(
                                                     BlurTransformation(25),
@@ -284,37 +262,14 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                                                     .apply(RequestOptions.bitmapTransform(multi))
                                                     .override(312, 400)
                                                     .error(R.drawable.not_upload_mission_img_view)
-                                                    .into(today_mission_image)
-                                                setLayoutToMission(EXIST_ANOTHER_MISSION)
+                                                    .into(missionImage)
+                                                setLayoutToMission(EXIST_FUTURE_MISSION)
                                             }
                                         }
-                                    } else {
-                                        val url = URL(imageUrl)
-                                        urlList.add(url) // 추가 해야함
                                     }
                                 }
-                                initRecyclerView()
                             }
-                            //beeInfo
-                            if(beeInfoResponse != null){
-                                val totalPenalty = beeInfoResponse.get("totalPenalty").asInt
-                                val memberCounts = beeInfoResponse.get("memberCounts").asInt
-                                val startTime = beeInfoResponse.get("startTime").asInt
-                                val endTime = beeInfoResponse.get("endTime").asInt
-                                val title = beeInfoResponse.get("title").asString
-                                val todayDifficulty = beeInfoResponse.get("todayDifficulty").asInt
-
-                                val todayQuestioner = beeInfoResponse.get("todayQuestioner")
-                                val todayNickname = todayQuestioner.asJsonObject.get("nickname").toString()
-                                val todayProfileImage = todayQuestioner.asJsonObject.get("profileImage").toString()
-
-                                val nextQuestioner = beeInfoResponse.get("nextQuestioner")
-                                val nextNickname = nextQuestioner.asJsonObject.get("nickname").toString()
-                                val nextProfileImage = nextQuestioner.asJsonObject.get("profileImage").toString()
-                                difficulty = todayDifficulty
-                                todayBee = todayNickname
-                                setLayoutToBeeInfo(title, todayDifficulty, startTime, endTime, memberCounts, totalPenalty, todayProfileImage, nextProfileImage)
-                            }
+                            initRecyclerView()
                         }
 
                         400 -> {
@@ -327,11 +282,30 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
                             // or Error Pop UP 출력
                         }
+
                         500 -> {
                             val jsonObject = JSONObject(response.errorBody()!!.string())
                             val message = jsonObject.getString("message")
-                            //applyImageUrl(null)
-                            today_mission_image.setImageResource(R.drawable.not_upload_mission_img_view)
+
+                            when {
+                                todayDate == targetDate -> {
+                                    targetDateMissionText.text = getString(R.string.today_mission_photo)
+                                    applyImageUrl(null)
+                                    setLayoutToMission(NOT_EXIST_MISSION)
+                                }
+
+                                todayDate > targetDate -> {
+                                    targetDateMissionText.text = getString(R.string.past_mission_photo)
+                                    setLayoutToMission(NOT_EXIST_PAST_MISSION)
+                                }
+
+                                todayDate < targetDate -> {
+                                    targetDateMissionText.text = getString(R.string.future_mission_photo)
+                                    setLayoutToMission(NOT_EXIST_FUTURE_MISSION)
+                                }
+                            }
+
+                            missionImage.setImageResource(R.drawable.not_upload_mission_img_view)
                             setLayoutToMission(NOT_EXIST_MISSION)
                             Log.d(TAG, message)
                         }
@@ -340,88 +314,141 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             })
     }
 
-    private fun setLayoutToBeeInfo(title : String, todayDifficulty : Int, startTime : Int, endTime : Int, memberCounts : Int, totalPenalty : Int, todayProfileImage : String, nextProfileImage : String){
-        wrap_define_difficulty_btn.visibility = View.VISIBLE
+    // MARK:~ View Design
+
+    private fun initRecyclerView() {
+        Log.d(TAG, "urlList.size: ${urlList.size}")
+        if (urlList.size == 0) {
+            urlList = mutableListOf(null, null, null)
+        }
+
+        val adapter = MissionParticipateAdapter(urlList, this)
+        missionParticipateRecyclerView.adapter = adapter
+        val layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, true)
+        missionParticipateRecyclerView.layoutManager = layoutManager
+        missionParticipateRecyclerView.scrollToPosition(urlList.size - 1)
+    }
+
+    private fun setLayoutToBeeInfo(
+        beeInfoResponse: JsonObject
+    ) {
+        missionDifficultyImageWrapLayout.visibility = View.VISIBLE
         wrap_undefine_difficulty_btn.visibility = View.INVISIBLE
-        setDifficulty(todayDifficulty)
 
-        wrap_defined_time_btn.visibility = View.VISIBLE
-        wrap_undefined_time_btn.visibility = View.INVISIBLE
-        mission_start_time_txt.text = startTime.toString()
-        mission_end_time_txt.text = endTime.toString()
+        difficulty = if (beeInfoResponse.get("todayDifficulty").isJsonNull)
+            0
+        else
+            beeInfoResponse.get("todayDifficulty").asInt
 
-        bee_title_text.text = title
-        bee_total_number_text.text = memberCounts.toString()
-        total_pay.text = " ${totalPenalty}원"
+        setDifficulty(difficulty)
 
+        missionTimeDefinedWrapLayout.visibility = View.VISIBLE
+        missionTimeUnDefinedWrapLayout.visibility = View.INVISIBLE
+        missionStartTimeText.text = beeInfoResponse.get("startTime").toString()
+        missionEndTimeText.text = beeInfoResponse.get("endTime").toString()
+
+        beeTitle = beeInfoResponse.get("title").toString().replace("\"", "")
+        beeTitleView.text = beeTitle
+        GlobalApp.prefsBeeInfo.beeTitle = beeTitle
+
+        beeTotalMemberView.text = beeInfoResponse.get("memberCounts").toString()
+        totalJelly.text = " ${beeInfoResponse.get("totalPenalty")}원"
+
+        val todayProfileImage =
+            beeInfoResponse.get("todayQuestioner").asJsonObject.get("profileImage").toString()
+        val nextProfileImage =
+            beeInfoResponse.get("nextQuestioner").asJsonObject.get("profileImage").toString()
+
+        todayBee = beeInfoResponse.get("todayQuestioner").asJsonObject.get("nickname").toString()
+            .replace("\"", "")
+        todayQuestionerNickname.text = todayBee
+
+        nextBee = beeInfoResponse.get("nextQuestioner").asJsonObject.get("nickname").toString()
+            .replace("\"", "")
 
         Glide.with(this)
             .load(todayProfileImage)
-            //.circleCrop()
-            .apply(RequestOptions.bitmapTransform(RoundedCorners(100)))
+            .centerCrop()
+            .circleCrop()
+//            .apply(RequestOptions.bitmapTransform(RoundedCorners(100)))
             .override(45, 45)
-            .error(R.drawable.round_today_bee_img)
-            .into(today_bee_img)
+//            .error(R.drawable.round_today_bee_img)
+            .into(todayQuestionerImage)
 
         Glide.with(this)
             .load(nextProfileImage)
-            //.circleCrop()
-            .apply(RequestOptions.bitmapTransform(RoundedCorners(100)))
+            .centerCrop()
+            .circleCrop()
+//            .apply(RequestOptions.bitmapTransform(RoundedCorners(100)))
             .override(30, 30)
-            .error(R.drawable.round_next_bee_img)
-            .into(next_bee_img)
-
+//            .error(R.drawable.round_next_bee_img)
+            .into(nextQuestionerImage)
     }
 
     private fun setLayoutToMission(state: Int) {
+        Log.d(TAG, "myNickname: $myNickname / todayBee: $todayBee")
+        missionUploadWrapLayout.background = applicationContext.getDrawable(R.color.transparent)
+        missionNotUploadWrapLayout.background = applicationContext.getDrawable(R.color.transparent)
         if (state == EXIST_MISSION) {
-            if (myNickname == todayBee) {
-                wrap_upload_mission_view.visibility = View.VISIBLE
-                wrap_not_upload_mission_view.visibility = View.INVISIBLE
-                go_mission_create_btn.visibility = View.INVISIBLE
-                go_mission_participate_btn.visibility = View.VISIBLE
+            if (myNickname == todayBee || isParticipateMission) { // or 이미 미션을 participate 한 경우
+                missionUploadWrapLayout.visibility = View.VISIBLE
+                missionNotUploadWrapLayout.visibility = View.INVISIBLE
+                goMissionCreateButton.visibility = View.INVISIBLE
+                goMissionParticipateButton.visibility = View.INVISIBLE
             } else {
-                wrap_upload_mission_view.visibility = View.VISIBLE
-                wrap_not_upload_mission_view.visibility = View.INVISIBLE
-                go_mission_create_btn.visibility = View.INVISIBLE
-                go_mission_participate_btn.visibility = View.VISIBLE
+                missionUploadWrapLayout.visibility = View.VISIBLE
+                missionNotUploadWrapLayout.visibility = View.INVISIBLE
+                goMissionCreateButton.visibility = View.INVISIBLE
+                goMissionParticipateButton.visibility = View.VISIBLE
             }
         } else if (state == NOT_EXIST_MISSION) {
             if (myNickname == todayBee) {
-                Log.d(TAG, "state: myNickname == todayBee")
-                wrap_upload_mission_view.visibility = View.INVISIBLE
-                wrap_not_upload_mission_view.visibility = View.VISIBLE
-                go_mission_create_btn.visibility = View.VISIBLE
-                go_mission_participate_btn.visibility = View.INVISIBLE
-                not_upload_mission_text.text = getString(R.string.need_to_register_mission)
+                missionNotUploadText.text = getString(R.string.need_to_register_mission)
+                missionUploadWrapLayout.visibility = View.INVISIBLE
+                missionNotUploadWrapLayout.visibility = View.VISIBLE
+                goMissionCreateButton.visibility = View.VISIBLE
+                goMissionParticipateButton.visibility = View.INVISIBLE
             } else {
-                wrap_upload_mission_view.visibility = View.INVISIBLE
-                wrap_not_upload_mission_view.visibility = View.VISIBLE
-                //go_mission_create_btn.visibility = View.INVISIBLE
-                //go_mission_participate_btn.visibility = View.INVISIBLE
-                //not_upload_mission_text.text = getString(R.string.no_exist_mission)
-
-                // 임시 create btn visibility
-                not_upload_mission_text.text = getString(R.string.need_to_register_mission)
-                go_mission_create_btn.visibility = View.VISIBLE
-                go_mission_participate_btn.visibility = View.INVISIBLE
+                missionNotUploadText.text = getString(R.string.no_exist_mission)
+                missionUploadWrapLayout.visibility = View.INVISIBLE
+                missionNotUploadWrapLayout.visibility = View.VISIBLE
+                goMissionCreateButton.visibility = View.INVISIBLE
+                goMissionParticipateButton.visibility = View.INVISIBLE
             }
-        } else if (state == EXIST_ANOTHER_MISSION) {
-            wrap_upload_mission_view.visibility = View.VISIBLE
-            wrap_not_upload_mission_view.visibility = View.INVISIBLE
-            go_mission_create_btn.visibility = View.INVISIBLE
-            go_mission_participate_btn.visibility = View.INVISIBLE
-
-        } else if (state == NOT_EXIST_ANOTHER_MISSION) {
-            wrap_upload_mission_view.visibility = View.INVISIBLE
-            wrap_not_upload_mission_view.visibility = View.VISIBLE
-            go_mission_create_btn.visibility = View.INVISIBLE
-            go_mission_participate_btn.visibility = View.INVISIBLE
-            not_upload_mission_text.text = getString(R.string.no_exist_mission)
+        } else if (state == EXIST_FUTURE_MISSION) {
+            missionUploadWrapLayout.visibility = View.VISIBLE
+            missionNotUploadWrapLayout.visibility = View.INVISIBLE
+            goMissionCreateButton.visibility = View.INVISIBLE
+            goMissionParticipateButton.visibility = View.INVISIBLE
+        } else if (state == NOT_EXIST_FUTURE_MISSION) {
+            if (myNickname == nextBee) {
+                missionNotUploadText.text = getString(R.string.need_to_register_mission)
+                missionUploadWrapLayout.visibility = View.INVISIBLE
+                missionNotUploadWrapLayout.visibility = View.VISIBLE
+                goMissionCreateButton.visibility = View.VISIBLE
+                goMissionParticipateButton.visibility = View.INVISIBLE
+            } else {
+                missionNotUploadText.text = getString(R.string.no_exist_mission)
+                missionUploadWrapLayout.visibility = View.INVISIBLE
+                missionNotUploadWrapLayout.visibility = View.VISIBLE
+                goMissionCreateButton.visibility = View.INVISIBLE
+                goMissionParticipateButton.visibility = View.INVISIBLE
+            }
+        } else if (state == EXIST_PAST_MISSION) {
+            missionUploadWrapLayout.visibility = View.VISIBLE
+            missionNotUploadWrapLayout.visibility = View.INVISIBLE
+            goMissionCreateButton.visibility = View.INVISIBLE
+            goMissionParticipateButton.visibility = View.INVISIBLE
+        } else if (state == NOT_EXIST_PAST_MISSION) {
+            missionNotUploadText.text = getString(R.string.no_exist_mission)
+            missionUploadWrapLayout.visibility = View.INVISIBLE
+            missionNotUploadWrapLayout.visibility = View.VISIBLE
+            goMissionCreateButton.visibility = View.INVISIBLE
+            goMissionParticipateButton.visibility = View.INVISIBLE
         }
     }
 
-    private fun applyImageUrl(imageUrl : String?){
+    private fun applyImageUrl(imageUrl: String?) {
         Glide.with(this@MainActivity)
             .load(imageUrl)
             .override(312, 400)
@@ -432,35 +459,81 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 )
             )
             .error(R.drawable.not_upload_mission_img_view)
-            .into(today_mission_image)
+            .into(missionImage)
     }
 
-    private fun setDifficulty(difficulty: Int) {
+    private fun setDifficulty(difficulty: Int?) {
         when (difficulty) {
-            0 -> mission_difficulty_img.setImageDrawable(getDrawable(R.drawable.low_level))
-            1 -> mission_difficulty_img.setImageDrawable(getDrawable(R.drawable.middle_level))
-            2 -> mission_difficulty_img.setImageDrawable(getDrawable(R.drawable.high_level))
+            0 -> missionDifficultyDefinedImage.setImageDrawable(getDrawable(R.drawable.low_level))
+            1 -> missionDifficultyDefinedImage.setImageDrawable(getDrawable(R.drawable.middle_level))
+            2 -> missionDifficultyDefinedImage.setImageDrawable(getDrawable(R.drawable.high_level))
         }
     }
 
-    private fun meServer() {
+    private fun setTargetDate() {
+        targetDateText.text = todayDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+        targetDate = todayDate
+    }
+
+    private fun changeIconColor() {
+        goToSettingButton.setColorFilter(Color.parseColor("#7E7E7E"))
+        mainNotificationButton.setColorFilter(Color.parseColor("#7E7E7E"))
+        changeTargetDateButton.setColorFilter(Color.parseColor("#7E7E7E"))
+        missionParticipateButton.setColorFilter(Color.parseColor("#7E7E7E"))
+    }
+
+    // MARK:~ Change Date
+
+    private fun changeTargetDate() {
+        val dialogFragment = CalendarDialog()
+        dialogFragment.show(supportFragmentManager, "signature")
+
+        dialogFragment.setDialogResult(object : CalendarDialog.OnMyDialogResult {
+            override fun finish(hyphenTargetDate: String, noHypentargetDate: String) {
+
+                targetDate = LocalDate.parse(hyphenTargetDate, DateTimeFormatter.ISO_DATE)
+                targetDateText.text = targetDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                Log.d(TAG, "changeTargetDate() - targetDate: $targetDate")
+                urlList = mutableListOf()
+                requestMainApi()
+            }
+        })
+    }
+
+    // MARK:~ Me Api Request
+
+    private fun requestMeApi() {
         service.me(userAccessToken)
             .enqueue(object : Callback<MeResponse> {
                 override fun onResponse(call: Call<MeResponse>, response: Response<MeResponse>) {
                     when (response.code()) {
                         200 -> {
                             val meResponse: MeResponse? = response.body()
-                            myNickname = meResponse?.nickname
-                            alreadyJoin = meResponse?.alreadyJoin
-                            beeId = meResponse!!.beeId
-                            mainServer(beeId)
+                            myNickname = meResponse!!.nickname
+                            beeId = meResponse.beeId
+                            GlobalApp.prefsBeeInfo.beeId = beeId
+                            requestMainApi()
                         }
 
                         400 -> {
                             val jsonObject = JSONObject(response.errorBody()?.string())
                             val message = jsonObject.getString("message")
-                            showToast { message }
-                            finish()
+                            val code = jsonObject.getInt("code")
+
+                            if (code == 110) {
+                                val oldAccessToken = GlobalApp.prefs.accessToken
+                                GlobalApp.prefs.requestRenewalApi()
+                                val renewalAccessToken = GlobalApp.prefs.accessToken
+
+                                if (oldAccessToken == renewalAccessToken) {
+                                    showToast { "다시 로그인해주세요." }
+                                    gotoLogOut()
+                                } else
+                                    requestMeApi()
+                            } else {
+                                showToast { message }
+                                finish()
+                            }
                         }
 
                         500 -> {
@@ -477,60 +550,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             })
     }
 
-    private fun beeInfoServer(){
-        service.beeInfo(userAccessToken, beeId)
-            .enqueue(object : Callback<BeeInfoResponse>{
-                override fun onResponse(call: Call<BeeInfoResponse>, response: Response<BeeInfoResponse>){
-                    when(response.code()){
-                        200 -> {
-                            try {
-                                val beeInfoResponse : BeeInfoResponse? = response.body()
-                                val accessToken = beeInfoResponse?.accessToken
-                                isManager = beeInfoResponse?.isManager
-                                title = beeInfoResponse?.title
-                                missionTitle = beeInfoResponse?.missionTitle
-                                totalPay = beeInfoResponse?.totalPay
-                                todayUser = beeInfoResponse?.todayUser
+    // MARK:~ Mission Participate
 
-                                meServer()
-                            } catch (e: JSONException) {
-                            }
-                        }
-
-                        400 -> {
-                            val jsonObject = JSONObject(response.errorBody()?.string())
-                            val message = jsonObject.getString("message")
-                            showToast { message }
-                        }
-
-                        500 -> {
-                            val jsonObject = JSONObject(response.errorBody()?.string())
-                            val message = jsonObject.getString("message")
-                            showToast { message }
-                        }
-                    }
-                }
-
-                override fun onFailure(call: Call<BeeInfoResponse>, t: Throwable) {
-                    Dlog().d(t.toString())
-                }
-
-            })
-    }
-
-    private fun gotoMissionCreate() {
-        if (beeId == 0) {
-            showToast { getString(R.string.no_registered_bee) }
-        } else {
-            val nextIntent = Intent(this, MissionCreateActivity::class.java)
-            nextIntent.putExtra("accessToken", userAccessToken)
-            nextIntent.putExtra("beeId", beeId)
-            nextIntent.putExtra("type", 1)
-            startActivity(nextIntent)
-        }
-    }
-
-    private fun missionParticipateDialog() {
+    private fun participateMissionDialog() {
         if (beeId == 0) {
             showToast { getString(R.string.no_registered_bee) }
         } else {
@@ -576,8 +598,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             return
         }
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        tempFile = createImageFile()
-        tempFile?.let {
+        imageFile = createImageFile()
+        imageFile?.let {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 val photoUri = FileProvider.getUriForFile(
                     this@MainActivity, "${application.packageName}.provider",
@@ -603,9 +625,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             storageDir.mkdirs()
         }
         try {
-            val tempFile = File.createTempFile(imageFileName, ".jpg", storageDir)
-            Log.d(TAG, "tempFile: $tempFile")
-            return tempFile
+            return File.createTempFile(imageFileName, ".jpg", storageDir)
         } catch (e: IOException) {
             e.printStackTrace()
         }
@@ -623,33 +643,22 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 val bitmap = ImageDecoder.decodeBitmap(source)
                 gotoMissionParticipate(bitmap)
             } else {
-                val bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, selectedImageUri)
+                val bitmap =
+                    MediaStore.Images.Media.getBitmap(this.contentResolver, selectedImageUri)
                 gotoMissionParticipate(bitmap)
             }
         } else if (requestCode == PICK_FROM_CAMERA && resultCode == Activity.RESULT_OK) {
-            val selectedImage = BitmapFactory.decodeFile(tempFile?.absolutePath)
+            val selectedImage = BitmapFactory.decodeFile(imageFile?.absolutePath)
             bitmap = selectedImage
-            image = tempFile
+            image = imageFile
             gotoMissionParticipate(bitmap)
         } else if (requestCode == GO_TO_PARTICIPATE && resultCode == FINISH) {
             bottomSheetDialog.dismiss()
+            requestMainApi()
         }
     }
 
-    private fun gotoMissionParticipate(bitmap: Bitmap?) {
-        val intent = Intent(this, MissionParticipateActivity::class.java)
-        val stream = ByteArrayOutputStream()
-
-        if (bitmap != null) {
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
-            val byte: ByteArray = stream.toByteArray()
-            intent.putExtra("missionImage", byte)
-            intent.putExtra("accessToken", userAccessToken)
-            intent.putExtra("beeId", beeId)
-            intent.putExtra("difficulty", difficulty)
-            startActivityForResult(intent, GO_TO_PARTICIPATE)
-        }
-    }
+    // MARK:~ Check Permission
 
     private fun chkPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -676,7 +685,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
-        grantResults: IntArray) {
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == REQUEST_PERMISSION) {
             for (value in grantResults) {
@@ -687,12 +697,44 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    private fun initRecyclerView() {
-        adapter = MainRecyclerViewAdapter(urlList, this)
-        main_recycler_view.adapter = adapter
-        layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, true)
-        main_recycler_view.layoutManager = layoutManager
-        main_recycler_view.scrollToPosition(urlList.size-1)
+
+    // MARK:~ Change Activity
+
+    // MARK:~ Log out
+
+    private fun gotoLogOut() {
+        startActivity(
+            Intent(this, LoginActivity::class.java)
+                .putExtra("RequestLogOut", "")
+                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        )
+    }
+
+    // MARK:~ Mission Participate
+
+    private fun gotoMissionParticipate(bitmap: Bitmap?) {
+        val intent = Intent(this, MissionParticipateActivity::class.java)
+        val stream = ByteArrayOutputStream()
+
+        if (bitmap != null) {
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+            val byte: ByteArray = stream.toByteArray()
+            intent.putExtra("missionImage", byte)
+            intent.putExtra("beeId", beeId)
+            intent.putExtra("difficulty", difficulty)
+            startActivityForResult(intent, GO_TO_PARTICIPATE)
+        }
+    }
+
+    // MARK:~ Mission Create
+
+    private fun gotoMissionCreate() {
+        if (beeId == 0) {
+            showToast { getString(R.string.no_registered_bee) }
+        } else {
+            val nextIntent = Intent(this, MissionCreateActivity::class.java)
+            startActivity(nextIntent)
+        }
     }
 
     companion object {
@@ -703,8 +745,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         private const val FINISH = 121
         private const val EXIST_MISSION = 1
         private const val NOT_EXIST_MISSION = 2
-        private const val EXIST_ANOTHER_MISSION = 3
-        private const val NOT_EXIST_ANOTHER_MISSION = 4
+        private const val EXIST_FUTURE_MISSION = 3
+        private const val NOT_EXIST_FUTURE_MISSION = 4
+        private const val EXIST_PAST_MISSION = 5
+        private const val NOT_EXIST_PAST_MISSION = 6
         private const val TAG = "MainActivity"
     }
 }

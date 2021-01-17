@@ -18,7 +18,7 @@
         android:textSize="16dp"/>
 
     <RelativeLayout
-        android:id="@+id/wrap_click_img_view"
+        android:id="@+id/missionImageUploadWrapLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"

@@ -6,10 +6,10 @@
     android:pivotY="50%"
     android:toDegrees="90">
     <vector
-        android:height="30dp"
+        android:height="66dp"
+        android:width="66dp"
         android:viewportHeight="240.0"
         android:viewportWidth="240.0"
-        android:width="30dp"
         android:tint="@color/selector_clock_6_color"
         android:tintMode="multiply"
         xmlns:android="http://schemas.android.com/apk/res/android">

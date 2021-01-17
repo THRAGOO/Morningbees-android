@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.dynamiclinks.ktx.dynamicLinks
 import com.google.firebase.ktx.Firebase
 import com.jasen.kimjaeseung.morningbees.R
+import com.jasen.kimjaeseung.morningbees.app.GlobalApp
 import com.jasen.kimjaeseung.morningbees.beforejoin.BeforeJoinActivity
 import com.jasen.kimjaeseung.morningbees.login.LoginActivity
 import com.jasen.kimjaeseung.morningbees.main.MainActivity
@@ -16,7 +17,6 @@ import com.jasen.kimjaeseung.morningbees.model.joinbee.JoinBeeRequest
 import com.jasen.kimjaeseung.morningbees.model.me.MeResponse
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import com.jasen.kimjaeseung.morningbees.util.Dlog
-import com.jasen.kimjaeseung.morningbees.util.Singleton
 import com.jasen.kimjaeseung.morningbees.util.showToast
 
 import kotlinx.android.synthetic.main.activity_invite_bee.*
@@ -27,18 +27,18 @@ import retrofit2.Response
 
 class InviteBeeActivity : AppCompatActivity(), View.OnClickListener{
     private val service = MorningBeesService.create()
-    private var accessToken : String = ""
-    private var userId : Int = 0
-    private var beeId : Int = 0
-    private lateinit var title : String
-    private var parameter : String = ""
+    private var accessToken = ""
+    private var userId = 0
+    private var beeId = 0
+    private var beeTitle = ""
+    private var parameter = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_invite_bee)
         getDynamicLink()
         initButtonListener()
-        accessToken = Singleton.getAccessToken()
+        accessToken = GlobalApp.prefs.accessToken
     }
 
     private fun getDynamicLink(){
@@ -49,8 +49,13 @@ class InviteBeeActivity : AppCompatActivity(), View.OnClickListener{
                 if (pendingDynamicLinkData != null) {
                     deepLink = pendingDynamicLinkData.link
                     parameter = deepLink?.getQueryParameter("beeId").orEmpty()
+                    beeTitle = deepLink?.getQueryParameter("beeTitle").orEmpty()
                     beeId = Integer.parseInt(parameter)
-                    beeNameText.text = ("${parameter}에 참여하여")
+
+                    GlobalApp.prefsBeeInfo.beeId = beeId
+                    GlobalApp.prefsBeeInfo.beeTitle = beeTitle
+
+                    beeNameText.text = ("${beeTitle}에 참여하여")
                 }
             }
             .addOnFailureListener(this) { e -> Log.w(TAG, "getDynamicLink:onFailure", e) }
@@ -64,10 +69,11 @@ class InviteBeeActivity : AppCompatActivity(), View.OnClickListener{
     private fun getAccessToken(){
         if(accessToken == ""){
             startActivity(
-                Intent(this, LoginActivity::class.java).putExtra("beeId", beeId)
+                Intent(this, LoginActivity::class.java)
+                    .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             )
         } else {
-            joinBeeServer()
+            setUserId()
         }
     }
 
@@ -82,23 +88,29 @@ class InviteBeeActivity : AppCompatActivity(), View.OnClickListener{
                     when(response.code()){
                         200 -> {
                             val meResponse : MeResponse? = response.body()
-                            val tempArray = meResponse?.nickname?.toByteArray()
-                            var str = ""
-                            if (tempArray != null) {
-                                for (i in tempArray){
-                                    val num = i.toInt()
-                                    val char = num.toString()
-                                    str += char
-                                }
-                            }
-                            userId = Integer.parseInt(str)
-                            Log.d(TAG, "userId: $userId")
+                            userId = meResponse!!.userId
+                            joinBeeServer()
                         }
 
                         400 -> {
                             val jsonObject = JSONObject(response.errorBody()!!.string())
                             val message = jsonObject.getString("message")
-                            showToast { message }
+                            val code = jsonObject.getInt("code")
+
+                            if (code == 110) {
+                                val oldAccessToken = GlobalApp.prefs.accessToken
+                                GlobalApp.prefs.requestRenewalApi()
+                                val renewalAccessToken = GlobalApp.prefs.accessToken
+
+                                if (oldAccessToken == renewalAccessToken) {
+                                    showToast { "다시 로그인해주세요." }
+                                    gotoLogOut()
+                                } else
+                                    setUserId()
+                            } else {
+                                showToast { message }
+                                finish()
+                            }
                         }
 
                         500 -> {
@@ -111,9 +123,17 @@ class InviteBeeActivity : AppCompatActivity(), View.OnClickListener{
             })
     }
 
+    private fun gotoLogOut(){
+        startActivity(
+            Intent(this, LoginActivity::class.java)
+                .putExtra("RequestLogOut", "")
+                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        )
+    }
+
     private fun joinBeeServer(){
-        setUserId()
-        service.joinBee(accessToken, beeId, userId)
+        val joinBeeRequest = JoinBeeRequest(beeId, userId, beeTitle)
+        service.joinBee(accessToken, joinBeeRequest)
             .enqueue(object: Callback<Void> {
                 override fun onFailure(call: Call<Void>, t: Throwable) {
                     Dlog().d(t.toString())
@@ -136,7 +156,15 @@ class InviteBeeActivity : AppCompatActivity(), View.OnClickListener{
                         400 -> {
                             val jsonObject = JSONObject(response.errorBody()!!.string())
                             val message = jsonObject.getString("message")
-                            showToast { message }
+                            val code = jsonObject.getInt("code")
+
+                            if (code == 172){
+                                // 이미 가입 완료 -> 가입되어 있는 main 이동
+                                gotoMain()
+                                showToast { message }
+                            } else {
+                                showToast { message }
+                            }
                         }
 
                         500 -> {
@@ -151,15 +179,24 @@ class InviteBeeActivity : AppCompatActivity(), View.OnClickListener{
     }
 
     private fun gotoMain(){
-        val nextIntent = Intent(this, MainActivity::class.java)
-        startActivity(nextIntent)
-        finish()
+        startActivity(Intent(this, MainActivity::class.java)
+            .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+    }
+
+    private fun clickCloseInviteButton(){
+        if(accessToken == ""){
+            startActivity(
+                Intent(this, LoginActivity::class.java)
+                    .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            )
+        } else {
+            gotoBeforeJoin()
+        }
     }
 
     private fun gotoBeforeJoin(){
-        val nextIntent = Intent(this, BeforeJoinActivity::class.java)
-        startActivity(nextIntent)
-        finish()
+        startActivity(Intent(this, BeforeJoinActivity::class.java)
+            .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
     }
 
     companion object{
@@ -169,7 +206,7 @@ class InviteBeeActivity : AppCompatActivity(), View.OnClickListener{
     override fun onClick(v: View) {
         when(v.id){
             R.id.accept_invitebee_button -> getAccessToken()
-            R.id.close_inviteView_button -> gotoBeforeJoin()
+            R.id.close_inviteView_button -> clickCloseInviteButton()
         }
     }
 }

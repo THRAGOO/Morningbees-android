@@ -76,7 +76,8 @@
 
                 <RelativeLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
 
                     <ImageButton
                         android:id="@+id/jelly_2"
@@ -100,7 +101,8 @@
 
                 <RelativeLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
                     <ImageButton
                         android:id="@+id/jelly_3"
                         android:layout_width="25dp"
@@ -124,7 +126,8 @@
 
                 <RelativeLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
 
                     <ImageButton
                         android:id="@+id/jelly_4"
@@ -148,7 +151,8 @@
 
                 <RelativeLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
                     <ImageButton
                         android:id="@+id/jelly_5"
                         android:layout_width="25dp"
@@ -172,7 +176,8 @@
 
                 <RelativeLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
                     <ImageButton
                         android:id="@+id/jelly_6"
                         android:layout_width="25dp"
@@ -195,7 +200,8 @@
 
                 <RelativeLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
 
                     <ImageButton
                         android:id="@+id/jelly_7"
@@ -220,7 +226,8 @@
 
                 <RelativeLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
                     <ImageButton
                         android:id="@+id/jelly_8"
                         android:layout_width="25dp"
@@ -244,7 +251,8 @@
 
                 <RelativeLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
 
                     <ImageButton
                         android:id="@+id/jelly_9"
@@ -270,14 +278,15 @@
 
                 <RelativeLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
 
                     <ImageButton
                         android:id="@+id/jelly_10"
                         android:layout_width="25dp"
                         android:layout_height="25dp"
                         android:layout_marginStart="5dp"
-                        android:layout_marginEnd="11dp"
+                        android:layout_marginEnd="5dp"
                         android:background="#00000000"
                         android:src="@drawable/jelly_button_selector"/>
                     <TextView
