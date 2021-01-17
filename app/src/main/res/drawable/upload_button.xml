@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <size android:layout_width="100dp" android:height="18dp"/>
+            <solid android:color="#f2f2f2"/>
+        </shape>
+    </item>
+    <item
+        android:drawable="@drawable/icon_reload"
+        android:gravity="start"
+        android:width="17dp"
+        android:height="18dp">
+    </item>
+</layer-list>

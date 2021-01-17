@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Morningbees</string>
+    <!--<string name="google_server_client_id">804125796572-5sg3l25b8km7c9j6vb57c3s6n6199s3i.apps.googleusercontent.com</string>-->
     <string name="google_server_client_id">507544410589-i91g22cbu6o6dpaukd8e4jo761k4js6v.apps.googleusercontent.com</string>
     <string name="naver_oauth_client_secret">NOIcUU6bcT</string>
     <string name="naver_oauth_client_id">5ZQIXFnwSx2XDv1Xcvpz</string>
@@ -17,4 +18,22 @@
     <string name="google">google</string>
     <string name="naver">naver</string>
     <string name="beename_text">X자 이내로 입력해주세요.</string>
+    <string name="today_mission_photo">오늘의 미션사진</string>
+    <string name="past_mission_photo">과거의 미션사진</string>
+    <string name="future_mission_photo">미래의 미션사진</string>
+    <string name="today_mission">오늘의 미션</string>
+    <string name="past_mission">과거의 미션</string>
+    <string name="future_mission">미래의 미션</string>
+    <string name="no_registered_bee">가입된 bee가 없습니다.</string>
+    <string name="tomorrow_mission_desc_text">자정 이후에/n공개됩니다.</string>
+    <string name="need_to_register_mission">미션을 등록해주세요.</string>
+    <string name="no_exist_mission">아직 미션이 등록되지 않았습니다.</string>
+    <string name="dismantle_bee">모임 해체하기</string>
+    <string name="withdrawal_bee">모임 탈퇴하기</string>
+    <string name="mission_time">미션 시간</string>
+    <string name="total_bee_member">전체 꿀벌</string>
+    <string name="royal_jelly">로얄젤리</string>
+    <string name="bee_member_list">꿀벌 목록</string>
+    <string name="copy_invite_link">+ 초대 링크 복사</string>
+    <string name="export_from_bee">강퇴하기</string>
 </resources>

@@ -13,4 +13,19 @@
     <color name="clock_8_button">#FBC932</color>
     <color name="clock_9_button">#F29F06</color>
     <color name="clock_10_button">#EE8007</color>
+
+    <color name="nomalColor">#E5E5E5</color>
+
+    <color name="undefinedButtonColor">#f6f5f2</color>
+    <color name="white">#ffffff</color>
+
+    <color name="not_upload_img_recyclerview_color">#4ca0a0a0</color>
+
+    <color name="active_mission_create_button">#F6CD00</color>
+    <color name="deactive_mission_create_button">#CCCCCC</color>
+
+    <color name="mainStatusBarColor">#fffae9</color>
+    <color name="signInStatusBarColor">#efc227</color>
+    
+    <color name="transparent">#00ff0000</color>
 </resources>

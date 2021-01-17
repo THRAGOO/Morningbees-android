@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="60dp">
+
+    <View
+        android:id="@+id/viewBeeMemberForManager"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#E5E5E5" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_below="@id/viewBeeMemberForManager">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/background_item_bee_member_button">
+
+            <TextView
+                android:id="@+id/itemBeeMemberSwipeButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|center_vertical"
+                android:text="@string/export_from_bee"
+                android:textColor="#ffffff"
+                android:layout_marginStart="23dp"
+                android:layout_marginEnd="23dp"/>
+        </FrameLayout>
+
+        <RelativeLayout
+            android:id="@+id/itemBeeMemberSwipeView"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@drawable/background_item_bee_member">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="12dp">
+
+                <ImageView
+                    android:id="@+id/itemBeeMemberProfileForManager"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_marginEnd="12dp" />
+
+                <TextView
+                    android:id="@+id/itemBeeMemberNicknameForManager"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toEndOf="@id/itemBeeMemberProfileForManager"
+                    android:textColor="#222222"
+                    android:textSize="15dp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/itemBeeMemberManagerForManager"
+                    android:layout_width="20dp"
+                    android:layout_height="18dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true" />
+            </RelativeLayout>
+        </RelativeLayout>
+    </FrameLayout>
+</RelativeLayout>

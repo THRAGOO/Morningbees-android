@@ -1,23 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <rotate xmlns:android="http://schemas.android.com/apk/res/android"
-android:fromDegrees="90"
-android:pivotX="50%"
-android:pivotY="50%"
-android:toDegrees="90">
-<vector
-    android:height="24dp"
-    android:viewportHeight="235.0"
-    android:viewportWidth="248.0"
-    android:width="27dp"
-    android:tint="@color/selector_clock_6_color"
-    android:tintMode="multiply"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    android:fromDegrees="90"
+    android:pivotX="50%"
+    android:pivotY="50%"
+    android:toDegrees="90">
+    <vector
+        android:height="66dp"
+        android:width="66dp"
+        android:viewportHeight="240.0"
+        android:viewportWidth="240.0"
+        android:tint="@color/selector_clock_6_color"
+        android:tintMode="multiply"
+        xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <path
-        android:fillColor="@color/round_button"
-        android:pathData="M237.581,128.273C241.244,121.558 241.244,113.442 237.581,106.727L189.943,19.38C186.001,12.151 178.424,7.654 170.19,7.654L77.81,7.654C69.576,7.654 61.999,12.151 58.057,19.38L10.419,106.727C6.756,113.442 6.756,121.558 10.419,128.273L58.057,215.62C61.999,222.849 69.576,227.346 77.81,227.346L170.19,227.346C178.424,227.346 186.001,222.849 189.943,215.62L237.581,128.273Z"
+        <path
+            android:fillColor="@color/round_button"
+            android:pathData="M230.359,137.849C237.277,125.165 237.277,109.835 230.359,97.151L193.628,29.804C186.181,16.15 171.87,7.654 156.317,7.654L87.683,7.654C72.13,7.654 57.819,16.15 50.372,29.804L13.641,97.151C6.723,109.835 6.723,125.165 13.641,137.849L50.372,205.196C57.819,218.85 72.13,227.346 87.683,227.346L156.317,227.346C171.87,227.346 186.181,218.85 193.628,205.196L230.359,137.849Z" />
 
-        />
-</vector>
+    </vector>
 </rotate>
