@@ -1,7 +1,7 @@
 package com.jasen.kimjaeseung.morningbees.util
 
 import android.util.Log
-import com.jasen.kimjaeseung.morningbees.GlobalApp
+import com.jasen.kimjaeseung.morningbees.app.GlobalApp
 import java.lang.StringBuilder
 
 class Dlog { //for log in debug mode

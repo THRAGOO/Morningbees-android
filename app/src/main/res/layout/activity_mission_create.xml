@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#ffffff">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/missionCreateCancelButton"
+            android:layout_width="12dp"
+            android:layout_height="19dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="11dp"
+            android:layout_marginBottom="12dp"
+            android:adjustViewBounds="true"
+            android:background="#00ff0000"
+            android:scaleType="fitCenter"
+            android:src="@drawable/icon_arrow_left_back" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="미션 등록"
+            android:textSize="17dp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/missionCreateRegisterButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:background="#00ff0000"
+            android:text="완료"
+            android:textColor="#CCCCCC"
+            android:textSize="17dp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="27dp"
+        android:background="#E5E5E5" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginBottom="16dp"
+        android:text="소개 "
+        android:textColor="#444444"
+        android:textSize="15dp" />
+
+    <EditText
+        android:id="@+id/missionDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="52dp"
+        android:backgroundTint="#dddddd"
+        android:hint="2~10자 이내로 입력해 주세요."
+        android:maxLength="10"
+        android:textColor="#444444"
+        android:theme="@style/EditTheme" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginBottom="21dp"
+        android:text="사진 업로드"
+        android:textColor="#444444"
+        android:textSize="15dp" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="120dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RelativeLayout
+                android:id="@+id/missionImageUploadWrapLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="150dp"
+                android:layout_centerInParent="true">
+
+                <Button
+                    android:id="@+id/takePictureButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="24dp"
+                    android:background="@drawable/take_picture_button"
+                    android:paddingTop="50dp"
+                    android:stateListAnimator="@null"
+                    android:text="사진찍기"
+                    android:textColor="#aaaaaa" />
+
+                <Button
+                    android:id="@+id/getGalleryButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_toEndOf="@id/takePictureButton"
+                    android:background="@drawable/gallery_picture_button"
+                    android:paddingTop="50dp"
+                    android:stateListAnimator="@null"
+                    android:text="갤러리에서\n가져오기"
+                    android:textColor="#aaaaaa" />
+            </RelativeLayout>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/missionLoadWrapLayout"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:layout_marginStart="24dp">
+
+            <ImageView
+                android:id="@+id/loadMissionView"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_marginEnd="15dp"
+                android:background="@drawable/round_upload_img_view" />
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="120dp"
+                android:layout_toEndOf="@id/loadMissionView">
+
+                <ImageView
+                    android:id="@+id/reloadMissionIcon"
+                    android:layout_width="17dp"
+                    android:layout_height="18dp"
+                    android:layout_alignParentBottom="true"
+                    android:adjustViewBounds="true"
+                    android:background="@drawable/icon_reload"
+                    android:scaleType="fitCenter" />
+
+                <Button
+                    android:id="@+id/reloadMissionButton"
+                    android:layout_width="100dp"
+                    android:layout_height="18dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginStart="7dp"
+                    android:background="#00ff0000"
+                    android:text="다시 올리기"
+                    android:textColor="#AAAAAA"
+                    android:textSize="14dp" />
+            </RelativeLayout>
+        </RelativeLayout>
+    </FrameLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="63dp"
+        android:text="난이도 설정"
+        android:textColor="#444444"
+        android:textSize="15sp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="16dp"
+        android:text="설정값에 따라 로얄젤리 액수가 달라집니다."
+        android:textColor="#AAAAAA"
+        android:textSize="13sp" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:padding="10dp">
+
+        <ImageView
+            android:id="@+id/difficultyBackground"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:src="@drawable/difficulty_round_img_view" />
+
+        <LinearLayout
+            android:id="@+id/difficultyButtonWrapLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="2dp"
+            android:weightSum="3">
+
+                <RelativeLayout
+                    android:id="@+id/hardButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/difficulty_unselected_button"
+                    android:adjustViewBounds="true"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/hardText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="25dp"
+                        android:layout_marginBottom="5dp"
+                        android:text="상"
+                        android:textSize="16dp"
+                        android:textStyle="bold"
+                        android:textColor="#cccccc"/>
+
+                    <TextView
+                        android:id="@+id/hardPriceText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/hardText"
+                        android:layout_centerHorizontal="true"
+                        android:text="-1,000"
+                        android:textColor="#cccccc"/>
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/normalButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/difficulty_unselected_button"
+                    android:adjustViewBounds="true"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/normalText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="25dp"
+                        android:layout_marginBottom="5dp"
+                        android:text="중"
+                        android:textSize="16dp"
+                        android:textStyle="bold"
+                        android:textColor="#cccccc"/>
+
+                    <TextView
+                        android:id="@+id/normalPriceButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/normalText"
+                        android:layout_centerHorizontal="true"
+                        android:text="기본값"
+                        android:textColor="#cccccc"/>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/easyButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/difficulty_unselected_button"
+                    android:adjustViewBounds="true"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/easyText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="25dp"
+                        android:layout_marginBottom="5dp"
+                        android:text="하"
+                        android:textSize="16dp"
+                        android:textStyle="bold"
+                        android:textColor="#cccccc"/>
+
+                    <TextView
+                        android:id="@+id/easyPriceText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/easyText"
+                        android:layout_centerHorizontal="true"
+                        android:text="+1,000원"
+                        android:textColor="#cccccc"/>
+                </RelativeLayout>
+        </LinearLayout>
+    </FrameLayout>
+</LinearLayout>

@@ -1,4 +1,4 @@
-package com.jasen.kimjaeseung.morningbees.main
+package com.jasen.kimjaeseung.morningbees.signup
 
 import android.content.Context
 import android.content.Intent
@@ -8,26 +8,34 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.mvp.BaseActivity
-import com.jasen.kimjaeseung.morningbees.signup.SignUpContract
-import com.jasen.kimjaeseung.morningbees.signup.SignUpPresenter
 import com.jasen.kimjaeseung.morningbees.util.showToast
 import kotlinx.android.synthetic.main.activity_signup.*
 import android.widget.Toast
-import com.jasen.kimjaeseung.morningbees.createbee.CreateStep1Activity
-import com.jasen.kimjaeseung.morningbees.signup.model.SignUpRequest
+import com.jasen.kimjaeseung.morningbees.app.GlobalApp
+import com.jasen.kimjaeseung.morningbees.beforejoin.BeforeJoinActivity
+import com.jasen.kimjaeseung.morningbees.login.LoginActivity
+import com.jasen.kimjaeseung.morningbees.main.MainActivity
+import com.jasen.kimjaeseung.morningbees.model.signup.SignUpRequest
+import com.jasen.kimjaeseung.morningbees.util.GlideApp
 import java.util.regex.Pattern
 
-
 class SignUpActivity : BaseActivity(), SignUpContract.View, View.OnClickListener {
-    private lateinit var signupPresenter : SignUpPresenter
+    private lateinit var signUpPresenter : SignUpPresenter
+//    private var beeId : Int = 0
+    private var socialAccessToken : String = ""
+    private var provider: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "onCreate callback")
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_signup)
+
+        socialAccessToken = intent.getStringExtra("socialAccessToken")
+        provider = intent.getStringExtra("provider")
+
         initButtonListeners()
-        signupPresenter.takeView(this)
+        signUpPresenter.takeView(this)
     }
 
     override fun onStart() {
@@ -37,11 +45,11 @@ class SignUpActivity : BaseActivity(), SignUpContract.View, View.OnClickListener
 
     override fun onDestroy() {
         super.onDestroy()
-        //signupPresenter.dropView()
+        signUpPresenter.dropView()
     }
 
     override fun initPresenter(){
-        signupPresenter = SignUpPresenter(this)
+        signUpPresenter = SignUpPresenter(this)
     }
 
     private fun initButtonListeners(){
@@ -50,10 +58,9 @@ class SignUpActivity : BaseActivity(), SignUpContract.View, View.OnClickListener
     }
 
     override fun onClick(v: View) {
-        val i = v.id
-        when(i){
+        when(v.id){
             R.id.signup_nickname_check_button -> nicknameCheck()
-            R.id.signup_start_button -> signupStart()
+            R.id.signup_start_button -> signUpStart()
         }
     }
 
@@ -61,11 +68,11 @@ class SignUpActivity : BaseActivity(), SignUpContract.View, View.OnClickListener
         signup_nickname_check_button.setOnClickListener{
             val usrNickname = signup_nickname_text.text.toString()
 
-            CloseKeyboard()
+            closeKeyboard()
             val filteredNickname = nicknameFilter(usrNickname)
 
             if(filteredNickname != "")
-                signupPresenter.nameValidMorningbeesServer(filteredNickname)
+                signUpPresenter.nameValidMorningbeesServer(filteredNickname)
         }
     }
 
@@ -80,29 +87,18 @@ class SignUpActivity : BaseActivity(), SignUpContract.View, View.OnClickListener
         }
     }
 
-    private fun signupStart(){
-        CloseKeyboard()
-
+    private fun signUpStart(){
+        closeKeyboard()
         when{
-            !signupPresenter.validCheck -> {
+            !signUpPresenter.validCheck -> {
                 Log.d(TAG, "need validcheck")
                 showToast { getString(R.string.no_nickname_duplicate_check) }
             }
 
-            signupPresenter.validCheck -> {
-                val IntentSocialAccessToken: String? = intent.getStringExtra("socialAccessToken")
-                val IntentProvider: String? = intent.getStringExtra("provider")
-
-                if (IntentSocialAccessToken == null || IntentProvider == null) {
-                    Log.d(TAG, "need intent value from signInActivity")
-                    showToast{getString(R.string.social_login_recheck)}
-
-                } else {
-                    signupPresenter.signUpMorningbeesServer(
-                        SignUpRequest(IntentSocialAccessToken,IntentProvider,signupPresenter.mNickname)
-                    )
-                    Log.d(TAG, signupPresenter.mNickname)
-                }
+            signUpPresenter.validCheck -> {
+                signUpPresenter.signUpMorningbeesServer(
+                    SignUpRequest(socialAccessToken, provider, signUpPresenter.mNickname)
+                )
             }
         }
     }
@@ -112,8 +108,8 @@ class SignUpActivity : BaseActivity(), SignUpContract.View, View.OnClickListener
     }
 
     private fun nicknameFilter(source: String): String {
-        when {
-            source.length in 2..10 -> {
+        when (source.length) {
+            in 2..10 -> {
                 val ps: Pattern =
                     Pattern.compile("^[a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ\\u318D\\u119E\\u11A2\\u2022\\u2025a\\u00B7\\uFE55]+$")
 
@@ -132,17 +128,27 @@ class SignUpActivity : BaseActivity(), SignUpContract.View, View.OnClickListener
         }
     }
 
-    override fun gotoMain(accessToken : String, refreshToken : String) {
-        val nextIntent = Intent(this, CreateStep1Activity::class.java)
-
-        nextIntent.putExtra("accessToken", accessToken)
-        nextIntent.putExtra("refreshToken", refreshToken)
-
-        startActivity(nextIntent)
+    override fun gotoBeforeJoin(){
+        startActivity(
+            Intent(this,BeforeJoinActivity::class.java)
+        )
     }
 
+    override fun gotoMain(){
+        startActivity(
+            Intent(this, MainActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        )
+    }
 
-    private fun CloseKeyboard() {
+    override fun gotoLogOut(){
+        startActivity(
+            Intent(this, LoginActivity::class.java)
+                .putExtra("RequestLogOut", "")
+                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        )
+    }
+
+    private fun closeKeyboard() {
         val view = this.currentFocus
 
         if (view != null) {
@@ -152,6 +158,9 @@ class SignUpActivity : BaseActivity(), SignUpContract.View, View.OnClickListener
         }
     }
 
+    override fun finish(){
+        finish()
+    }
 
     companion object {
         private const val TAG = "SignUpActivity"

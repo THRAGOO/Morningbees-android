@@ -6,7 +6,7 @@
     xmlns:src="http://schemas.android.com/tools">
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_marginTop="35dp"
@@ -22,20 +22,11 @@
                 android:id="@+id/go_back_step1_button"
                 android:layout_width="12dp"
                 android:layout_height="20dp"
-                android:src="@drawable/arrow_left"
+                android:src="@drawable/icon_arrow_left_back"
                 android:padding="0sp"
                 android:scaleType="fitCenter"
-                android:layout_alignParentStart="true"/>
-
-            <ImageButton
-                android:id="@+id/info_step2_button"
-                android:layout_width="20dp"
-                android:layout_height="wrap_content"
-                app:srcCompat="@drawable/icon_info"
-                android:padding="0sp"
-                android:scaleType="fitCenter"
-                android:layout_alignParentEnd="true"
-                />
+                android:layout_alignParentStart="true"
+                android:background="#00ff0000"/>
         </RelativeLayout>
 
         <LinearLayout
@@ -75,49 +66,52 @@
 
                 <Button
                     android:id="@+id/clock_6_button"
-                    android:layout_width="54dp"
-                    android:layout_height="54dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:background="@drawable/clock_6_custom_button"
                     android:layout_marginEnd="6dp"
-                    android:padding="0sp"
                     android:scaleType="fitCenter"
-                    android:text="6"/>
+                    android:text="6"
+                    android:layout_weight="1"/>
 
                 <Button
                     android:id="@+id/clock_7_button"
-                    android:layout_width="54dp"
-                    android:layout_height="54dp"
-                    android:background="@drawable/clock_7_custom_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_marginEnd="6dp"
-                    android:text="7"/>
+                    android:background="@drawable/clock_7_custom_button"
+                    android:gravity="center"
+                    android:text="7"
+                    android:layout_weight="1"/>
 
                 <Button
                     android:id="@+id/clock_8_button"
-                    android:layout_width="54dp"
-                    android:layout_height="54dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_marginEnd="6dp"
                     android:background="@drawable/clock_8_custom_button"
-                    android:text="8"/>
+                    android:text="8"
+                    android:layout_weight="1"/>
 
                 <Button
                     android:id="@+id/clock_9_button"
-                    android:layout_width="54dp"
-                    android:layout_height="54dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:background="@drawable/clock_9_custom_button"
                     android:layout_marginEnd="6dp"
-                    android:text="9"/>
+                    android:text="9"
+                    android:layout_weight="1"/>
 
                 <Button
                     android:id="@+id/clock_10_button"
-                    android:layout_width="54dp"
-                    android:layout_height="54dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:background="@drawable/clock_10_custom_button"
-                    android:text="10"/>
-
+                    android:textAlignment="center"
+                    android:text="10"
+                    android:layout_weight="1"/>
             </LinearLayout>
-
         </LinearLayout>
-
     </LinearLayout>
 
     <Button
@@ -125,10 +119,10 @@
         android:text="다음 2/3"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:textColor="#222222"
         android:textSize="15sp"
         android:textAlignment="center"
         android:letterSpacing="0.02"
+        android:textColor="#aaaaaa"
         android:background="@drawable/selector_custom_button"
         android:layout_alignParentBottom="true"
         />

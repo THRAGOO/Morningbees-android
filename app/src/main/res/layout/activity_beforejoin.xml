@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/wrap_icon_illust">
+
+            <ImageButton
+                android:layout_width="20dp"
+                android:layout_height="21dp"
+                android:id="@+id/icon_notification_before_joining_Button"
+                android:src="@drawable/icon_notification"
+                android:padding="0sp"
+                android:scaleType="fitCenter"
+
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="24dp"
+                android:layout_marginTop="34dp"
+                android:layout_marginBottom="33dp"/>
+
+            <ImageView
+                android:layout_width="238dp"
+                android:layout_height="238dp"
+                android:id="@+id/illust_before_joining_ImageView"
+                android:src="@drawable/illust_before_joining"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="32dp"
+                android:layout_below="@id/icon_notification_before_joining_Button" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/wrap_icon_illust">
+
+            <TextView
+                android:id="@+id/before_joining_textview1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:text="회원님은 Bee에\n소속되어 있지 않습니다."
+                android:textSize="22dp"
+                android:textColor="#222222"
+                android:gravity="center_horizontal"
+                android:layout_marginBottom="22dp"/>
+
+            <TextView
+                android:id="@+id/before_joining_textview2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/before_joining_textview1"
+                android:layout_marginBottom="34dp"
+                android:lineHeight="22dp"
+                android:text="Bee(모임)을 만들어 여왕벌이 되거나\n여왕벌에게 초대를 부탁하세요! "
+                android:gravity="center_horizontal"
+                android:layout_centerHorizontal="true"/>
+
+
+    </RelativeLayout>
+        <Button
+            android:layout_alignParentBottom="true"
+            android:id="@+id/accept_beecreate_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/radius_button_selector"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="88dp"
+            android:text="BEE 만들기 "/>
+    </RelativeLayout>
+
+</LinearLayout>
