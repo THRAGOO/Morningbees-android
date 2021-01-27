@@ -87,7 +87,8 @@ interface MorningBeesService {
         @Part("beeId") beeId: Int,
         @Part("description") description : String,
         @Part("type") type : Int,
-        @Part("difficulty") difficulty : Int
+        @Part("difficulty") difficulty : Int,
+        @Part("targetDate") targetDate: String
     ): Call<Void>
 
     @GET("/api/main")

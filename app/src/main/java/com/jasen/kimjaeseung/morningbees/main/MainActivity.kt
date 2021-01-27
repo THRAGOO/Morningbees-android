@@ -5,9 +5,7 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Color
-import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -23,20 +21,23 @@ import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.MultiTransformation
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.gson.JsonObject
 import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.app.GlobalApp
-import com.jasen.kimjaeseung.morningbees.model.me.MeResponse
 import com.jasen.kimjaeseung.morningbees.calendar.CalendarDialog
 import com.jasen.kimjaeseung.morningbees.login.LoginActivity
 import com.jasen.kimjaeseung.morningbees.missioncreate.MissionCreateActivity
 import com.jasen.kimjaeseung.morningbees.missionparticipate.MissionParticipateActivity
 import com.jasen.kimjaeseung.morningbees.model.main.MainResponse
+import com.jasen.kimjaeseung.morningbees.model.me.MeResponse
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import com.jasen.kimjaeseung.morningbees.setting.SettingActivity
+import com.jasen.kimjaeseung.morningbees.util.Dlog
+import com.jasen.kimjaeseung.morningbees.util.showToast
 import jp.wasabeef.glide.transformations.BlurTransformation
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_mission_participate.view.*
@@ -44,14 +45,13 @@ import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
-import java.util.*
-import com.jasen.kimjaeseung.morningbees.util.*
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.*
 
 // MARK:~ Sign Up (코틀린 룰 찾아보기)
 // 주석이 필요한 이유
@@ -112,7 +112,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         return SimpleDateFormat("yyyy-MM-dd").format(this)
     }
 
-    fun Date.toString(type: String): String {
+    fun LocalDate.toString(type: String): String {
         return SimpleDateFormat(type).format(this)
     }
 
@@ -182,8 +182,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
                             // missionsResponse
                             if (missionsResponse == null || missionsResponse.size() == 0) {
-                                // Not Exist Mission
-                                Log.d(TAG, "todayDate: $todayDate")
+
                                 when {
                                     todayDate == targetDate -> {
                                         targetDateMissionText.text =
@@ -213,13 +212,14 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                                     val missionId = missionItem.get("missionId").asInt
                                     val imageUrl = missionItem.get("imageUrl").asString
                                     val type = missionItem.get("type").asInt
-                                    val createdAt = missionItem.get("createdAt").asString
                                     val nickname = missionItem.get("nickname").asString
+                                    val missionTitle = missionItem.get("missionTitle").asString
 
                                     if (type == 2) {
                                         urlList.add(imageUrl)
                                         if (nickname == myNickname) {
                                             isParticipateMission = true
+                                            goMissionParticipateButton.visibility = View.INVISIBLE
                                         }
                                     }
 
@@ -230,6 +230,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                                                     getString(R.string.today_mission_photo)
                                                 missionTargetDateText.text =
                                                     getString(R.string.today_mission)
+                                                missionDescriptionText.text = missionTitle
                                                 applyImageUrl(imageUrl)
                                                 setLayoutToMission(EXIST_MISSION)
                                             }
@@ -239,6 +240,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                                                     getString(R.string.past_mission_photo)
                                                 missionTargetDateText.text =
                                                     getString(R.string.past_mission_photo)
+
+                                                missionDescriptionText.text =
+                                                    missionItem.get("missionTitle").asString
                                                 applyImageUrl(imageUrl)
                                                 setLayoutToMission(EXIST_PAST_MISSION)
                                             }
@@ -251,18 +255,19 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                                                 missionDescriptionText.text =
                                                     getString(R.string.tomorrow_mission_desc_text)
 
-                                                val multi = MultiTransformation<Bitmap>(
-                                                    BlurTransformation(25),
-                                                    RoundedCorners(30)
-                                                )
-
                                                 Glide.with(this@MainActivity)
                                                     .load(imageUrl)
-                                                    .centerCrop()
-                                                    .apply(RequestOptions.bitmapTransform(multi))
-                                                    .override(312, 400)
+                                                    .apply(RequestOptions().override(312, 400))
+                                                    .transform(
+                                                        MultiTransformation(
+                                                            CenterCrop(),
+                                                            RoundedCorners(30),
+                                                            BlurTransformation(40)
+                                                        )
+                                                    )
                                                     .error(R.drawable.not_upload_mission_img_view)
                                                     .into(missionImage)
+
                                                 setLayoutToMission(EXIST_FUTURE_MISSION)
                                             }
                                         }
@@ -289,18 +294,21 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
                             when {
                                 todayDate == targetDate -> {
-                                    targetDateMissionText.text = getString(R.string.today_mission_photo)
+                                    targetDateMissionText.text =
+                                        getString(R.string.today_mission_photo)
                                     applyImageUrl(null)
                                     setLayoutToMission(NOT_EXIST_MISSION)
                                 }
 
                                 todayDate > targetDate -> {
-                                    targetDateMissionText.text = getString(R.string.past_mission_photo)
+                                    targetDateMissionText.text =
+                                        getString(R.string.past_mission_photo)
                                     setLayoutToMission(NOT_EXIST_PAST_MISSION)
                                 }
 
                                 todayDate < targetDate -> {
-                                    targetDateMissionText.text = getString(R.string.future_mission_photo)
+                                    targetDateMissionText.text =
+                                        getString(R.string.future_mission_photo)
                                     setLayoutToMission(NOT_EXIST_FUTURE_MISSION)
                                 }
                             }
@@ -342,8 +350,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
         setDifficulty(difficulty)
 
-        missionTimeDefinedWrapLayout.visibility = View.VISIBLE
-        missionTimeUnDefinedWrapLayout.visibility = View.INVISIBLE
+        setMissionTimeImage(
+            beeInfoResponse.get("startTime").toString(),
+            beeInfoResponse.get("endTime").toString()
+        )
+
         missionStartTimeText.text = beeInfoResponse.get("startTime").toString()
         missionEndTimeText.text = beeInfoResponse.get("endTime").toString()
 
@@ -355,9 +366,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         totalJelly.text = " ${beeInfoResponse.get("totalPenalty")}원"
 
         val todayProfileImage =
-            beeInfoResponse.get("todayQuestioner").asJsonObject.get("profileImage").toString()
-        val nextProfileImage =
-            beeInfoResponse.get("nextQuestioner").asJsonObject.get("profileImage").toString()
+            beeInfoResponse.get("todayQuestioner").asJsonObject.get("profileImage").asString
 
         todayBee = beeInfoResponse.get("todayQuestioner").asJsonObject.get("nickname").toString()
             .replace("\"", "")
@@ -366,29 +375,53 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         nextBee = beeInfoResponse.get("nextQuestioner").asJsonObject.get("nickname").toString()
             .replace("\"", "")
 
-        Glide.with(this)
+        Glide.with(this@MainActivity)
             .load(todayProfileImage)
             .centerCrop()
-            .circleCrop()
-//            .apply(RequestOptions.bitmapTransform(RoundedCorners(100)))
-            .override(45, 45)
-//            .error(R.drawable.round_today_bee_img)
             .into(todayQuestionerImage)
+    }
 
-        Glide.with(this)
-            .load(nextProfileImage)
-            .centerCrop()
-            .circleCrop()
-//            .apply(RequestOptions.bitmapTransform(RoundedCorners(100)))
-            .override(30, 30)
-//            .error(R.drawable.round_next_bee_img)
-            .into(nextQuestionerImage)
+    private fun setMissionTimeImage(_startTime: String, _endTime: String) {
+        missionTimeDefinedWrapLayout.visibility = View.VISIBLE
+        missionTimeUnDefinedWrapLayout.visibility = View.INVISIBLE
+
+        val current = LocalDateTime.now()
+
+        var startTime = _startTime
+        var endTime = _endTime
+        if (_startTime == "10")
+            startTime += ":00:00"
+        else
+            startTime = "0$_startTime:00:00"
+
+        if (_endTime == "10")
+            endTime += ":00:00"
+        else
+            endTime = "0$_endTime:00:00"
+
+        val targetStart =
+            targetDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + " $startTime"
+        val targetEnd = targetDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + " $endTime"
+
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        val formattedTargetStart = LocalDateTime.parse(targetStart, formatter)
+        val formattedTargetEnd = LocalDateTime.parse(targetEnd, formatter)
+
+        if (current > formattedTargetStart && current < formattedTargetEnd) {
+            missionTime.background =
+                applicationContext.getDrawable(R.drawable.image_of_mission_time)
+            lottie.playAnimation()
+        } else {
+            missionTime.background =
+                applicationContext.getDrawable(R.drawable.image_outside_of_mission_time)
+        }
     }
 
     private fun setLayoutToMission(state: Int) {
         Log.d(TAG, "myNickname: $myNickname / todayBee: $todayBee")
         missionUploadWrapLayout.background = applicationContext.getDrawable(R.color.transparent)
         missionNotUploadWrapLayout.background = applicationContext.getDrawable(R.color.transparent)
+        Log.d(TAG, "isParticipateMission: $isParticipateMission")
         if (state == EXIST_MISSION) {
             if (myNickname == todayBee || isParticipateMission) { // or 이미 미션을 participate 한 경우
                 missionUploadWrapLayout.visibility = View.VISIBLE
@@ -451,13 +484,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     private fun applyImageUrl(imageUrl: String?) {
         Glide.with(this@MainActivity)
             .load(imageUrl)
-            .override(312, 400)
-            .centerCrop()
-            .apply(
-                RequestOptions.bitmapTransform(
-                    RoundedCorners(30)
-                )
-            )
+            .apply(RequestOptions().override(312, 400))
+            .transform(MultiTransformation(CenterCrop(), RoundedCorners(30)))
             .error(R.drawable.not_upload_mission_img_view)
             .into(missionImage)
     }
@@ -493,7 +521,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
                 targetDate = LocalDate.parse(hyphenTargetDate, DateTimeFormatter.ISO_DATE)
                 targetDateText.text = targetDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-                Log.d(TAG, "changeTargetDate() - targetDate: $targetDate")
                 urlList = mutableListOf()
                 requestMainApi()
             }
@@ -553,36 +580,34 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     // MARK:~ Mission Participate
 
     private fun participateMissionDialog() {
-        if (beeId == 0) {
-            showToast { getString(R.string.no_registered_bee) }
-        } else {
-            bottomSheetDialog = BottomSheetDialog(
-                this, R.style.BottomSheetDialogTheme
+
+
+        bottomSheetDialog = BottomSheetDialog(
+            this, R.style.BottomSheetDialogTheme
+        )
+
+        val bottomSheetView = LayoutInflater.from(applicationContext)
+            .inflate(
+                R.layout.activity_mission_participate,
+                findViewById(R.id.layout_mission_participate)
             )
 
-            val bottomSheetView = LayoutInflater.from(applicationContext)
-                .inflate(
-                    R.layout.activity_mission_participate,
-                    findViewById(R.id.layout_mission_participate)
-                )
+        bottomSheetDialog.setContentView(bottomSheetView)
+        bottomSheetDialog.show()
 
-            bottomSheetDialog.setContentView(bottomSheetView)
-            bottomSheetDialog.show()
+        chkPermission()
 
-            chkPermission()
+        bottomSheetView.pc_get_picture_btn.setOnClickListener(object : View.OnClickListener {
+            override fun onClick(p0: View?) {
+                gotoGallery()
+            }
+        })
 
-            bottomSheetView.pc_get_picture_btn.setOnClickListener(object : View.OnClickListener {
-                override fun onClick(p0: View?) {
-                    gotoGallery()
-                }
-            })
-
-            bottomSheetView.pc_take_picture_btn.setOnClickListener(object : View.OnClickListener {
-                override fun onClick(v: View) {
-                    gotoCamera()
-                }
-            })
-        }
+        bottomSheetView.pc_take_picture_btn.setOnClickListener(object : View.OnClickListener {
+            override fun onClick(v: View) {
+                gotoCamera()
+            }
+        })
     }
 
     private fun gotoGallery() {
@@ -616,9 +641,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun createImageFile(): File? {
-        val timestamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
-        val imageFileName = "morningbees"
-        val path = getExternalFilesDir(Environment.DIRECTORY_PICTURES)?.absolutePath
+        val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        val imageFileName = "morningbees_"
+
+        val path = Environment.getExternalStorageDirectory().absolutePath
         val storageDir = File(path)
 
         if (!storageDir.exists()) {
@@ -636,25 +662,19 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == PICK_FROM_ALBUM && resultCode == Activity.RESULT_OK && data != null && data.data != null) {
-            val selectedImageUri: Uri = data.data!!
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                val source = ImageDecoder.createSource(contentResolver, selectedImageUri)
-                val bitmap = ImageDecoder.decodeBitmap(source)
-                gotoMissionParticipate(bitmap)
-            } else {
-                val bitmap =
-                    MediaStore.Images.Media.getBitmap(this.contentResolver, selectedImageUri)
-                gotoMissionParticipate(bitmap)
-            }
+            val selectedImageUri = data.data!!
+            Log.d(TAG, "selectedImageUri: $selectedImageUri")
+            gotoMissionParticipate(selectedImageUri.toString(), PICK_FROM_ALBUM)
         } else if (requestCode == PICK_FROM_CAMERA && resultCode == Activity.RESULT_OK) {
-            val selectedImage = BitmapFactory.decodeFile(imageFile?.absolutePath)
-            bitmap = selectedImage
-            image = imageFile
-            gotoMissionParticipate(bitmap)
+            gotoMissionParticipate(imageFile?.absolutePath, PICK_FROM_CAMERA)
         } else if (requestCode == GO_TO_PARTICIPATE && resultCode == FINISH) {
+            Log.d(TAG, "finish")
             bottomSheetDialog.dismiss()
+            urlList = mutableListOf()
             requestMainApi()
+        } else if (requestCode == GO_TO_PARTICIPATE && resultCode == RELOAD) {
+            Log.d(TAG, "reload")
+            bottomSheetDialog.show()
         }
     }
 
@@ -697,7 +717,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-
     // MARK:~ Change Activity
 
     // MARK:~ Log out
@@ -712,18 +731,16 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     // MARK:~ Mission Participate
 
-    private fun gotoMissionParticipate(bitmap: Bitmap?) {
-        val intent = Intent(this, MissionParticipateActivity::class.java)
-        val stream = ByteArrayOutputStream()
-
-        if (bitmap != null) {
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
-            val byte: ByteArray = stream.toByteArray()
-            intent.putExtra("missionImage", byte)
-            intent.putExtra("beeId", beeId)
-            intent.putExtra("difficulty", difficulty)
-            startActivityForResult(intent, GO_TO_PARTICIPATE)
-        }
+    private fun gotoMissionParticipate(uri: String?, state: Int) {
+        startActivityForResult(
+            Intent(this, MissionParticipateActivity::class.java)
+                .putExtra("missionImage", uri)
+                .putExtra("state", state)
+                .putExtra(
+                    "targetDate",
+                    targetDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                ), GO_TO_PARTICIPATE
+        )
     }
 
     // MARK:~ Mission Create
@@ -732,8 +749,19 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         if (beeId == 0) {
             showToast { getString(R.string.no_registered_bee) }
         } else {
-            val nextIntent = Intent(this, MissionCreateActivity::class.java)
-            startActivity(nextIntent)
+            startActivityForResult(
+                Intent(this, MissionCreateActivity::class.java)
+                    .putExtra(
+                        "targetDate",
+                        targetDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                    )
+                    .putExtra("difficulty", difficulty)
+                    .putExtra(
+                        "targetDate",
+                        targetDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                    )
+                , GO_TO_PARTICIPATE
+            )
         }
     }
 
@@ -742,13 +770,16 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         private const val PICK_FROM_ALBUM = 1001
         private const val PICK_FROM_CAMERA = 1002
         private const val GO_TO_PARTICIPATE = 1003
-        private const val FINISH = 121
+
         private const val EXIST_MISSION = 1
         private const val NOT_EXIST_MISSION = 2
         private const val EXIST_FUTURE_MISSION = 3
         private const val NOT_EXIST_FUTURE_MISSION = 4
         private const val EXIST_PAST_MISSION = 5
         private const val NOT_EXIST_PAST_MISSION = 6
+
+        private const val RELOAD = 120
+        private const val FINISH = 121
         private const val TAG = "MainActivity"
     }
 }

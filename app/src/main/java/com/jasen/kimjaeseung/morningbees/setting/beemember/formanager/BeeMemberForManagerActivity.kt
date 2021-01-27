@@ -21,7 +21,6 @@ import com.jasen.kimjaeseung.morningbees.model.beemember.BeeMember
 import com.jasen.kimjaeseung.morningbees.model.beemember.BeeMemberResponse
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import com.jasen.kimjaeseung.morningbees.util.Dlog
-import com.jasen.kimjaeseung.morningbees.util.Singleton
 import com.jasen.kimjaeseung.morningbees.util.showToast
 import kotlinx.android.synthetic.main.activity_setting_bee_member_for_manager.*
 import kotlinx.android.synthetic.main.item_bee_member_for_manager.*

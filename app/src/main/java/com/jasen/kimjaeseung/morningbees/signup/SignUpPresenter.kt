@@ -6,15 +6,11 @@ import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.app.GlobalApp
 import com.jasen.kimjaeseung.morningbees.model.joinbee.JoinBeeRequest
 import com.jasen.kimjaeseung.morningbees.model.me.MeResponse
-import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import com.jasen.kimjaeseung.morningbees.model.namevalidationcheck.NameValidataionCheckResponse
 import com.jasen.kimjaeseung.morningbees.model.signup.SignUpRequest
 import com.jasen.kimjaeseung.morningbees.model.signup.SignUpResponse
-
+import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import com.jasen.kimjaeseung.morningbees.util.Dlog
-import com.jasen.kimjaeseung.morningbees.util.Singleton
-import com.jasen.kimjaeseung.morningbees.util.showToast
-
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback

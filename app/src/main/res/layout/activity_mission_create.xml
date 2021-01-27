@@ -195,16 +195,12 @@
         <LinearLayout
             android:id="@+id/difficultyButtonWrapLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="2dp"
-            android:weightSum="3">
+            android:layout_height="match_parent">
 
                 <RelativeLayout
                     android:id="@+id/hardButton"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:src="@drawable/difficulty_unselected_button"
-                    android:adjustViewBounds="true"
                     android:layout_weight="1">
 
                     <TextView
@@ -231,10 +227,8 @@
 
                 <RelativeLayout
                     android:id="@+id/normalButton"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:src="@drawable/difficulty_unselected_button"
-                    android:adjustViewBounds="true"
                     android:layout_weight="1">
 
                     <TextView
@@ -262,10 +256,8 @@
 
                 <RelativeLayout
                     android:id="@+id/easyButton"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:src="@drawable/difficulty_unselected_button"
-                    android:adjustViewBounds="true"
                     android:layout_weight="1">
 
                     <TextView

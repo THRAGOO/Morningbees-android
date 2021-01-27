@@ -3,34 +3,47 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ffffff"
-    >
-
-    <ImageView
-        android:id="@+id/login_beebackground"
+    android:background="#ffffff">
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="520dp"
-        android:adjustViewBounds="true"
-        android:background="#ffffff"
-        android:scaleType="fitXY"
-        android:src="@drawable/bg_signin_start"/>
+        android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/login_beeimage"
-        android:layout_marginTop="460dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_width="172dp"
-        android:layout_height="188dp"
-        android:scaleType="fitXY"
-        android:src="@drawable/bee" />
+        <ImageView
+            android:id="@+id/login_beebackground"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            android:src="@drawable/bg_signin"/>
+
+        <ImageView
+            android:id="@+id/login_beeimage"
+            android:layout_centerHorizontal="true"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:src="@drawable/bee"
+            android:layout_below="@id/login_beebackground"/>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scaleType="fitXY"
+            android:adjustViewBounds="true"
+            android:src="@drawable/bg_sign_in_white"
+            android:layout_marginTop="420dp" />
+
+    </RelativeLayout>
 
     <LinearLayout
         android:background="#ffffff"
-        android:layout_marginTop="520dp"
-        android:paddingTop="20dp"
+        android:paddingBottom="20dp"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom">
+
         <ImageView
             android:id="@+id/login_naver_sign_in_button"
             android:layout_width="match_parent"
@@ -48,10 +61,8 @@
             android:layout_marginTop="12dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
-            android:src="@drawable/btn_google"
-            />
+            android:src="@drawable/btn_google" />
     </LinearLayout>
-
 
     <TextView
         android:layout_width="wrap_content"
@@ -61,8 +72,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="109dp"
         android:textSize="15sp"
-        android:text="친구들과 함께하는 기상미션"
-        />
+        android:text="친구들과 함께하는 기상미션" />
 
     <ImageView
         android:layout_width="match_parent"

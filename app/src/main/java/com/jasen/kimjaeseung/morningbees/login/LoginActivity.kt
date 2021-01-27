@@ -3,8 +3,10 @@ package com.jasen.kimjaeseung.morningbees.login
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.util.Log
 import android.view.View
+import android.view.WindowManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -26,7 +28,6 @@ import com.jasen.kimjaeseung.morningbees.signup.SignUpActivity
 import com.jasen.kimjaeseung.morningbees.mvp.BaseActivity
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import com.jasen.kimjaeseung.morningbees.util.Dlog
-import com.jasen.kimjaeseung.morningbees.util.Singleton
 import com.jasen.kimjaeseung.morningbees.util.showToast
 
 import com.nhn.android.naverlogin.OAuthLogin
@@ -68,7 +69,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
 
         beeId = GlobalApp.prefsBeeInfo.beeId
 
-        if(intent.hasExtra("RequestLogOut")){
+        if (intent.hasExtra("RequestLogOut")) {
             signOut()
         }
     }
@@ -101,7 +102,11 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
     // MARK:~ View Design
 
     private fun initAnimation() {
-        login_beeimage.animate().translationY(-343f).duration = 500
+        val displayMetrics = DisplayMetrics()
+        windowManager.defaultDisplay.getMetrics(displayMetrics)
+        val translationY = displayMetrics.heightPixels * 0.25f
+
+        login_beeimage.animate().translationY(-translationY).duration = 500
     }
 
     // MARK:~ SNS Login Init
@@ -354,7 +359,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
                             alreadyJoin = meResponse?.alreadyJoin
                             GlobalApp.prefsBeeInfo.beeId = meResponse!!.beeId
                             beeId = meResponse.beeId
-                            Log.d(TAG,"beeId: $beeId")
+                            Log.d(TAG, "beeId: $beeId")
 
                             if (alreadyJoin == true) {
                                 Log.d(TAG, "already bee join")

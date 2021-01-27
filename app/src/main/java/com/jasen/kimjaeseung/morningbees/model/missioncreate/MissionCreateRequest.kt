@@ -5,8 +5,10 @@ import retrofit2.http.Multipart
 import java.io.File
 
 data class MissionCreateRequest(
-    val image : File,
-    val beeId : Int,
-    val description : String,
-    val type : Int,
-    val difficulty : Int) {}
+    val image: File,
+    val beeId: Int,
+    val description: String,
+    val type: Int,
+    val difficulty: Int,
+    val targetDate: String
+)

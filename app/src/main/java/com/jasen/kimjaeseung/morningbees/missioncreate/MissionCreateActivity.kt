@@ -40,6 +40,7 @@ import retrofit2.Response
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
+import java.time.LocalDate
 import java.util.*
 
 class MissionCreateActivity : AppCompatActivity(), View.OnClickListener {
@@ -50,6 +51,7 @@ class MissionCreateActivity : AppCompatActivity(), View.OnClickListener {
     var tempFile: File? = null     // 카메라로 찍은 사진 File (갤러리에 저장)
     var bitmap: Bitmap? = null     // 갤러리에서 가져온 사진 bitmap
     var image: File? = null        // 서버에 보낼 image data
+    var targetDate = ""
 
     // 앱이 카메라 권한을 가지고 있는지 확인하는 변수 ( 카메라 권한이 없다면 -1 반환 )
     private val permissionCheckCamera by lazy {
@@ -61,6 +63,7 @@ class MissionCreateActivity : AppCompatActivity(), View.OnClickListener {
         setContentView(R.layout.activity_mission_create)
 
         beeId = GlobalApp.prefsBeeInfo.beeId
+        targetDate = intent.getStringExtra("targetDate")
 
         initButtonListeners()
         initEditTextListeners()
@@ -167,8 +170,8 @@ class MissionCreateActivity : AppCompatActivity(), View.OnClickListener {
                 showToast { "미션 타이틀을 등록해주세요. " }
             }
             else -> {
-                val imageFile: File = image!!
-                val testImage: MultipartBody.Part = MultipartBody.Part.createFormData(
+                val imageFile = image!!
+                val testImage = MultipartBody.Part.createFormData(
                     "image",
                     imageFile.name,
                     imageFile.asRequestBody("image/*".toMediaTypeOrNull())
@@ -180,7 +183,8 @@ class MissionCreateActivity : AppCompatActivity(), View.OnClickListener {
                     beeId,
                     description,
                     1,
-                    difficulty
+                    difficulty,
+                    targetDate
                 )
                     .enqueue(object : Callback<Void> {
                         override fun onFailure(call: Call<Void>, t: Throwable) {
@@ -266,7 +270,7 @@ class MissionCreateActivity : AppCompatActivity(), View.OnClickListener {
         //외장 메모리 (sd card) 연결 여부 확인
         val state: String = Environment.getExternalStorageState()
         if (state != Environment.MEDIA_MOUNTED) {
-            Log.d(TAG, "SDcard is not mounted")
+            Log.d(TAG, "SD card is not mounted")
             return
         }
 
@@ -290,7 +294,7 @@ class MissionCreateActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun createImageFile(): File? {
-        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
         val imageFileName = "morningbees"
 
         // 외부 앱 전용 저장소
@@ -409,7 +413,8 @@ class MissionCreateActivity : AppCompatActivity(), View.OnClickListener {
                 easyPriceText.setTextColor(Color.parseColor("#cccccc"))
                 easyText.setTextColor(Color.parseColor("#cccccc"))
 
-                hardButton.elevation = 10f
+                hardButton.elevation = 5f
+//                hardButton.elevation = 0f
                 normalButton.elevation = 0f
                 easyButton.elevation = 0f
             }
@@ -432,7 +437,8 @@ class MissionCreateActivity : AppCompatActivity(), View.OnClickListener {
                 easyText.setTextColor(Color.parseColor("#cccccc"))
 
                 hardButton.elevation = 0f
-                normalButton.elevation = 10f
+                normalButton.elevation = 5f
+//                normalButton.elevation = 0f
                 easyButton.elevation = 0f
             }
             0 -> {
@@ -455,7 +461,8 @@ class MissionCreateActivity : AppCompatActivity(), View.OnClickListener {
 
                 hardButton.elevation = 0f
                 normalButton.elevation = 0f
-                easyButton.elevation = 10f
+                easyButton.elevation = 5f
+//                easyButton.elevation = 0f
             }
         }
         difficulty = mDifficulty

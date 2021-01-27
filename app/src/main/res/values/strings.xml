@@ -25,7 +25,7 @@
     <string name="past_mission">과거의 미션</string>
     <string name="future_mission">미래의 미션</string>
     <string name="no_registered_bee">가입된 bee가 없습니다.</string>
-    <string name="tomorrow_mission_desc_text">자정 이후에/n공개됩니다.</string>
+    <string name="tomorrow_mission_desc_text">자정 이후에 \n공개됩니다.</string>
     <string name="need_to_register_mission">미션을 등록해주세요.</string>
     <string name="no_exist_mission">아직 미션이 등록되지 않았습니다.</string>
     <string name="dismantle_bee">모임 해체하기</string>

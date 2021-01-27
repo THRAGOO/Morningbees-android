@@ -162,20 +162,19 @@
                 </RelativeLayout>
             </RelativeLayout>
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:layout_marginEnd="24dp"
-                android:layout_marginBottom="24dp">
+                android:layout_marginStart="38dp"
+                android:layout_marginEnd="38dp"
+                android:layout_marginBottom="24dp"
+                android:orientation="horizontal">
 
                 <RelativeLayout
                     android:id="@+id/missionTimeWrapLayout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_marginStart="13dp"
-                    android:layout_marginEnd="32dp">
+                    >
 
                     <TextView
                         android:id="@+id/missionTimeText"
@@ -189,7 +188,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="86dp"
                         android:layout_below="@id/missionTimeText"
-                        android:layout_alignParentStart="true"
                         android:layout_centerInParent="true"
                         android:layout_centerHorizontal="true">
 
@@ -204,17 +202,17 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content">
 
-                                <ImageView
+                                <com.airbnb.lottie.LottieAnimationView
+                                    android:id="@+id/lottie"
                                     android:layout_width="60dp"
                                     android:layout_height="60dp"
-                                    android:layout_centerInParent="true"
-                                    android:src="@drawable/mission_time_solid_img" />
+                                    app:lottie_fileName="Lottie_mission_time.json" />
 
                                 <ImageView
+                                    android:id="@+id/missionTime"
                                     android:layout_width="54dp"
                                     android:layout_height="54dp"
-                                    android:layout_centerInParent="true"
-                                    android:src="@drawable/mission_time_img" />
+                                    android:layout_centerInParent="true" />
 
                                 <RelativeLayout
                                     android:layout_width="wrap_content"
@@ -280,8 +278,8 @@
                     android:id="@+id/mainBarFirst"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="32dp"
-                    android:layout_toEndOf="@id/missionTimeWrapLayout">
+                    android:layout_toEndOf="@id/missionTimeWrapLayout"
+                    android:layout_weight="1">
 
                     <TextView
                         android:id="@+id/mainBarTextFirst"
@@ -308,8 +306,7 @@
                     android:id="@+id/todayQuestionerWrapLayout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="32dp"
-                    android:layout_toEndOf="@id/mainBarFirst">
+                    android:layout_weight="1">
 
                     <TextView
                         android:id="@+id/todayQuestionerText"
@@ -320,43 +317,18 @@
                         android:layout_marginBottom="17dp"
                         android:text="오늘의 꿀벌 " />
 
-                    <RelativeLayout
-                        android:id="@+id/todayQuestionerImageWrapLayout"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                    <ImageView
+                        android:id="@+id/todayQuestionerImage"
+                        android:layout_width="45dp"
+                        android:layout_height="45dp"
                         android:layout_below="@id/todayQuestionerText"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginBottom="6dp">
-
-                        <RelativeLayout
-                            android:layout_width="45dp"
-                            android:layout_height="45dp"
-                            android:layout_centerVertical="true">
-
-                            <ImageView
-                                android:id="@+id/todayQuestionerImage"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent" />
-                        </RelativeLayout>
-
-                        <RelativeLayout
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
-                            android:layout_centerVertical="true"
-                            android:layout_marginStart="30dp">
-
-                            <ImageView
-                                android:id="@+id/nextQuestionerImage"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent" />
-                        </RelativeLayout>
-                    </RelativeLayout>
+                        android:layout_centerInParent="true" />
 
                     <TextView
                         android:id="@+id/todayQuestionerNickname"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/todayQuestionerImageWrapLayout"
+                        android:layout_below="@id/todayQuestionerImage"
                         android:layout_centerHorizontal="true" />
 
                 </RelativeLayout>
@@ -365,13 +337,12 @@
                     android:id="@+id/mainBarSecond"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="32dp"
                     android:layout_toStartOf="@id/missionDifficultyWrapLayout"
-                    android:layout_toEndOf="@id/todayQuestionerWrapLayout">
+                    android:layout_weight="1">
 
                     <TextView
                         android:id="@+id/mainBarTextSecond"
-                        android:layout_width="1dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="11dp"
                         android:layout_centerHorizontal="true"
                         android:layout_marginBottom="11dp" />
@@ -393,9 +364,7 @@
                 <RelativeLayout
                     android:id="@+id/missionDifficultyWrapLayout"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginEnd="13dp">
+                    android:layout_height="wrap_content">
 
                     <TextView
                         android:id="@+id/missionDifficultyText"
@@ -450,7 +419,7 @@
                         </FrameLayout>
                     </RelativeLayout>
                 </RelativeLayout>
-            </RelativeLayout>
+            </LinearLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -494,24 +463,26 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <androidx.cardview.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                <RelativeLayout
                     android:id="@+id/missionNotUploadWrapLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginEnd="20dp"
-                    card_view:cardCornerRadius="30dp">
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:id="@+id/notUploadMissionImage"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginEnd="20dp"
+                        android:adjustViewBounds="true"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/not_upload_mission_img_view" />
 
                     <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:adjustViewBounds="true"
-                            android:scaleType="fitXY"
-                            android:src="@drawable/not_upload_mission_img_view" />
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginEnd="20dp">
 
                         <TextView
                             android:id="@+id/missionNotUploadText"
@@ -540,27 +511,39 @@
                                 android:src="@drawable/participate_in_mission" />
                         </RelativeLayout>
                     </RelativeLayout>
-                </androidx.cardview.widget.CardView>
+                </RelativeLayout>
 
-                <androidx.cardview.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                <RelativeLayout
                     android:id="@+id/missionUploadWrapLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginEnd="20dp"
-                    card_view:cardCornerRadius="30dp">
+                    android:layout_height="match_parent"
+                    android:visibility="invisible">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_centerInParent="true"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:adjustViewBounds="true"
+                        android:src="@drawable/shadow_mission_image" />
+
+                    <ImageView
+                        android:id="@+id/missionImage"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginEnd="20dp"
+                        android:adjustViewBounds="true"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/upload_mission_img_view" />
 
                     <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <ImageView
-                            android:id="@+id/missionImage"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:adjustViewBounds="true"
-                            android:scaleType="fitXY"
-                            android:src="@drawable/upload_mission_img_view" />
+                        android:layout_height="match_parent"
+                        android:layout_centerInParent="true"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginEnd="20dp">
 
                         <RelativeLayout
                             android:layout_width="wrap_content"
@@ -606,7 +589,7 @@
                                 android:src="@drawable/participate_in_mission" />
                         </RelativeLayout>
                     </RelativeLayout>
-                </androidx.cardview.widget.CardView>
+                </RelativeLayout>
             </FrameLayout>
 
             <RelativeLayout

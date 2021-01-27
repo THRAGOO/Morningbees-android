@@ -6,9 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.MultiTransformation
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.jasen.kimjaeseung.morningbees.R
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.item_mission_participate.view.*
 
 class MissionParticipateAdapter(
@@ -26,14 +29,14 @@ class MissionParticipateAdapter(
     private fun bindDefaultView(holder: MainRecyclerViewHolder, position: Int){
         Glide.with(holder.itemView.context)
             .load(urlList[position])
-            .centerCrop()
-            .apply(
-                RequestOptions.bitmapTransform(
+            .transform(
+                MultiTransformation(
+                    CenterCrop(),
                     RoundedCorners(30)
                 )
             )
+            .error(R.drawable.not_upload_mission_img_view)
             .into(holder.item)
-        //holder.bind(urlList[position], context)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -44,17 +47,6 @@ class MissionParticipateAdapter(
     private class MainRecyclerViewHolder(view : View) : RecyclerView.ViewHolder(view) {
         //val item = itemView.findViewById<ImageView>(R.id.item_main_recycler)
         val item = itemView.item_mission_participate_image
-
-//        fun bind(itemUrl : URL?, context: Context){
-//            //val urlString = itemUrl.toString()
-//            if(itemUrl == null){
-//                item?.setImageResource(R.drawable.item_main_img)
-//            }
-//            else{
-//                val photoImage = BitmapFactory.decodeStream(itemUrl.openConnection().getInputStream())
-//                item.setImageBitmap(photoImage)
-//            }
-//        }
     }
 }
 
