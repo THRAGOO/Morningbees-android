@@ -32,7 +32,7 @@
                 android:layout_width="238dp"
                 android:layout_height="238dp"
                 android:id="@+id/illust_before_joining_ImageView"
-                android:src="@drawable/illust_before_joining"
+                android:src="@drawable/icon_before_joining"
                 android:layout_centerHorizontal="true"
                 android:layout_marginBottom="32dp"
                 android:layout_below="@id/icon_notification_before_joining_Button" />

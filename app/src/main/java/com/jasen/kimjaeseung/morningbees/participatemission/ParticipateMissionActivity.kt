@@ -1,4 +1,4 @@
-package com.jasen.kimjaeseung.morningbees.missionparticipate
+package com.jasen.kimjaeseung.morningbees.participatemission
 
 import android.content.Context
 import android.content.ContextWrapper
@@ -15,12 +15,10 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.app.GlobalApp
-import com.jasen.kimjaeseung.morningbees.missioncreate.MissionCreateActivity
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import com.jasen.kimjaeseung.morningbees.util.Dlog
 import com.jasen.kimjaeseung.morningbees.util.showToast
-import kotlinx.android.synthetic.main.activity_mission_participate_upload.*
-import okhttp3.Callback
+import kotlinx.android.synthetic.main.activity_participate_upload_mission.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -33,7 +31,7 @@ import java.io.IOException
 import java.io.OutputStream
 import java.util.*
 
-class MissionParticipateActivity : AppCompatActivity(), View.OnClickListener {
+class ParticipateMissionActivity : AppCompatActivity(), View.OnClickListener {
     private val service = MorningBeesService.create()
 
     // MissionCreate API
@@ -45,7 +43,7 @@ class MissionParticipateActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_mission_participate_upload)
+        setContentView(R.layout.activity_participate_upload_mission)
 
         accessToken = GlobalApp.prefs.accessToken
         beeId = GlobalApp.prefsBeeInfo.beeId

@@ -124,7 +124,6 @@
         android:letterSpacing="0.02"
         android:textColor="#aaaaaa"
         android:background="@drawable/selector_custom_button"
-        android:layout_alignParentBottom="true"
-        />
+        android:layout_alignParentBottom="true" />
 
 </RelativeLayout>

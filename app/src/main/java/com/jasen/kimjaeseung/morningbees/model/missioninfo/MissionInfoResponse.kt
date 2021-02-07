@@ -1,13 +1,7 @@
 package com.jasen.kimjaeseung.morningbees.model.missioninfo
 
-import retrofit2.http.Url
+import com.google.gson.JsonArray
 
-class MissionInfoResponse{
-    class missions{
-        lateinit var image_url : Url
-        lateinit var desc : String
-        lateinit var nickname : String
-        val agreeCount : Int = 0
-        val disagreeCount : Int = 0
-    }
-}
+data class MissionInfoResponse(
+    var missions: JsonArray?
+)

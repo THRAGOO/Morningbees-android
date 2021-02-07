@@ -1,4 +1,4 @@
-package com.jasen.kimjaeseung.morningbees.missioncreate
+package com.jasen.kimjaeseung.morningbees.createmission
 
 import android.Manifest
 
@@ -28,7 +28,7 @@ import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import com.jasen.kimjaeseung.morningbees.util.Dlog
 import com.jasen.kimjaeseung.morningbees.util.URIPathHelper
 import com.jasen.kimjaeseung.morningbees.util.showToast
-import kotlinx.android.synthetic.main.activity_mission_create.*
+import kotlinx.android.synthetic.main.activity_create_mission.*
 
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -40,10 +40,9 @@ import retrofit2.Response
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
-import java.time.LocalDate
 import java.util.*
 
-class MissionCreateActivity : AppCompatActivity(), View.OnClickListener {
+class CreateMissionActivity : AppCompatActivity(), View.OnClickListener {
     val service = MorningBeesService.create()
     var difficulty: Int = -1
     var description: String = ""
@@ -60,7 +59,7 @@ class MissionCreateActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_mission_create)
+        setContentView(R.layout.activity_create_mission)
 
         beeId = GlobalApp.prefsBeeInfo.beeId
         targetDate = intent.getStringExtra("targetDate")
@@ -87,15 +86,11 @@ class MissionCreateActivity : AppCompatActivity(), View.OnClickListener {
         difficultyBackground.viewTreeObserver.addOnGlobalLayoutListener(object :
             ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
-                Log.d(TAG, "difficultyButtonWrapLayout: ${difficultyButtonWrapLayout.height}")
-                Log.d(TAG, "difficultyBackground: ${difficultyBackground.height}")
-
                 difficultyButtonWrapLayout.layoutParams.height = difficultyBackground.height
                 difficultyBackground.viewTreeObserver.removeOnGlobalLayoutListener(this)
             }
         })
     }
-
 
     override fun onClick(v: View) {
         when (v.id) {

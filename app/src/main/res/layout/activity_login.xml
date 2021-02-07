@@ -14,7 +14,7 @@
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
-            android:src="@drawable/bg_signin"/>
+            android:src="@drawable/icon_bg_signin"/>
 
         <ImageView
             android:id="@+id/login_beeimage"
@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:scaleType="fitCenter"
             android:adjustViewBounds="true"
-            android:src="@drawable/bee"
+            android:src="@drawable/icon_bee"
             android:layout_below="@id/login_beebackground"/>
 
         <ImageView
@@ -31,7 +31,7 @@
             android:layout_height="wrap_content"
             android:scaleType="fitXY"
             android:adjustViewBounds="true"
-            android:src="@drawable/bg_sign_in_white"
+            android:src="@drawable/icon_bg_sign_in_white"
             android:layout_marginTop="420dp" />
 
     </RelativeLayout>
@@ -51,7 +51,7 @@
             android:adjustViewBounds="true"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
-            android:src="@drawable/btn_naver" />
+            android:src="@drawable/icon_button_naver" />
 
         <ImageView
             android:id="@+id/login_google_sign_in_button"
@@ -61,7 +61,7 @@
             android:layout_marginTop="12dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
-            android:src="@drawable/btn_google" />
+            android:src="@drawable/icon_button_google" />
     </LinearLayout>
 
     <TextView
@@ -82,5 +82,5 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="144dp"
         android:adjustViewBounds="true"
-        android:src="@drawable/logo_title"/>
+        android:src="@drawable/icon_logo_title"/>
 </FrameLayout>

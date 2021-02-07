@@ -28,4 +28,7 @@
     <color name="signInStatusBarColor">#efc227</color>
     
     <color name="transparent">#00ff0000</color>
+
+    <color name="unpaid_selected">#FFFBE8</color>
+    <color name="unpaid_unselected">#ffffff</color>
 </resources>

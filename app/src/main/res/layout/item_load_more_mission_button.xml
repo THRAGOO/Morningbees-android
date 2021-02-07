@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="245dp"
+    android:layout_marginStart="18dp"
+    android:layout_marginEnd="18dp">
+
+    <ImageButton
+        android:id="@+id/missionLoadMoreButton"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center"
+        android:background="@drawable/icon_more_mission_photo_button"
+        android:elevation="3dp" />
+</FrameLayout>
+

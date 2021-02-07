@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="540dp"
-    android:background="@drawable/bee_list_search_dialog">
+    android:background="@drawable/background_bee_list_search_dialog">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -19,7 +19,7 @@
             <ImageView
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:background="@drawable/search"
+                android:background="@drawable/icon_search"
                 android:layout_centerVertical="true"/>
 
             <EditText

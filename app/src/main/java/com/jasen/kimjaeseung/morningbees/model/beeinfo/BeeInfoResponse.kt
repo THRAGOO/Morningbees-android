@@ -5,5 +5,5 @@ data class BeeInfoResponse(
     val nickname : String,
     val startTime : Array<String>,
     val endTime : Array<String>,
-    val totalPay : Int
+    val pay : Int
 )

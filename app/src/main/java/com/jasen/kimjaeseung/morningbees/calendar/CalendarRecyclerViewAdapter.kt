@@ -30,7 +30,6 @@ class CalendarRecyclerViewAdapter(private val calendarDialog: CalendarDialog) :
         layoutParams.height = parent.height / rowOfCalendar
         layoutParams.width = parent.width
 
-
         view.layoutParams = layoutParams
 
         return CalendarRecyclerViewHolder(view)

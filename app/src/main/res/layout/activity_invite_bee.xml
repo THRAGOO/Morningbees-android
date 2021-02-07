@@ -14,7 +14,7 @@
             android:id="@+id/illust_inviteImageView"
             android:layout_width="238dp"
             android:layout_height="238dp"
-            android:src="@drawable/illust_invite"
+            android:src="@drawable/icon_invite"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="32dp"/>
 

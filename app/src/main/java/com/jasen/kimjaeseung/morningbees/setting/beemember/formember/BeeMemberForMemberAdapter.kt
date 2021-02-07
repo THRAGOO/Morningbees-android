@@ -50,7 +50,7 @@ class BeeMemberForMemberAdapter(
 
             itemNickname.text = beeMember.nickname
             if (managerNickname == beeMember.nickname)
-                itemView.itemBeeMemberManagerForMember.setImageResource(R.drawable.crown)
+                itemView.itemBeeMemberManagerForMember.setImageResource(R.drawable.icon_crown)
         }
     }
 }

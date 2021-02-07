@@ -58,7 +58,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/whiteStatusBarTheme"/>
 
-        <activity android:name=".missioncreate.MissionCreateActivity"
+        <activity android:name=".createmission.CreateMissionActivity"
             android:screenOrientation="portrait"
             android:theme="@style/whiteStatusBarTheme"/>
 
@@ -73,7 +73,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".missionparticipate.MissionParticipateActivity"
+        <activity android:name=".participatemission.ParticipateMissionActivity"
             android:screenOrientation="portrait"
             android:theme="@style/whiteStatusBarTheme"/>
 
@@ -86,6 +86,14 @@
             android:theme="@style/whiteStatusBarTheme"/>
 
         <activity android:name=".setting.beemember.formember.BeeMemberForMemberActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/whiteStatusBarTheme"/>
+
+        <activity android:name=".loadmissionphoto.LoadMissionPhotoActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/whiteStatusBarTheme"/>
+
+        <activity android:name=".setting.royaljelly.RoyalJellyActivity"
             android:screenOrientation="portrait"
             android:theme="@style/whiteStatusBarTheme"/>
 

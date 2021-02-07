@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/layout_mission_participate"
+    android:layout_width="match_parent"
+    android:layout_height="300dp"
+    android:background="@drawable/background_part_payment"
+    app:layout_behavior="@string/bottom_sheet_behavior">
+
+    <TextView
+        android:id="@+id/selectedPaymentText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="42dp"
+        android:layout_marginBottom="9dp"
+        android:gravity="center"
+        android:text="선택한 액수"
+        android:textColor="#222222"
+        android:textSize="15dp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/selectedPayment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/selectedPaymentText"
+        android:gravity="center"
+        android:textColor="#222222"
+        android:textSize="30dp"
+        android:textStyle="bold" />
+
+    <SeekBar
+        android:layout_below="@id/selectedPayment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="10"
+        android:thumb="@drawable/icon_thumb"
+        android:theme="@style/Widget.AppCompat.SeekBar.Discrete"
+        android:progressDrawable="@drawable/seekbar_selected_payment" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/selectedPaymentButton"
+        android:layout_marginBottom="27dp"
+        android:gravity="center"
+        android:text="1,000원 단위로 선택할 수 있습니다."
+        android:textColor="#aaaaaa"
+        android:textSize="13dp" />
+
+    <Button
+        android:id="@+id/selectedPaymentButton"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:background="#FFDA22"
+        android:text="선택한 액수만큼 차감"
+        android:textSize="15dp" />
+
+
+</RelativeLayout>

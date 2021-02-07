@@ -22,7 +22,7 @@
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/main_bg"
+                    android:background="@drawable/icon_bg_main"
                     android:scaleType="fitCenter" />
 
                 <RelativeLayout
@@ -120,7 +120,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginEnd="6dp"
-                    android:src="@drawable/oval" />
+                    android:src="@drawable/icon_oval" />
 
                 <TextView
                     android:id="@+id/totalJellyText"
@@ -173,8 +173,7 @@
                 <RelativeLayout
                     android:id="@+id/missionTimeWrapLayout"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    >
+                    android:layout_height="wrap_content">
 
                     <TextView
                         android:id="@+id/missionTimeText"
@@ -469,6 +468,15 @@
                     android:layout_height="match_parent">
 
                     <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_centerInParent="true"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:adjustViewBounds="true"
+                        android:src="@drawable/icon_shadow_mission_image" />
+
+                    <ImageView
                         android:id="@+id/notUploadMissionImage"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -508,7 +516,7 @@
                                 android:adjustViewBounds="true"
                                 android:background="#00ff0000"
                                 android:scaleType="fitCenter"
-                                android:src="@drawable/participate_in_mission" />
+                                android:src="@drawable/icon_participate_in_mission" />
                         </RelativeLayout>
                     </RelativeLayout>
                 </RelativeLayout>
@@ -516,8 +524,7 @@
                 <RelativeLayout
                     android:id="@+id/missionUploadWrapLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:visibility="invisible">
+                    android:layout_height="match_parent">
 
                     <ImageView
                         android:layout_width="match_parent"
@@ -526,7 +533,7 @@
                         android:layout_marginStart="10dp"
                         android:layout_marginEnd="10dp"
                         android:adjustViewBounds="true"
-                        android:src="@drawable/shadow_mission_image" />
+                        android:src="@drawable/icon_shadow_mission_image" />
 
                     <ImageView
                         android:id="@+id/missionImage"
@@ -570,70 +577,31 @@
                                 android:textSize="24dp"
                                 android:textStyle="bold" />
                         </RelativeLayout>
-
-                        <RelativeLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:layout_alignParentBottom="true">
-
-                            <ImageButton
-                                android:id="@+id/goMissionParticipateButton"
-                                android:layout_width="98dp"
-                                android:layout_height="98dp"
-                                android:layout_marginEnd="26dp"
-                                android:layout_marginBottom="29dp"
-                                android:adjustViewBounds="true"
-                                android:background="#00ff0000"
-                                android:scaleType="fitCenter"
-                                android:src="@drawable/participate_in_mission" />
-                        </RelativeLayout>
                     </RelativeLayout>
                 </RelativeLayout>
             </FrameLayout>
 
-            <RelativeLayout
-                android:layout_width="wrap_content"
+            <TextView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="36dp"
                 android:layout_marginEnd="24dp"
-                android:layout_marginBottom="20dp">
+                android:layout_marginBottom="20dp"
+                android:text="미션 참여사진"
+                android:textColor="#444444"
+                android:textSize="20dp"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_marginEnd="184dp"
-                    android:text="미션 참여사진"
-                    android:textColor="#444444"
-                    android:textSize="20dp"
-                    android:textStyle="bold" />
-
-                <RelativeLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true">
-
-                    <ImageButton
-                        android:id="@+id/missionParticipateButton"
-                        android:layout_width="18dp"
-                        android:layout_height="16dp"
-                        android:layout_marginEnd="3dp"
-                        android:adjustViewBounds="true"
-                        android:background="#00ff0000"
-                        android:scaleType="fitCenter"
-                        android:src="@drawable/icon_arrow_right" />
-                </RelativeLayout>
-            </RelativeLayout>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/missionParticipateRecyclerView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:layout_marginEnd="24dp"
+                android:clipToPadding="false"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
                 android:layout_marginBottom="36dp"
                 android:nestedScrollingEnabled="false"
                 android:overScrollMode="never" />

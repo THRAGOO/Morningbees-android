@@ -1,60 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <ImageButton
         android:id="@+id/go_back_step2_button"
-        android:layout_marginStart="24dp"
         android:layout_width="12dp"
         android:layout_height="20dp"
-        android:background="#00ff0000"
-        android:src="@drawable/icon_arrow_left_back"
-        android:scaleType="fitCenter"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="35dp"
         android:layout_marginBottom="25dp"
-        android:layout_marginTop="35dp"/>
+        android:background="#00ff0000"
+        android:scaleType="fitCenter"
+        android:src="@drawable/icon_arrow_left_back" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/go_back_step2_button"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
-        android:orientation="vertical"
-        android:layout_below="@id/go_back_step2_button">
+        android:orientation="vertical">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:lineHeight="33sp"
             android:text="로얄젤리를"
-            android:textSize="24sp"
-            android:lineHeight="33sp"
-            android:textColor="#222222"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="설정해주세요."
-            android:textSize="24sp"
-            android:lineHeight="33sp"
             android:textColor="#222222"
-            android:layout_marginBottom="24dp"/>
+            android:textSize="24sp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:lineHeight="33sp"
+            android:text="설정해주세요."
+            android:textColor="#222222"
+            android:textSize="24sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="27dp"
             android:text="로얄젤리는 모닝비즈 내 벌금이에요.\n매일 진행되는 미션을 수행하지 못한 꿀벌에게 부과해요."
-            android:textColor="#cccccc"
-            android:layout_marginBottom="27dp"/>
+            android:textColor="#cccccc" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="13sp"
-            android:textColor="#777777"
+            android:layout_marginBottom="20dp"
             android:text="로얄젤리 (최소 2,000 ~ 최대 10,000원)"
-            android:layout_marginBottom="20dp"/>
+            android:textColor="#777777"
+            android:textSize="13sp" />
 
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -66,7 +65,7 @@
                 android:layout_height="18dp"
                 android:layout_alignParentTop="true"
                 android:layout_marginTop="3dp"
-                android:background="@drawable/round_imageview"/>
+                android:background="@drawable/round_imageview" />
 
             <LinearLayout
                 android:id="@+id/jelly_linearLayout"
@@ -93,16 +92,17 @@
                         android:id="@+id/jelly_2_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="2,000"
-                        android:textSize="13dp"
+                        android:layout_below="@id/jelly_2"
                         android:layout_centerInParent="true"
-                        android:layout_below="@id/jelly_2"/>
+                        android:text="2,000"
+                        android:textSize="13dp" />
                 </RelativeLayout>
 
                 <RelativeLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1">
+
                     <ImageButton
                         android:id="@+id/jelly_3"
                         android:layout_width="25dp"
@@ -112,16 +112,17 @@
                         android:layout_marginEnd="5dp"
                         android:background="#00000000"
                         android:src="@drawable/jelly_button_selector" />
+
                     <TextView
                         android:id="@+id/jelly_3_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:visibility="invisible"
-                        android:textStyle="bold"
-                        android:textSize="13dp"
-                        android:text="3,000"
+                        android:layout_below="@id/jelly_3"
                         android:layout_centerInParent="true"
-                        android:layout_below="@id/jelly_3"/>
+                        android:text="3,000"
+                        android:textSize="13dp"
+                        android:textStyle="bold"
+                        android:visibility="invisible" />
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -134,68 +135,72 @@
                         android:layout_width="25dp"
                         android:layout_height="25dp"
                         android:layout_gravity="center"
-                        android:background="#00000000"
                         android:layout_marginStart="5dp"
                         android:layout_marginEnd="5dp"
-                        android:src="@drawable/jelly_button_selector"/>
+                        android:background="#00000000"
+                        android:src="@drawable/jelly_button_selector" />
+
                     <TextView
                         android:id="@+id/jelly_4_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:visibility="invisible"
-                        android:textStyle="bold"
-                        android:text="4,000"
+                        android:layout_below="@id/jelly_4"
                         android:layout_centerInParent="true"
-                        android:layout_below="@id/jelly_4"/>
+                        android:text="4,000"
+                        android:textStyle="bold"
+                        android:visibility="invisible" />
                 </RelativeLayout>
 
                 <RelativeLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1">
+
                     <ImageButton
                         android:id="@+id/jelly_5"
                         android:layout_width="25dp"
                         android:layout_height="25dp"
                         android:layout_gravity="center"
-                        android:background="#00000000"
                         android:layout_marginStart="5dp"
                         android:layout_marginEnd="5dp"
+                        android:background="#00000000"
                         android:src="@drawable/jelly_button_selector" />
 
                     <TextView
                         android:id="@+id/jelly_5_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:visibility="invisible"
-                        android:textStyle="bold"
-                        android:text="5,000"
+                        android:layout_below="@id/jelly_5"
                         android:layout_centerInParent="true"
-                        android:layout_below="@id/jelly_5"/>
+                        android:text="5,000"
+                        android:textStyle="bold"
+                        android:visibility="invisible" />
                 </RelativeLayout>
 
                 <RelativeLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1">
+
                     <ImageButton
                         android:id="@+id/jelly_6"
                         android:layout_width="25dp"
                         android:layout_height="25dp"
                         android:layout_gravity="center"
-                        android:background="#00000000"
                         android:layout_marginStart="5dp"
                         android:layout_marginEnd="5dp"
-                        android:src="@drawable/jelly_button_selector"/>
+                        android:background="#00000000"
+                        android:src="@drawable/jelly_button_selector" />
+
                     <TextView
                         android:id="@+id/jelly_6_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:visibility="invisible"
-                        android:textStyle="bold"
-                        android:text="6,000"
+                        android:layout_below="@id/jelly_6"
                         android:layout_centerInParent="true"
-                        android:layout_below="@id/jelly_6"/>
+                        android:text="6,000"
+                        android:textStyle="bold"
+                        android:visibility="invisible" />
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -208,44 +213,46 @@
                         android:layout_width="25dp"
                         android:layout_height="25dp"
                         android:layout_gravity="center"
-                        android:background="#00000000"
                         android:layout_marginStart="5dp"
                         android:layout_marginEnd="5dp"
-                        android:src="@drawable/jelly_button_selector"/>
+                        android:background="#00000000"
+                        android:src="@drawable/jelly_button_selector" />
 
                     <TextView
                         android:id="@+id/jelly_7_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:visibility="invisible"
-                        android:textStyle="bold"
-                        android:text="7,000"
+                        android:layout_below="@id/jelly_7"
                         android:layout_centerInParent="true"
-                        android:layout_below="@id/jelly_7"/>
+                        android:text="7,000"
+                        android:textStyle="bold"
+                        android:visibility="invisible" />
                 </RelativeLayout>
 
                 <RelativeLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1">
+
                     <ImageButton
                         android:id="@+id/jelly_8"
                         android:layout_width="25dp"
                         android:layout_height="25dp"
                         android:layout_gravity="center"
-                        android:background="#00000000"
                         android:layout_marginStart="5dp"
                         android:layout_marginEnd="5dp"
-                        android:src="@drawable/jelly_button_selector"/>
+                        android:background="#00000000"
+                        android:src="@drawable/jelly_button_selector" />
+
                     <TextView
                         android:id="@+id/jelly_8_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:visibility="invisible"
-                        android:textStyle="bold"
-                        android:text="8,000"
+                        android:layout_below="@id/jelly_8"
                         android:layout_centerInParent="true"
-                        android:layout_below="@id/jelly_8"/>
+                        android:text="8,000"
+                        android:textStyle="bold"
+                        android:visibility="invisible" />
 
                 </RelativeLayout>
 
@@ -259,20 +266,20 @@
                         android:layout_width="25dp"
                         android:layout_height="25dp"
                         android:layout_gravity="center"
-                        android:background="#00000000"
-                        android:src="@drawable/jelly_button_selector"
                         android:layout_marginStart="5dp"
-                        android:layout_marginEnd="5dp"/>
+                        android:layout_marginEnd="5dp"
+                        android:background="#00000000"
+                        android:src="@drawable/jelly_button_selector" />
 
                     <TextView
                         android:id="@+id/jelly_9_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:visibility="invisible"
-                        android:textStyle="bold"
-                        android:text="9,000"
+                        android:layout_below="@id/jelly_9"
                         android:layout_centerInParent="true"
-                        android:layout_below="@id/jelly_9"/>
+                        android:text="9,000"
+                        android:textStyle="bold"
+                        android:visibility="invisible" />
                 </RelativeLayout>
 
 
@@ -288,14 +295,15 @@
                         android:layout_marginStart="5dp"
                         android:layout_marginEnd="5dp"
                         android:background="#00000000"
-                        android:src="@drawable/jelly_button_selector"/>
+                        android:src="@drawable/jelly_button_selector" />
+
                     <TextView
                         android:id="@+id/jelly_10_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="10,000"
+                        android:layout_below="@id/jelly_10"
                         android:layout_centerInParent="true"
-                        android:layout_below="@id/jelly_10"/>
+                        android:text="10,000" />
                 </RelativeLayout>
 
             </LinearLayout>
@@ -308,11 +316,11 @@
         android:id="@+id/create_step3_next_button"
         android:layout_width="match_parent"
         android:layout_height="56dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/deactive_button"
         android:text="다음 3/3"
         android:textAlignment="center"
-        android:textSize="15sp"
         android:textColor="#aaaaaa"
-        android:background="@color/deactive_button"
-        android:layout_alignParentBottom="true"/>
+        android:textSize="15sp" />
 
 </RelativeLayout>

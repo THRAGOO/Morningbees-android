@@ -11,6 +11,7 @@ import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import com.jasen.kimjaeseung.morningbees.model.beeinfo.BeeInfoResponse
 import com.jasen.kimjaeseung.morningbees.setting.beemember.formanager.BeeMemberForManagerActivity
 import com.jasen.kimjaeseung.morningbees.setting.beemember.formember.BeeMemberForMemberActivity
+import com.jasen.kimjaeseung.morningbees.setting.royaljelly.RoyalJellyActivity
 import com.jasen.kimjaeseung.morningbees.util.Dlog
 import com.jasen.kimjaeseung.morningbees.util.showToast
 import kotlinx.android.synthetic.main.activity_setting.*
@@ -20,13 +21,13 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class SettingActivity : AppCompatActivity(), View.OnClickListener {
-    var nickName: String = ""
     private lateinit var accessToken: String
     private val service = MorningBeesService.create()
     var beeId: Int = -1
     private var managerNickname = ""
     private var myNickname = ""
     private var beeTitle = ""
+    private var pay = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,20 +79,21 @@ class SettingActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun setLayoutToSetting(beeInfoResponse: BeeInfoResponse) {
         my_nickname_text.text = beeInfoResponse.nickname
-        setting_mission_time_txt.text =
+        missionTimeInSetting.text =
             "${beeInfoResponse.startTime[0]}시-${beeInfoResponse.endTime[0]}시"
-        setting_royaljelly_txt.text = "${beeInfoResponse.totalPay}원"
+        pay = beeInfoResponse.pay
+        royalJellyInSetting.text = "${pay}원"
         if (beeInfoResponse.manager) {
             managerNickname = beeInfoResponse.nickname
             wrap_bee_withdrawal_layout.visibility = View.INVISIBLE
             wrap_bee_dismantle_layout.visibility = View.VISIBLE
-            setting_royaljelly_btn.visibility = View.VISIBLE
-            setting_mission_time_button.visibility = View.VISIBLE
+            goToRoyalJellyButton.visibility = View.VISIBLE
+            gotoMissionTimeButton.visibility = View.VISIBLE
         } else {
             wrap_bee_withdrawal_layout.visibility = View.VISIBLE
             wrap_bee_dismantle_layout.visibility = View.INVISIBLE
-            setting_royaljelly_btn.visibility = View.INVISIBLE
-            setting_mission_time_button.visibility = View.INVISIBLE
+            goToRoyalJellyButton.visibility = View.GONE
+            gotoMissionTimeButton.visibility = View.GONE
         }
     }
 
@@ -165,11 +167,18 @@ class SettingActivity : AppCompatActivity(), View.OnClickListener {
         )
     }
 
+    private fun gotoRoyalJelly(){
+        startActivity(
+            Intent(this, RoyalJellyActivity::class.java)
+                .putExtra("pay", pay)
+        )
+    }
+
     override fun onClick(v: View) {
         when (v.id) {
             R.id.go_main_btn -> finish()
-            R.id.setting_mission_time_button -> setMissionTime()
-            R.id.setting_royaljelly_btn -> setRoyalJelly()
+            R.id.gotoMissionTimeButton -> setMissionTime()
+            R.id.goToRoyalJellyButton -> gotoRoyalJelly()
             R.id.logout_button -> gotoLogOut()
             R.id.bee_withdrawal_button -> withdrawServer()
             R.id.bee_dismantle_button -> withdrawServer() // 수정 필요
@@ -179,8 +188,8 @@ class SettingActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun initButtonListener() {
         go_main_btn.setOnClickListener(this)
-        setting_mission_time_button.setOnClickListener(this)
-        setting_royaljelly_btn.setOnClickListener(this)
+        gotoMissionTimeButton.setOnClickListener(this)
+        goToRoyalJellyButton.setOnClickListener(this)
         total_bee_member_button.setOnClickListener(this)
         logout_button.setOnClickListener(this)
         bee_dismantle_button.setOnClickListener(this)

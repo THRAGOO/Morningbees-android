@@ -221,7 +221,7 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@id/hardText"
                         android:layout_centerHorizontal="true"
-                        android:text="-1,000"
+                        android:text="- 1,000"
                         android:textColor="#cccccc"/>
                 </RelativeLayout>
 
@@ -278,7 +278,7 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@id/easyText"
                         android:layout_centerHorizontal="true"
-                        android:text="+1,000원"
+                        android:text="+ 1,000원"
                         android:textColor="#cccccc"/>
                 </RelativeLayout>
         </LinearLayout>

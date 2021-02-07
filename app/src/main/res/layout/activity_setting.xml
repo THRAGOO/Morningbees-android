@@ -47,7 +47,7 @@
             android:layout_centerVertical="true"
             android:layout_marginStart="24dp"
             android:layout_marginEnd="8dp"
-            android:background="@drawable/setting_bee" />
+            android:background="@drawable/icon_setting_bee" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -86,7 +86,7 @@
             android:layout_centerVertical="true"
             android:layout_marginStart="24dp"
             android:layout_marginEnd="8dp"
-            android:background="@drawable/bee_group" />
+            android:background="@drawable/icon_bee_group" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -126,19 +126,19 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/setting_mission_time_txt"
+                    android:id="@+id/missionTimeInSetting"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="#777777"
                     android:textSize="13dp" />
 
                 <ImageButton
-                    android:id="@+id/setting_mission_time_button"
+                    android:id="@+id/gotoMissionTimeButton"
                     android:layout_width="6dp"
                     android:layout_height="10dp"
                     android:layout_centerVertical="true"
                     android:layout_marginStart="18dp"
-                    android:layout_toEndOf="@id/setting_mission_time_txt"
+                    android:layout_toEndOf="@id/missionTimeInSetting"
                     android:background="@drawable/icon_arrow_right_back" />
 
             </RelativeLayout>
@@ -168,19 +168,19 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/setting_royaljelly_txt"
+                    android:id="@+id/royalJellyInSetting"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="#777777"
                     android:textSize="13dp" />
 
                 <ImageButton
-                    android:id="@+id/setting_royaljelly_btn"
+                    android:id="@+id/goToRoyalJellyButton"
                     android:layout_width="6dp"
                     android:layout_height="10dp"
                     android:layout_centerVertical="true"
                     android:layout_marginStart="18dp"
-                    android:layout_toEndOf="@id/setting_royaljelly_txt"
+                    android:layout_toEndOf="@id/royalJellyInSetting"
                     android:background="@drawable/icon_arrow_right_back" />
             </RelativeLayout>
         </RelativeLayout>
