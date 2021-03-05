@@ -18,6 +18,7 @@
 
     <color name="undefinedButtonColor">#f6f5f2</color>
     <color name="white">#ffffff</color>
+    <color name="cursorColor">#ffffff</color>
 
     <color name="not_upload_img_recyclerview_color">#4ca0a0a0</color>
 
@@ -31,4 +32,11 @@
 
     <color name="unpaid_selected">#FFFBE8</color>
     <color name="unpaid_unselected">#ffffff</color>
+
+    <color name="colorControlActivated">#444444</color>
+    <color name="colorControlNormal">#dddddd</color>
+    <color name="textCursorDrawable">#222222</color>
+
+    <color name="tooShortText">#eb3636</color>
+    <color name="tooLongText">#aaaaaa</color>
 </resources>

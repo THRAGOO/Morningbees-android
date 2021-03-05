@@ -17,16 +17,20 @@ import com.google.firebase.dynamiclinks.ktx.shortLinkAsync
 import com.google.firebase.ktx.Firebase
 import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.app.GlobalApp
+import com.jasen.kimjaeseung.morningbees.login.LoginActivity
 import com.jasen.kimjaeseung.morningbees.model.beemember.BeeMember
 import com.jasen.kimjaeseung.morningbees.model.beemember.BeeMemberResponse
+import com.jasen.kimjaeseung.morningbees.model.error.ErrorResponse
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import com.jasen.kimjaeseung.morningbees.util.Dlog
 import com.jasen.kimjaeseung.morningbees.util.showToast
 import kotlinx.android.synthetic.main.activity_setting_bee_member_for_manager.*
 import kotlinx.android.synthetic.main.item_bee_member_for_manager.*
+import okhttp3.ResponseBody
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
+import retrofit2.Converter
 import retrofit2.Response
 
 class BeeMemberForManagerActivity : AppCompatActivity(), View.OnClickListener {
@@ -82,10 +86,28 @@ class BeeMemberForManagerActivity : AppCompatActivity(), View.OnClickListener {
                     }
 
                     400 -> {
-                        val jsonObject = JSONObject(response.errorBody()?.string())
-                        val message = jsonObject.getString("message")
-                        val code = jsonObject.getInt("code")
-                        showToast { message }
+                        val converter: Converter<ResponseBody, ErrorResponse> =
+                            MorningBeesService.retrofit.responseBodyConverter<ErrorResponse>(
+                                ErrorResponse::class.java,
+                                ErrorResponse::class.java.annotations
+                            )
+
+                        val errorResponse = converter.convert(response.errorBody())
+
+                        if(errorResponse.code == 111 || errorResponse.code == 110 || errorResponse.code == 120){
+                            val oldAccessToken = GlobalApp.prefs.accessToken
+                            GlobalApp.prefs.requestRenewalApi()
+                            val renewalAccessToken = GlobalApp.prefs.accessToken
+
+                            if (oldAccessToken == renewalAccessToken) {
+                                showToast { "다시 로그인해주세요." }
+                                gotoLogOut()
+                            } else
+                                requestBeeMemberApi()
+                        } else {
+                            showToast { errorResponse.message }
+                            finish()
+                        }
                     }
 
                     500 -> {
@@ -110,7 +132,6 @@ class BeeMemberForManagerActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun initRecyclerView() {
-
         val beeMemberSwipeHelperCallback = BeeMemberSwipeHelperCallback()
             .apply {
                 setClamp(300f)
@@ -168,8 +189,15 @@ class BeeMemberForManagerActivity : AppCompatActivity(), View.OnClickListener {
         val intent = Intent()
         intent.action = Intent.ACTION_SEND
         intent.type = "text/plain"
-        intent.putExtra(Intent.EXTRA_TEXT, "Try this amazing app: $shortLink")
+        intent.putExtra(Intent.EXTRA_TEXT, "모닝비즈로부터 초대장이 왔습니다! 링크를 통해 확인해 주세요 :) $shortLink")
         startActivity(Intent.createChooser(intent, "Share Link"))
+    }
+
+    private fun gotoLogOut() {
+        startActivity(
+            Intent(this, LoginActivity::class.java)
+                .putExtra("RequestLogOut", "")
+                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)        )
     }
 
     companion object {

@@ -63,7 +63,8 @@
             android:theme="@style/whiteStatusBarTheme"/>
 
         <activity android:name=".invitebee.InviteBeeActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/whiteStatusBarTheme">
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>

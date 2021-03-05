@@ -37,19 +37,10 @@
             <TextView
                 android:id="@+id/itemAfterTimeMissionPhoto"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:textSize="12dp"
+                android:textColor="#cccccc"/>
         </LinearLayout>
-
-        <ImageButton
-            android:id="@+id/itemMenuMissionPhoto"
-            android:layout_width="18dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:background="@color/transparent"
-            android:src="@drawable/icon_menu_button"
-            android:adjustViewBounds="true"
-            android:scaleType="fitXY"/>
     </RelativeLayout>
 
     <ImageView

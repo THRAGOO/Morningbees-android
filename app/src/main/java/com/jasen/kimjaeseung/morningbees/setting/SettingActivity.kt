@@ -9,23 +9,26 @@ import com.jasen.kimjaeseung.morningbees.app.GlobalApp
 import com.jasen.kimjaeseung.morningbees.login.LoginActivity
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import com.jasen.kimjaeseung.morningbees.model.beeinfo.BeeInfoResponse
+import com.jasen.kimjaeseung.morningbees.model.error.ErrorResponse
 import com.jasen.kimjaeseung.morningbees.setting.beemember.formanager.BeeMemberForManagerActivity
 import com.jasen.kimjaeseung.morningbees.setting.beemember.formember.BeeMemberForMemberActivity
 import com.jasen.kimjaeseung.morningbees.setting.royaljelly.RoyalJellyActivity
 import com.jasen.kimjaeseung.morningbees.util.Dlog
 import com.jasen.kimjaeseung.morningbees.util.showToast
 import kotlinx.android.synthetic.main.activity_setting.*
+import okhttp3.ResponseBody
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
+import retrofit2.Converter
 import retrofit2.Response
 
 class SettingActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var accessToken: String
     private val service = MorningBeesService.create()
     var beeId: Int = -1
-    private var managerNickname = ""
-    private var myNickname = ""
+//    private var managerNickname = ""
+//    private var myNickname = ""
     private var beeTitle = ""
     private var pay = 0
 
@@ -37,8 +40,6 @@ class SettingActivity : AppCompatActivity(), View.OnClickListener {
         accessToken = GlobalApp.prefs.accessToken
         beeId = GlobalApp.prefsBeeInfo.beeId
         beeTitle = GlobalApp.prefsBeeInfo.beeTitle
-
-        myNickname = intent.getStringExtra("myNickname")
 
         requestBeeInfoApi()
     }
@@ -62,9 +63,28 @@ class SettingActivity : AppCompatActivity(), View.OnClickListener {
                     }
 
                     400 -> {
-                        val jsonObject = JSONObject(response.errorBody()!!.string())
-                        val message = jsonObject.getString("message")
-                        showToast { message }
+                        val converter: Converter<ResponseBody, ErrorResponse> =
+                            MorningBeesService.retrofit.responseBodyConverter<ErrorResponse>(
+                                ErrorResponse::class.java,
+                                ErrorResponse::class.java.annotations
+                            )
+
+                        val errorResponse = converter.convert(response.errorBody())
+
+                        if(errorResponse.code == 111 || errorResponse.code == 110 || errorResponse.code == 120){
+                            val oldAccessToken = GlobalApp.prefs.accessToken
+                            GlobalApp.prefs.requestRenewalApi()
+                            val renewalAccessToken = GlobalApp.prefs.accessToken
+
+                            if (oldAccessToken == renewalAccessToken) {
+                                showToast { "다시 로그인해주세요." }
+                                gotoLogOut()
+                            } else
+                                requestBeeInfoApi()
+                        } else {
+                            showToast { errorResponse.message }
+                            finish()
+                        }
                     }
 
                     500 -> {
@@ -84,28 +104,28 @@ class SettingActivity : AppCompatActivity(), View.OnClickListener {
         pay = beeInfoResponse.pay
         royalJellyInSetting.text = "${pay}원"
         if (beeInfoResponse.manager) {
-            managerNickname = beeInfoResponse.nickname
+//            managerNickname = beeInfoResponse.nickname
             wrap_bee_withdrawal_layout.visibility = View.INVISIBLE
             wrap_bee_dismantle_layout.visibility = View.VISIBLE
             goToRoyalJellyButton.visibility = View.VISIBLE
-            gotoMissionTimeButton.visibility = View.VISIBLE
+//            gotoMissionTimeButton.visibility = View.VISIBLE
         } else {
             wrap_bee_withdrawal_layout.visibility = View.VISIBLE
             wrap_bee_dismantle_layout.visibility = View.INVISIBLE
             goToRoyalJellyButton.visibility = View.GONE
-            gotoMissionTimeButton.visibility = View.GONE
+//            gotoMissionTimeButton.visibility = View.GONE
         }
     }
 
-    private fun setRoyalJelly() {
+//    private fun setRoyalJelly() {
+//
+//    }
+//
+//    private fun setMissionTime() {
+//
+//    }
 
-    }
-
-    private fun setMissionTime() {
-
-    }
-
-    private fun withdrawServer() {
+    private fun requestBeeWithdrawalApi() {
         GlobalApp.prefsBeeInfo.beeId = 0
         GlobalApp.prefsBeeInfo.beeTitle = ""
         GlobalApp.prefsBeeInfo.startTime = 0
@@ -119,13 +139,34 @@ class SettingActivity : AppCompatActivity(), View.OnClickListener {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 when (response.code()) {
                     200 -> {
-                        gotoSignIn()
+                        gotoLogOut()
                     }
+
                     400 -> {
-                        val jsonObject = JSONObject(response.errorBody()!!.string())
-                        val message = jsonObject.getString("message")
-                        showToast { message }
+                        val converter: Converter<ResponseBody, ErrorResponse> =
+                            MorningBeesService.retrofit.responseBodyConverter<ErrorResponse>(
+                                ErrorResponse::class.java,
+                                ErrorResponse::class.java.annotations
+                            )
+
+                        val errorResponse = converter.convert(response.errorBody())
+
+                        if(errorResponse.code == 111 || errorResponse.code == 110 || errorResponse.code == 120){
+                            val oldAccessToken = GlobalApp.prefs.accessToken
+                            GlobalApp.prefs.requestRenewalApi()
+                            val renewalAccessToken = GlobalApp.prefs.accessToken
+
+                            if (oldAccessToken == renewalAccessToken) {
+                                showToast { "다시 로그인해주세요." }
+                                gotoLogOut()
+                            } else
+                                requestBeeWithdrawalApi()
+                        } else {
+                            showToast { errorResponse.message }
+                            finish()
+                        }
                     }
+
                     500 -> {
                         val jsonObject = JSONObject(response.errorBody()!!.string())
                         val message = jsonObject.getString("message")
@@ -137,18 +178,12 @@ class SettingActivity : AppCompatActivity(), View.OnClickListener {
 
     }
 
-    private fun gotoSignIn() {
-        startActivity(
-            Intent(this, LoginActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        )
-    }
-
     private fun dismantleServer() {
 
     }
 
     private fun gotoTotalBeeMember() {
-        if (myNickname == managerNickname) {
+        if (GlobalApp.prefsBeeInfo.myNickname == GlobalApp.prefsBeeInfo.beeManagerNickname) {
             startActivity(
                 Intent(this, BeeMemberForManagerActivity::class.java)
             )
@@ -163,7 +198,7 @@ class SettingActivity : AppCompatActivity(), View.OnClickListener {
         startActivity(
             Intent(this, LoginActivity::class.java)
                 .putExtra("RequestLogOut", REQUEST_LOGOUT)
-                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
         )
     }
 
@@ -177,18 +212,18 @@ class SettingActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(v: View) {
         when (v.id) {
             R.id.go_main_btn -> finish()
-            R.id.gotoMissionTimeButton -> setMissionTime()
+//            R.id.gotoMissionTimeButton -> setMissionTime()
             R.id.goToRoyalJellyButton -> gotoRoyalJelly()
             R.id.logout_button -> gotoLogOut()
-            R.id.bee_withdrawal_button -> withdrawServer()
-            R.id.bee_dismantle_button -> withdrawServer() // 수정 필요
+            R.id.bee_withdrawal_button -> requestBeeWithdrawalApi()
+            R.id.bee_dismantle_button -> requestBeeWithdrawalApi() // 수정 필요
             R.id.total_bee_member_button -> gotoTotalBeeMember()
         }
     }
 
     private fun initButtonListener() {
         go_main_btn.setOnClickListener(this)
-        gotoMissionTimeButton.setOnClickListener(this)
+//        gotoMissionTimeButton.setOnClickListener(this)
         goToRoyalJellyButton.setOnClickListener(this)
         total_bee_member_button.setOnClickListener(this)
         logout_button.setOnClickListener(this)

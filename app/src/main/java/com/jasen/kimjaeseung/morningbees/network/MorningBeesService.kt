@@ -1,23 +1,25 @@
 package com.jasen.kimjaeseung.morningbees.network
 
-import com.jasen.kimjaeseung.morningbees.model.me.MeResponse
-import com.jasen.kimjaeseung.morningbees.model.createbee.CreateBeeRequest
-import com.jasen.kimjaeseung.morningbees.model.renewal.RenewalResponse
-import com.jasen.kimjaeseung.morningbees.model.joinbee.JoinBeeRequest
-import com.jasen.kimjaeseung.morningbees.model.signin.SignInRequest
-import com.jasen.kimjaeseung.morningbees.model.signin.SignInResponse
 import com.jasen.kimjaeseung.morningbees.model.beeinfo.BeeInfoResponse
 import com.jasen.kimjaeseung.morningbees.model.beemember.BeeMemberResponse
 import com.jasen.kimjaeseung.morningbees.model.beepenalty.BeePenaltyResponse
+import com.jasen.kimjaeseung.morningbees.model.createbee.CreateBeeRequest
+import com.jasen.kimjaeseung.morningbees.model.joinbee.JoinBeeRequest
 import com.jasen.kimjaeseung.morningbees.model.main.MainResponse
+import com.jasen.kimjaeseung.morningbees.model.me.MeResponse
 import com.jasen.kimjaeseung.morningbees.model.missioninfo.Mission
-import com.jasen.kimjaeseung.morningbees.model.missioninfo.MissionInfoResponse
 import com.jasen.kimjaeseung.morningbees.model.namevalidationcheck.NameValidataionCheckResponse
+import com.jasen.kimjaeseung.morningbees.model.paid.PaidRequest
+import com.jasen.kimjaeseung.morningbees.model.renewal.RenewalResponse
+import com.jasen.kimjaeseung.morningbees.model.signin.SignInRequest
+import com.jasen.kimjaeseung.morningbees.model.signin.SignInResponse
 import com.jasen.kimjaeseung.morningbees.model.signup.SignUpRequest
 import com.jasen.kimjaeseung.morningbees.model.signup.SignUpResponse
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.json.JSONArray
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -114,6 +116,13 @@ interface MorningBeesService {
         @Path(value = "beeId", encoded = true) beeId: Int,
         @Query("status") status: Int
     ): Call<BeePenaltyResponse>
+
+    @POST("/api/bee_penalties/paid/{beeId}")
+    fun paid(
+        @Header("X-BEES-ACCESS-TOKEN") accessToken: String,
+        @Path(value = "beeId", encoded = true) beeId: Int,
+        @Body paidRequest : PaidRequest
+    ): Call<Void>
 
     companion object {
         private val interceptor = HttpLoggingInterceptor()

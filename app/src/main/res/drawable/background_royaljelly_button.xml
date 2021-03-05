@@ -4,7 +4,7 @@
         android:state_selected="false">
         <shape android:shape="rectangle">
             <size android:height="42dp" android:width="160dp"/>
-            <solid android:color="@color/round_button"/>
+            <solid android:color="@color/white"/>
             <corners android:radius="21dp"/>
         </shape>
     </item>

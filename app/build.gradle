@@ -10,7 +10,7 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.jasen.kimjaeseung.morningbees"
-        minSdkVersion 23
+        minSdkVersion 24
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -103,5 +103,7 @@ dependencies {
     implementation "androidx.cardview:cardview:1.0.0"
     // Lottie
     implementation 'com.airbnb.android:lottie:3.6.0'
+
+    implementation 'com.google.android.material:material:1.3.0'
 }
 

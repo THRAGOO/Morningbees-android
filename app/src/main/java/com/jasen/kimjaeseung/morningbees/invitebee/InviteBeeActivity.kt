@@ -13,6 +13,7 @@ import com.jasen.kimjaeseung.morningbees.app.GlobalApp
 import com.jasen.kimjaeseung.morningbees.beforejoin.BeforeJoinActivity
 import com.jasen.kimjaeseung.morningbees.login.LoginActivity
 import com.jasen.kimjaeseung.morningbees.main.MainActivity
+import com.jasen.kimjaeseung.morningbees.model.error.ErrorResponse
 import com.jasen.kimjaeseung.morningbees.model.joinbee.JoinBeeRequest
 import com.jasen.kimjaeseung.morningbees.model.me.MeResponse
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
@@ -20,14 +21,16 @@ import com.jasen.kimjaeseung.morningbees.util.Dlog
 import com.jasen.kimjaeseung.morningbees.util.showToast
 
 import kotlinx.android.synthetic.main.activity_invite_bee.*
+import okhttp3.ResponseBody
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
+import retrofit2.Converter
 import retrofit2.Response
 
 class InviteBeeActivity : AppCompatActivity(), View.OnClickListener{
     private val service = MorningBeesService.create()
-    private var accessToken = ""
+//    private var accessToken = ""
     private var userId = 0
     private var beeId = 0
     private var beeTitle = ""
@@ -38,7 +41,6 @@ class InviteBeeActivity : AppCompatActivity(), View.OnClickListener{
         setContentView(R.layout.activity_invite_bee)
         getDynamicLink()
         initButtonListener()
-        accessToken = GlobalApp.prefs.accessToken
     }
 
     private fun getDynamicLink(){
@@ -66,19 +68,10 @@ class InviteBeeActivity : AppCompatActivity(), View.OnClickListener{
         close_inviteView_button.setOnClickListener(this)
     }
 
-    private fun getAccessToken(){
-        if(accessToken == ""){
-            startActivity(
-                Intent(this, LoginActivity::class.java)
-                    .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            )
-        } else {
-            setUserId()
-        }
-    }
+    private fun requestMeApi() {
+        Log.d(TAG, "accessToken: ${GlobalApp.prefs.accessToken}")
 
-    private fun setUserId() {
-        service.me(accessToken)
+        service.me(GlobalApp.prefs.accessToken)
             .enqueue(object : Callback<MeResponse>{
                 override fun onFailure(call: Call<MeResponse>, t: Throwable) {
                     Dlog().d(t.toString())
@@ -93,11 +86,15 @@ class InviteBeeActivity : AppCompatActivity(), View.OnClickListener{
                         }
 
                         400 -> {
-                            val jsonObject = JSONObject(response.errorBody()!!.string())
-                            val message = jsonObject.getString("message")
-                            val code = jsonObject.getInt("code")
+                            val converter: Converter<ResponseBody, ErrorResponse> =
+                                MorningBeesService.retrofit.responseBodyConverter<ErrorResponse>(
+                                    ErrorResponse::class.java,
+                                    ErrorResponse::class.java.annotations
+                                )
 
-                            if (code == 110) {
+                            val errorResponse = converter.convert(response.errorBody())
+
+                            if(errorResponse.code == 101 || errorResponse.code == 111 || errorResponse.code == 110 || errorResponse.code == 120){
                                 val oldAccessToken = GlobalApp.prefs.accessToken
                                 GlobalApp.prefs.requestRenewalApi()
                                 val renewalAccessToken = GlobalApp.prefs.accessToken
@@ -106,9 +103,9 @@ class InviteBeeActivity : AppCompatActivity(), View.OnClickListener{
                                     showToast { "다시 로그인해주세요." }
                                     gotoLogOut()
                                 } else
-                                    setUserId()
+                                    requestMeApi()
                             } else {
-                                showToast { message }
+                                showToast { errorResponse.message }
                                 finish()
                             }
                         }
@@ -127,13 +124,20 @@ class InviteBeeActivity : AppCompatActivity(), View.OnClickListener{
         startActivity(
             Intent(this, LoginActivity::class.java)
                 .putExtra("RequestLogOut", "")
-                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)        )
+    }
+
+    private fun gotoSignIn(){
+        startActivity(
+            Intent(this, LoginActivity::class.java)
+                .putExtra("RequestSignIn", REQUEST_SIGN_IN)
+                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
         )
     }
 
     private fun joinBeeServer(){
         val joinBeeRequest = JoinBeeRequest(beeId, userId, beeTitle)
-        service.joinBee(accessToken, joinBeeRequest)
+        service.joinBee(GlobalApp.prefs.accessToken, joinBeeRequest)
             .enqueue(object: Callback<Void> {
                 override fun onFailure(call: Call<Void>, t: Throwable) {
                     Dlog().d(t.toString())
@@ -154,16 +158,30 @@ class InviteBeeActivity : AppCompatActivity(), View.OnClickListener{
                         }
 
                         400 -> {
-                            val jsonObject = JSONObject(response.errorBody()!!.string())
-                            val message = jsonObject.getString("message")
-                            val code = jsonObject.getInt("code")
+                            val converter: Converter<ResponseBody, ErrorResponse> =
+                                MorningBeesService.retrofit.responseBodyConverter<ErrorResponse>(
+                                    ErrorResponse::class.java,
+                                    ErrorResponse::class.java.annotations
+                                )
 
-                            if (code == 172){
-                                // 이미 가입 완료 -> 가입되어 있는 main 이동
+                            val errorResponse = converter.convert(response.errorBody())
+
+                            if(errorResponse.code == 101 || errorResponse.code == 111 || errorResponse.code == 110 || errorResponse.code == 120){
+                                val oldAccessToken = GlobalApp.prefs.accessToken
+                                GlobalApp.prefs.requestRenewalApi()
+                                val renewalAccessToken = GlobalApp.prefs.accessToken
+
+                                if (oldAccessToken == renewalAccessToken) {
+                                    showToast { "로그인 해주세요." }
+                                    gotoSignIn()
+                                } else
+                                    requestMeApi()
+                            } else if (errorResponse.code == 172) {
+                                showToast { errorResponse.message }
                                 gotoMain()
-                                showToast { message }
                             } else {
-                                showToast { message }
+                                showToast { errorResponse.message }
+                                finish()
                             }
                         }
 
@@ -183,17 +201,6 @@ class InviteBeeActivity : AppCompatActivity(), View.OnClickListener{
             .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
     }
 
-    private fun clickCloseInviteButton(){
-        if(accessToken == ""){
-            startActivity(
-                Intent(this, LoginActivity::class.java)
-                    .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            )
-        } else {
-            gotoBeforeJoin()
-        }
-    }
-
     private fun gotoBeforeJoin(){
         startActivity(Intent(this, BeforeJoinActivity::class.java)
             .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
@@ -201,14 +208,17 @@ class InviteBeeActivity : AppCompatActivity(), View.OnClickListener{
 
     companion object{
         const val TAG = "InviteBeeActivity"
+        private const val REQUEST_SIGN_IN = 1007
     }
 
     override fun onClick(v: View) {
         when(v.id){
-            R.id.accept_invitebee_button -> getAccessToken()
-            R.id.close_inviteView_button -> clickCloseInviteButton()
+            R.id.accept_invitebee_button -> requestMeApi()
+            R.id.close_inviteView_button -> gotoBeforeJoin()
         }
     }
+
+
 }
 
 

@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:src="http://schemas.android.com/tools">
+    xmlns:src="http://schemas.android.com/tools"
+    android:background="@color/white">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -40,7 +41,8 @@
                 android:textSize="24sp"
                 android:lineHeight="33sp"
                 android:textColor="#222222"
-                android:text="미션 수행 시간을" />
+                android:text="미션 수행 시간을"
+                android:textStyle="bold"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -48,7 +50,8 @@
                 android:textSize="24sp"
                 android:lineHeight="33sp"
                 android:textColor="#222222"
-                android:text="선택해 주세요." />
+                android:text="선택해 주세요."
+                android:textStyle="bold"/>
 
             <TextView
                 android:layout_width="wrap_content"

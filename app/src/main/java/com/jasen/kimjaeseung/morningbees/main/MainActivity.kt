@@ -11,8 +11,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
+import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -38,6 +37,7 @@ import com.jasen.kimjaeseung.morningbees.model.missionurl.MissionUrl
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import com.jasen.kimjaeseung.morningbees.participatemission.ParticipateMissionActivity
 import com.jasen.kimjaeseung.morningbees.setting.SettingActivity
+import com.jasen.kimjaeseung.morningbees.setting.royaljelly.RoyalJellyActivity
 import com.jasen.kimjaeseung.morningbees.util.Dlog
 import com.jasen.kimjaeseung.morningbees.util.showToast
 import jp.wasabeef.glide.transformations.BlurTransformation
@@ -51,6 +51,7 @@ import retrofit2.Converter
 import retrofit2.Response
 import java.io.File
 import java.io.IOException
+import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -81,7 +82,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
     var missionUrlList = mutableListOf<MissionUrl?>()
 
     var imageFile: File? = null
-    lateinit var bottomSheetDialog: BottomSheetDialog
+    private lateinit var bottomSheetDialog: BottomSheetDialog
 
     private var beeTitle = ""
 
@@ -101,11 +102,13 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
         userAccessToken = GlobalApp.prefs.accessToken
 
         initButtonListeners()
+        initScrollListener()
         changeIconColor()
         setTargetDate()
         requestMeApi()
 
-        window.statusBarColor
+//        window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+//            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
     }
 
     // MARK:~ Method Extension
@@ -118,12 +121,40 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
         return SimpleDateFormat(type).format(this)
     }
 
+    private fun Int.getPriceAnnotation(): String {
+        return DecimalFormat("###,###").format(this)
+    }
+
     // MARK:~ Button Click
 
     private fun initButtonListeners() {
         goMissionCreateButton.setOnClickListener(this)
         changeTargetDateButton.setOnClickListener(this)
         goToSettingButton.setOnClickListener(this)
+        royalJellyCheckButton.setOnClickListener(this)
+    }
+
+    private fun initScrollListener(){
+        val window = window
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+
+        mainNestedScrollView.viewTreeObserver.addOnScrollChangedListener(object : ViewTreeObserver.OnScrollChangedListener{
+            override fun onScrollChanged() {
+                val view = mainNestedScrollView.getChildAt(mainNestedScrollView.childCount - 1)
+                Log.d(TAG, "height: ${mainNestedScrollView.height}")
+                Log.d(TAG, "bottom: ${view.bottom}")
+
+                Log.d(TAG, "diff: ${view.bottom - mainNestedScrollView.height}")
+                Log.d(TAG, "scrollY: ${mainNestedScrollView.scrollY}")
+
+                if (mainNestedScrollView.scrollY in 0..80){
+                    window.statusBarColor = ContextCompat.getColor(this@MainActivity, R.color.mainStatusBarColor)
+                } else {
+                    window.statusBarColor = ContextCompat.getColor(this@MainActivity, R.color.white)
+                }
+            }
+        })
     }
 
     override fun onClick(v: View) {
@@ -131,6 +162,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
             R.id.goMissionCreateButton -> gotoMissionCreate()
             R.id.changeTargetDateButton -> changeTargetDate()
             R.id.goToSettingButton -> gotoSetting()
+            R.id.royalJellyCheckButton -> gotoRoyalJelly()
         }
     }
 
@@ -139,7 +171,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
     private fun gotoSetting() {
         startActivity(
             Intent(this, SettingActivity::class.java)
-                .putExtra("myNickname", myNickname)
         )
     }
 
@@ -164,6 +195,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
                         200 -> {
                             val missionInfoResponse = response.body()?.missions
                             val beeInfoResponse = response.body()?.beeInfo
+                            missionUrlList = mutableListOf()
 
                             //beeInfo
                             if (beeInfoResponse != null) {
@@ -199,6 +231,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
                                         setLayoutToMission(NOT_EXIST_FUTURE_MISSION)
                                     }
                                 }
+                                setRecyclerView()
                             } else {
                                 // Exist Mission
                                 var countMissionUrlList = 0
@@ -212,6 +245,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
                                     val missionTitle = missionItem.get("missionTitle").asString
 
                                     if (type == 2) {
+                                        Log.d(TAG, "nickname: $nickname myNickname: $myNickname")
                                         if (nickname == myNickname) {
                                             isParticipateMission = true
                                             missionUrlList.add(
@@ -222,8 +256,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
                                                 )
                                             )
                                         } else {
-                                            if (countMissionUrlList < 3) {
-                                                isParticipateMission = false
+                                            if (countMissionUrlList < 2) {
+//                                                isParticipateMission = false
                                                 missionUrlList.add(
                                                     MissionUrl(
                                                         MissionUrl.MISSION_PARTICIPATE_IMAGE_TYPE,
@@ -287,8 +321,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
                                         }
                                     }
                                 }
+                                setRecyclerView()
                             }
-                            setRecyclerView()
                         }
 
                         400 -> {
@@ -298,7 +332,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
 
                             applyImageUrl(null)
                             setLayoutToMission(NOT_EXIST_MISSION)
-                            // or Error Pop UP 출력
                         }
 
                         500 -> {
@@ -347,6 +380,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
     }
 
     private fun setMissionUrlType() {
+        Log.d(TAG, "isParticipateMission: $isParticipateMission")
         if (isParticipateMission) {
             for (i in 0 until missionUrlList.size) {
                 Log.d(TAG, "missionUrlList[$i]: ${missionUrlList[i]}")
@@ -359,7 +393,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
                 }
             }
 
-            if (missionUrlList.size >= 3) { // 1로 해야하나? 상세 디자인을 모르겠음 (수정 필요)
+            if (missionUrlList.size >= 1) {
                 missionUrlList.add(
                     0,
                     MissionUrl(MissionUrl.LOAD_MORE_MISSION_BUTTON_TYPE, null, null)
@@ -407,7 +441,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
         GlobalApp.prefsBeeInfo.beeTitle = beeTitle
 
         beeTotalMemberView.text = beeInfoResponse.get("memberCounts").toString()
-        totalJelly.text = " ${beeInfoResponse.get("totalPenalty")}원"
+
+        val totalPenalty = beeInfoResponse.get("totalPenalty").asInt.getPriceAnnotation()
+        totalJelly.text = " ${totalPenalty}원"
 
         val todayProfileImage =
             beeInfoResponse.get("todayQuestioner").asJsonObject.get("profileImage").asString
@@ -571,6 +607,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
                         200 -> {
                             val meResponse = response.body()
                             myNickname = meResponse!!.nickname
+                            GlobalApp.prefsBeeInfo.myNickname = myNickname
                             beeId = meResponse.beeId
                             GlobalApp.prefsBeeInfo.beeId = beeId
                             requestMainApi()
@@ -762,8 +799,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
         startActivity(
             Intent(this, LoginActivity::class.java)
                 .putExtra("RequestLogOut", "")
-                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        )
+                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)        )
     }
 
     // MARK:~ Mission Participate
@@ -777,6 +813,12 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
                     "targetDate",
                     targetDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
                 ), GO_TO_PARTICIPATE
+        )
+    }
+
+    private fun gotoRoyalJelly(){
+        startActivity(
+            Intent(this, RoyalJellyActivity::class.java)
         )
     }
 

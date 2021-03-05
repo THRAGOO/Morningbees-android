@@ -139,8 +139,10 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginEnd="8dp"
+                    android:textSize="15dp"
                     android:layout_toEndOf="@id/totalJellyText"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:textColor="#444444"/>
 
                 <RelativeLayout
                     android:layout_width="72dp"
@@ -154,6 +156,7 @@
                         android:background="@drawable/round_total_jelly_btn" />
 
                     <Button
+                        android:id="@+id/royalJellyCheckButton"
                         android:layout_width="72dp"
                         android:layout_height="28dp"
                         android:background="#00ff0000"
@@ -465,14 +468,14 @@
                 <RelativeLayout
                     android:id="@+id/missionNotUploadWrapLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp">
 
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_centerInParent="true"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginEnd="10dp"
                         android:adjustViewBounds="true"
                         android:src="@drawable/icon_shadow_mission_image" />
 
@@ -480,15 +483,16 @@
                         android:id="@+id/notUploadMissionImage"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="20dp"
-                        android:layout_marginEnd="20dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
                         android:adjustViewBounds="true"
                         android:scaleType="fitXY"
                         android:src="@drawable/not_upload_mission_img_view" />
 
                     <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
                         android:layout_marginStart="20dp"
                         android:layout_marginEnd="20dp">
 
@@ -496,49 +500,39 @@
                             android:id="@+id/missionNotUploadText"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_centerInParent="true"
                             android:textColor="#aaaaaa"
                             android:textSize="15sp"
                             android:textStyle="bold" />
+                    </RelativeLayout>
 
-                        <RelativeLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:layout_alignParentBottom="true">
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_alignParentEnd="true">
 
-                            <ImageButton
-                                android:id="@+id/goMissionCreateButton"
-                                android:layout_width="98dp"
-                                android:layout_height="98dp"
-                                android:layout_marginEnd="26dp"
-                                android:layout_marginBottom="29dp"
-                                android:adjustViewBounds="true"
-                                android:background="#00ff0000"
-                                android:scaleType="fitCenter"
-                                android:src="@drawable/icon_participate_in_mission" />
-                        </RelativeLayout>
+                        <ImageButton
+                            android:id="@+id/goMissionCreateButton"
+                            android:layout_width="98dp"
+                            android:layout_height="98dp"
+                            android:layout_marginEnd="26dp"
+                            android:layout_marginBottom="29dp"
+                            android:adjustViewBounds="true"
+                            android:background="#00ff0000"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/icon_participate_in_mission" />
+
                     </RelativeLayout>
                 </RelativeLayout>
-
                 <RelativeLayout
                     android:id="@+id/missionUploadWrapLayout"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
                     <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_centerInParent="true"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:adjustViewBounds="true"
-                        android:src="@drawable/icon_shadow_mission_image" />
-
-                    <ImageView
                         android:id="@+id/missionImage"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_marginStart="20dp"
                         android:layout_marginEnd="20dp"
                         android:adjustViewBounds="true"
@@ -547,36 +541,30 @@
 
                     <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_centerInParent="true"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
                         android:layout_marginStart="20dp"
                         android:layout_marginEnd="20dp">
 
-                        <RelativeLayout
+                        <TextView
+                            android:id="@+id/missionTargetDateText"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_alignParentBottom="true">
+                            android:layout_marginStart="29dp"
+                            android:layout_marginBottom="12dp"
+                            android:textColor="#ffffff"
+                            android:textSize="14dp" />
 
-                            <TextView
-                                android:id="@+id/missionTargetDateText"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="29dp"
-                                android:layout_marginBottom="12dp"
-                                android:textColor="#ffffff"
-                                android:textSize="14dp" />
-
-                            <TextView
-                                android:id="@+id/missionDescriptionText"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_below="@+id/missionTargetDateText"
-                                android:layout_marginStart="29dp"
-                                android:layout_marginBottom="29dp"
-                                android:textColor="#ffffff"
-                                android:textSize="24dp"
-                                android:textStyle="bold" />
-                        </RelativeLayout>
+                        <TextView
+                            android:id="@+id/missionDescriptionText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/missionTargetDateText"
+                            android:layout_marginStart="29dp"
+                            android:textColor="#ffffff"
+                            android:textSize="24dp"
+                            android:textStyle="bold"
+                            android:layout_marginBottom="35dp"/>
                     </RelativeLayout>
                 </RelativeLayout>
             </FrameLayout>
@@ -586,7 +574,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_marginStart="24dp"
-                android:layout_marginTop="36dp"
+                android:layout_marginTop="32dp"
                 android:layout_marginEnd="24dp"
                 android:layout_marginBottom="20dp"
                 android:text="미션 참여사진"
@@ -594,17 +582,16 @@
                 android:textSize="20dp"
                 android:textStyle="bold" />
 
-
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/missionParticipateRecyclerView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:clipToPadding="false"
-                android:paddingStart="24dp"
-                android:paddingEnd="24dp"
                 android:layout_marginBottom="36dp"
+                android:clipToPadding="false"
                 android:nestedScrollingEnabled="false"
-                android:overScrollMode="never" />
+                android:overScrollMode="never"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

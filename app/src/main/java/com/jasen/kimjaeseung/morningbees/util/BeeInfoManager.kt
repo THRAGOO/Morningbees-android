@@ -10,6 +10,10 @@ class BeeInfoManager(context: Context) {
     private val mMyNickname = "myNickname"
     private val mStartTime = "startTime"
     private val mEndTime = "endTime"
+    private val mSelectedPartPayment = "selectedPartPayment"
+    private val mUnPaidPenalty = "unPaidPenalty"
+    private val mPaidPenalty = "paidPenalty"
+    private val mSelectedUserId = "selectedUserId"
 
     private val prefsBeeInfo = context.getSharedPreferences(fileName, 0)
 
@@ -32,4 +36,24 @@ class BeeInfoManager(context: Context) {
     var endTime: Int
         get() = prefsBeeInfo.getInt(mEndTime, 0)
         set(value) = prefsBeeInfo.edit().putInt(mEndTime, value).apply()
+
+    var selectedPartPayment: Int
+        get() = prefsBeeInfo.getInt(mSelectedPartPayment, 0)
+        set(value) = prefsBeeInfo.edit().putInt(mSelectedPartPayment, value).apply()
+
+    var selectedUserId: Long
+        get() = prefsBeeInfo.getLong(mSelectedUserId, 0)
+        set(value) = prefsBeeInfo.edit().putLong(mSelectedUserId, value).apply()
+
+    var unPaidPenalty: Int
+        get() = prefsBeeInfo.getInt(mUnPaidPenalty, 0)
+        set(value) = prefsBeeInfo.edit().putInt(mUnPaidPenalty, value).apply()
+
+    var paidPenalty: Int
+        get() = prefsBeeInfo.getInt(mPaidPenalty, 0)
+        set(value) = prefsBeeInfo.edit().putInt(mPaidPenalty, value).apply()
+
+    var myNickname: String
+        get() = prefsBeeInfo.getString(mMyNickname, "")
+        set(value) = prefsBeeInfo.edit().putString(mMyNickname, value).apply()
 }

@@ -1,6 +1,5 @@
 package com.jasen.kimjaeseung.morningbees.setting.royaljelly.unpaid
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,8 +10,14 @@ import kotlinx.android.synthetic.main.item_royaljelly_unpaid.view.*
 import java.text.DecimalFormat
 
 class UnPaidAdapter(
-    private val penaltyList: MutableList<Penalty>
+    private val penaltyList: MutableList<Penalty>,
+    private val listener: OnItemSelectedInterface
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+    interface OnItemSelectedInterface {
+        fun onItemSelected(v: View, position: Int)
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return UnPaidViewHolder(
             LayoutInflater.from(parent.context)
@@ -37,9 +42,14 @@ class UnPaidAdapter(
 
         holder.itemView.itemUnPaidNickname.text = item.nickname
         holder.itemView.itemUnPaidMoney.text = item.penalty.getPriceAnnotation()
+
+        holder.itemView.setOnClickListener(object : View.OnClickListener{
+            override fun onClick(v: View) {
+                listener.onItemSelected(v, position)
+            }
+        })
     }
 
     private class UnPaidViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     }
-
 }

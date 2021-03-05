@@ -5,6 +5,7 @@ import android.content.ContextWrapper
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
@@ -15,6 +16,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.app.GlobalApp
+import com.jasen.kimjaeseung.morningbees.model.error.ErrorResponse
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import com.jasen.kimjaeseung.morningbees.util.Dlog
 import com.jasen.kimjaeseung.morningbees.util.showToast
@@ -22,8 +24,10 @@ import kotlinx.android.synthetic.main.activity_participate_upload_mission.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.ResponseBody
 import org.json.JSONObject
 import retrofit2.Call
+import retrofit2.Converter
 import retrofit2.Response
 import java.io.File
 import java.io.FileOutputStream
@@ -72,6 +76,7 @@ class ParticipateMissionActivity : AppCompatActivity(), View.OnClickListener {
             pc_upload_img.setImageBitmap(selectedImage)
         }
 
+        pc_reload_img.setColorFilter(Color.parseColor("#aaaaaa"))
         initButtonListeners()
     }
 
@@ -86,7 +91,7 @@ class ParticipateMissionActivity : AppCompatActivity(), View.OnClickListener {
         when (i) {
             R.id.cancel_participate_upload_btn -> gotoMain()
             R.id.pc_reload_img_btn -> gotoParticipateDialog()
-            R.id.share_participate_upload_btn -> missionCreateServer()
+            R.id.share_participate_upload_btn -> requestMissionCreateApi()
         }
     }
 
@@ -112,7 +117,7 @@ class ParticipateMissionActivity : AppCompatActivity(), View.OnClickListener {
         return file
     }
 
-    private fun missionCreateServer() {
+    private fun requestMissionCreateApi() {
         if (imageFile == null) {
             showToast { "사진을 선택해 주세요." }
         } else {
@@ -138,15 +143,32 @@ class ParticipateMissionActivity : AppCompatActivity(), View.OnClickListener {
                                 gotoMain()
                                 Log.d(TAG, "mission participate success")
                             }
+
                             400 -> {
-                                val jsonObject = JSONObject(response.errorBody()!!.string())
-                                val timestamp = jsonObject.getString("timestamp")
-                                val status = jsonObject.getString("status")
-                                val message = jsonObject.getString("message")
-                                val code = jsonObject.getInt("code")
-                                gotoMain()
-                                showToast { message }
+                                val converter: Converter<ResponseBody, ErrorResponse> =
+                                    MorningBeesService.retrofit.responseBodyConverter<ErrorResponse>(
+                                        ErrorResponse::class.java,
+                                        ErrorResponse::class.java.annotations
+                                    )
+
+                                val errorResponse = converter.convert(response.errorBody())
+
+                                if(errorResponse.code == 111 || errorResponse.code == 110 || errorResponse.code == 120){
+                                    val oldAccessToken = GlobalApp.prefs.accessToken
+                                    GlobalApp.prefs.requestRenewalApi()
+                                    val renewalAccessToken = GlobalApp.prefs.accessToken
+
+                                    if (oldAccessToken == renewalAccessToken) {
+                                        showToast { "다시 로그인해주세요." }
+                                        gotoMain()
+                                    } else
+                                        requestMissionCreateApi()
+                                } else {
+                                    showToast { errorResponse.message }
+                                    finish()
+                                }
                             }
+
                             500 -> { //internal server error
                                 val jsonObject = JSONObject(response.errorBody()!!.string())
                                 val timestamp = jsonObject.getString("timestamp")

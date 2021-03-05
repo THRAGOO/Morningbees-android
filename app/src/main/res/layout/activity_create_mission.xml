@@ -52,23 +52,32 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginBottom="16dp"
         android:text="소개 "
-        android:textColor="#444444"
+        android:textColor="#777777"
+        android:textStyle="bold"
         android:textSize="15dp" />
 
-    <EditText
-        android:id="@+id/missionDescription"
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        style="@style/EditTextGreyStyle"
+        android:theme="@style/EditTextGreyStyle"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
-        android:layout_marginBottom="52dp"
-        android:backgroundTint="#dddddd"
-        android:hint="2~10자 이내로 입력해 주세요."
-        android:maxLength="10"
-        android:textColor="#444444"
-        android:theme="@style/EditTheme" />
+        android:layout_marginBottom="-8dp"
+        android:hint="2~10자 이내로 입력해 주세요.">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/missionDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLength="10"
+            android:textColor="#444444"
+            android:textSize="15dp"
+            android:layout_marginBottom="52dp">
+        </com.google.android.material.textfield.TextInputEditText>
+
+    </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
         android:layout_width="wrap_content"
@@ -76,7 +85,8 @@
         android:layout_marginStart="24dp"
         android:layout_marginBottom="21dp"
         android:text="사진 업로드"
-        android:textColor="#444444"
+        android:textColor="#777777"
+        android:textStyle="bold"
         android:textSize="15dp" />
 
     <FrameLayout
@@ -165,7 +175,8 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="63dp"
         android:text="난이도 설정"
-        android:textColor="#444444"
+        android:textColor="#777777"
+        android:textStyle="bold"
         android:textSize="15sp" />
 
     <TextView

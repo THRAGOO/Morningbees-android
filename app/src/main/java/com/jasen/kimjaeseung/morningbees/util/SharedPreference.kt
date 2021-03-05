@@ -12,6 +12,9 @@ class SharedPreference(context: Context) {
     private val fileName = "prefs"
     private val mAccessToken = "AccessToken"
     private val mRefreshToken = "RefreshToken"
+    private val mUserId = "UserId"
+    private val mProvider = "Provider"
+    private val mSocialAccessToken = "SocialAccessToken"
     private val prefs = context.getSharedPreferences(fileName, 0)
     private val service = MorningBeesService.create()
 
@@ -22,6 +25,18 @@ class SharedPreference(context: Context) {
     var refreshToken: String
         get() = prefs.getString(mRefreshToken, "")
         set(value) = prefs.edit().putString(mRefreshToken, value).apply()
+
+    var userId: Int
+        get() = prefs.getInt(mUserId, 0)
+        set(value) = prefs.edit().putInt(mUserId, value).apply()
+
+    var provider: String
+        get() = prefs.getString(mProvider, "")
+        set(value) = prefs.edit().putString(mProvider, value).apply()
+
+    var socialAccessToken: String
+        get() = prefs.getString(mSocialAccessToken, "")
+        set(value) = prefs.edit().putString(mSocialAccessToken, value).apply()
 
     fun requestRenewalApi() {
         service.renewal(accessToken, refreshToken).enqueue(object : Callback<RenewalResponse> {
@@ -34,6 +49,7 @@ class SharedPreference(context: Context) {
                     200 -> {
                         val renewalResponse = response.body()
                         accessToken = renewalResponse!!.accessToken
+//                        socialAccessToken = renewalResponse!!.accessToken
                     }
 
                     400 -> {

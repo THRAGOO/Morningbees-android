@@ -8,15 +8,19 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.app.GlobalApp
-import com.jasen.kimjaeseung.morningbees.model.createbee.CreateBeeRequest
+import com.jasen.kimjaeseung.morningbees.login.LoginActivity
 import com.jasen.kimjaeseung.morningbees.main.MainActivity
+import com.jasen.kimjaeseung.morningbees.model.createbee.CreateBeeRequest
+import com.jasen.kimjaeseung.morningbees.model.error.ErrorResponse
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import com.jasen.kimjaeseung.morningbees.util.Dlog
 import com.jasen.kimjaeseung.morningbees.util.showToast
 import kotlinx.android.synthetic.main.activity_create_step3.*
+import okhttp3.ResponseBody
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
+import retrofit2.Converter
 import retrofit2.Response
 
 
@@ -56,7 +60,7 @@ class CreateStep3Activity : AppCompatActivity(), View.OnClickListener {
 
     override fun onClick(v: View) {
         when (v.id) {
-            R.id.create_step3_next_button -> createBeeServer()
+            R.id.create_step3_next_button -> requestCreateBeeApi()
             R.id.go_back_step2_button -> onBackPressed()
 
             R.id.jelly_2 -> {
@@ -359,7 +363,7 @@ class CreateStep3Activity : AppCompatActivity(), View.OnClickListener {
         jelly_10.setOnClickListener(this)
     }
 
-    private fun createBeeServer() {
+    private fun requestCreateBeeApi() {
         val pay: Int = (jellyCnt * 1000)
         val createBeeRequest = CreateBeeRequest(beeTitle, startTime, endTime, pay, " ")
         service.createBee(accessToken, createBeeRequest)
@@ -379,10 +383,28 @@ class CreateStep3Activity : AppCompatActivity(), View.OnClickListener {
                         }
 
                         400 -> {
-                            val jsonObject = JSONObject(response.errorBody()!!.string())
-                            val message = jsonObject.getString("message")
+                            val converter: Converter<ResponseBody, ErrorResponse> =
+                                MorningBeesService.retrofit.responseBodyConverter<ErrorResponse>(
+                                    ErrorResponse::class.java,
+                                    ErrorResponse::class.java.annotations
+                                )
 
-                            showToast { message }
+                            val errorResponse = converter.convert(response.errorBody())
+
+                            if(errorResponse.code == 111 || errorResponse.code == 110 || errorResponse.code == 120){
+                                val oldAccessToken = GlobalApp.prefs.accessToken
+                                GlobalApp.prefs.requestRenewalApi()
+                                val renewalAccessToken = GlobalApp.prefs.accessToken
+
+                                if (oldAccessToken == renewalAccessToken) {
+                                    showToast { "다시 로그인해주세요." }
+                                    gotoLogOut()
+                                } else
+                                    requestCreateBeeApi()
+                            } else {
+                                showToast { errorResponse.message }
+                                finish()
+                            }
                         }
 
                         500 -> {
@@ -399,6 +421,13 @@ class CreateStep3Activity : AppCompatActivity(), View.OnClickListener {
     private fun gotoMain() {
         startActivity(Intent(this, MainActivity::class.java)
             .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+    }
+
+    private fun gotoLogOut() {
+        startActivity(
+            Intent(this, LoginActivity::class.java)
+                .putExtra("RequestLogOut", "")
+                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)        )
     }
 
     companion object {

@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.app.GlobalApp
+import com.jasen.kimjaeseung.morningbees.model.error.ErrorResponse
 import com.jasen.kimjaeseung.morningbees.model.joinbee.JoinBeeRequest
 import com.jasen.kimjaeseung.morningbees.model.me.MeResponse
 import com.jasen.kimjaeseung.morningbees.model.namevalidationcheck.NameValidataionCheckResponse
@@ -11,25 +12,27 @@ import com.jasen.kimjaeseung.morningbees.model.signup.SignUpRequest
 import com.jasen.kimjaeseung.morningbees.model.signup.SignUpResponse
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import com.jasen.kimjaeseung.morningbees.util.Dlog
+import okhttp3.ResponseBody
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
+import retrofit2.Converter
 import retrofit2.Response
 
-class SignUpPresenter(context: Context) : SignUpContract.Presenter{
+class SignUpPresenter(context: Context) : SignUpContract.Presenter {
     //만약에 activity를 라이프사이클에 맞춰서 구현했으면 presenter에도 라이프사이클 해줘야함
-    private var signUpView : SignUpContract.View ?= null
+    private var signUpView: SignUpContract.View? = null
     private val service = MorningBeesService.create()
     var nameValidCheckResponse: NameValidataionCheckResponse? = null
-    var signUpResponse : SignUpResponse? = null
+    var signUpResponse: SignUpResponse? = null
 
     lateinit var mNickname: String
     var validCheck: Boolean = false
-    var mContext : Context = context
+    var mContext: Context = context
 
     private var userId = 0
 
-    override fun takeView(view: SignUpContract.View){
+    override fun takeView(view: SignUpContract.View) {
         signUpView = view
     }
 
@@ -37,8 +40,9 @@ class SignUpPresenter(context: Context) : SignUpContract.Presenter{
         signUpView = null
     }
 
-    override fun nameValidMorningbeesServer(tempName: String){
-        service.nameValidationCheck(tempName)
+    override fun nameValidMorningbeesServer(nickName: String) {
+        val nickName = nickName
+        service.nameValidationCheck(nickName)
             .enqueue(object : Callback<NameValidataionCheckResponse> {
                 override fun onFailure(call: Call<NameValidataionCheckResponse>, t: Throwable) {
                     signUpView!!.showToastView { mContext.resources.getString(R.string.network_error_message) }
@@ -54,7 +58,7 @@ class SignUpPresenter(context: Context) : SignUpContract.Presenter{
                         200 -> {
                             nameValidCheckResponse = response.body()
                             if (nameValidCheckResponse!!.isValid) {    //valid nickname
-                                mNickname = tempName
+                                mNickname = nickName
                                 validCheck = true
 
                                 signUpView!!.showToastView { mContext.resources.getString(R.string.validnickname_ok) }
@@ -68,16 +72,31 @@ class SignUpPresenter(context: Context) : SignUpContract.Presenter{
                                 Log.d(TAG, "validnickname duplicate")
                             }
                         }
-                        400 -> {
-                            Dlog().d(response.code().toString())
-                            val jsonObject = JSONObject(response.errorBody()!!.string())
-                            val timestamp = jsonObject.getString("timestamp")
-                            val status = jsonObject.getString("status")
-                            val message = jsonObject.getString("message")
-                            val code = jsonObject.getInt("code")
 
-                            signUpView!!.showToastView{message}
+                        400 -> {
+                            val converter: Converter<ResponseBody, ErrorResponse> =
+                                MorningBeesService.retrofit.responseBodyConverter<ErrorResponse>(
+                                    ErrorResponse::class.java,
+                                    ErrorResponse::class.java.annotations
+                                )
+
+                            val errorResponse = converter.convert(response.errorBody())
+
+                            if (errorResponse.code == 111 || errorResponse.code == 110 || errorResponse.code == 120) {
+                                val oldAccessToken = GlobalApp.prefs.accessToken
+                                GlobalApp.prefs.requestRenewalApi()
+                                val renewalAccessToken = GlobalApp.prefs.accessToken
+
+                                if (oldAccessToken == renewalAccessToken) {
+                                    signUpView!!.showToastView { "다시 로그인해주세요." }
+                                    signUpView!!.gotoLogOut()
+                                } else
+                                    nameValidMorningbeesServer(nickName)
+                            } else {
+                                signUpView!!.showToastView { errorResponse.message }
+                            }
                         }
+
                         500 -> {//internal server error
                             Dlog().d(response.code().toString())
                         }
@@ -88,7 +107,8 @@ class SignUpPresenter(context: Context) : SignUpContract.Presenter{
 
     override fun signUpMorningbeesServer(
         signUpRequest: SignUpRequest
-    ){
+    ) {
+        val signUpRequest = signUpRequest
         service.signUp(signUpRequest)
             .enqueue(object : Callback<SignUpResponse> {
                 override fun onFailure(call: Call<SignUpResponse>, t: Throwable) {
@@ -111,103 +131,145 @@ class SignUpPresenter(context: Context) : SignUpContract.Presenter{
                             GlobalApp.prefs.accessToken = signUpResponse!!.accessToken
                             GlobalApp.prefs.refreshToken = signUpResponse!!.refreshToken
 
-                            if(GlobalApp.prefsBeeInfo.beeId == 0){
+                            if (GlobalApp.prefsBeeInfo.beeId == 0) {
                                 signUpView!!.gotoBeforeJoin()
                             } else {
                                 meServer()
                             }
                         }
+
                         400 -> {
-                            val jsonObject = JSONObject(response.errorBody()!!.string())
-                            val message = jsonObject.getString("message")
-                            signUpView!!.showToastView{message}
+                            val converter: Converter<ResponseBody, ErrorResponse> =
+                                MorningBeesService.retrofit.responseBodyConverter<ErrorResponse>(
+                                    ErrorResponse::class.java,
+                                    ErrorResponse::class.java.annotations
+                                )
+
+                            val errorResponse = converter.convert(response.errorBody())
+
+                            if(errorResponse.code == 111 || errorResponse.code == 110 || errorResponse.code == 120){
+                                val oldAccessToken = GlobalApp.prefs.accessToken
+                                GlobalApp.prefs.requestRenewalApi()
+                                val renewalAccessToken = GlobalApp.prefs.accessToken
+
+                                if (oldAccessToken == renewalAccessToken) {
+                                    signUpView!!.showToastView { "다시 로그인해주세요." }
+                                    signUpView!!.gotoLogOut()
+                                } else
+                                    signUpMorningbeesServer(signUpRequest)
+                            } else {
+                                signUpView!!.showToastView { errorResponse.message }
+                            }
                         }
+
                         500 -> { //internal server error
                             val jsonObject = JSONObject(response.errorBody()!!.string())
                             val message = jsonObject.getString("message")
-                            signUpView!!.showToastView{message}
+                            signUpView!!.showToastView { message }
                         }
                     }
                 }
             })
     }
 
-    private fun meServer(){
+    private fun meServer() {
         service.me(GlobalApp.prefs.accessToken)
-            .enqueue(object : Callback<MeResponse>{
+            .enqueue(object : Callback<MeResponse> {
                 override fun onFailure(call: Call<MeResponse>, t: Throwable) {
                     Dlog().d(t.toString())
                 }
 
                 override fun onResponse(call: Call<MeResponse>, response: Response<MeResponse>) {
-                    when(response.code()){
+                    when (response.code()) {
                         200 -> {
-                            val meResponse : MeResponse? = response.body()
+                            val meResponse: MeResponse? = response.body()
                             userId = meResponse!!.userId
                             joinBeeServer(userId)
                         }
 
                         400 -> {
-                            val jsonObject = JSONObject(response.errorBody()!!.string())
-                            val message = jsonObject.getString("message")
-                            val code = jsonObject.getInt("code")
+                            val converter: Converter<ResponseBody, ErrorResponse> =
+                                MorningBeesService.retrofit.responseBodyConverter<ErrorResponse>(
+                                    ErrorResponse::class.java,
+                                    ErrorResponse::class.java.annotations
+                                )
 
-                            if (code == 110) {
+                            val errorResponse = converter.convert(response.errorBody())
+
+                            if(errorResponse.code == 111 || errorResponse.code == 110 || errorResponse.code == 120){
                                 val oldAccessToken = GlobalApp.prefs.accessToken
                                 GlobalApp.prefs.requestRenewalApi()
                                 val renewalAccessToken = GlobalApp.prefs.accessToken
 
                                 if (oldAccessToken == renewalAccessToken) {
-                                    signUpView!!.showToastView{message}
+                                    signUpView!!.showToastView { "다시 로그인해주세요." }
                                     signUpView!!.gotoLogOut()
-                                } else{
+                                } else
                                     meServer()
-                                    signUpView!!.finish()
-                                }
-
-
                             } else {
-                                signUpView!!.showToastView{message}
+                                signUpView!!.showToastView { errorResponse.message }
+                                signUpView!!.finish()
                             }
                         }
 
                         500 -> {
                             val jsonObject = JSONObject(response.errorBody()!!.string())
                             val message = jsonObject.getString("message")
-                            signUpView!!.showToastView{message}
+                            signUpView!!.showToastView { message }
                         }
                     }
                 }
             })
     }
 
-    private fun joinBeeServer(userId : Int){
+    private fun joinBeeServer(userId: Int) {
+        val userId = userId
         val joinBeeRequest = JoinBeeRequest(GlobalApp.prefsBeeInfo.beeId, userId, "")
 //        service.joinBee(accessToken, beeId, userId)
         service.joinBee(GlobalApp.prefs.accessToken, joinBeeRequest)
-            .enqueue(object: Callback<Void> {
+            .enqueue(object : Callback<Void> {
                 override fun onFailure(call: Call<Void>, t: Throwable) {
                     Dlog().d(t.toString())
                 }
+
                 override fun onResponse(
                     call: Call<Void>,
                     response: Response<Void>
                 ) {
-                    when(response.code()){
+                    when (response.code()) {
                         200 -> {
                             signUpView!!.gotoMain()
                         }
 
                         400 -> {
-                            val jsonObject = JSONObject(response.errorBody()!!.string())
-                            val message = jsonObject.getString("message")
-                            signUpView!!.showToastView{message}
+                            val converter: Converter<ResponseBody, ErrorResponse> =
+                                MorningBeesService.retrofit.responseBodyConverter<ErrorResponse>(
+                                    ErrorResponse::class.java,
+                                    ErrorResponse::class.java.annotations
+                                )
+
+                            val errorResponse = converter.convert(response.errorBody())
+
+                            if(errorResponse.code == 111 || errorResponse.code == 110 || errorResponse.code == 120){
+                                val oldAccessToken = GlobalApp.prefs.accessToken
+                                GlobalApp.prefs.requestRenewalApi()
+                                val renewalAccessToken = GlobalApp.prefs.accessToken
+
+                                if (oldAccessToken == renewalAccessToken) {
+                                    signUpView!!.showToastView { "다시 로그인해주세요." }
+                                    signUpView!!.gotoLogOut()
+                                } else
+                                    joinBeeServer(userId)
+                            } else {
+                                signUpView!!.showToastView { errorResponse.message }
+                                signUpView!!.finish()
+                            }
                         }
 
                         500 -> {
                             val jsonObject = JSONObject(response.errorBody()!!.string())
                             val message = jsonObject.getString("message")
-                            signUpView!!.showToastView{message}
+                            signUpView!!.showToastView { message }
                         }
                     }
                 }

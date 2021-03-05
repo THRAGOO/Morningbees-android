@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/white">
 
     <RelativeLayout
         android:id="@+id/wrapUnPaidRoyalJellyBar"
@@ -29,7 +30,7 @@
             android:adjustViewBounds="true"
             android:background="@color/transparent"
             android:scaleType="fitXY"
-            android:src="@drawable/icon_search" />
+            android:src="@drawable/icon_search_resize" />
 
         <FrameLayout
             android:layout_width="wrap_content"
@@ -41,7 +42,7 @@
                 android:layout_width="102dp"
                 android:layout_height="7dp"
                 android:layout_gravity="bottom"
-                android:background="@drawable/background_total_unpaid" />
+                android:background="@drawable/background_total_unpaid"/>
 
             <LinearLayout
                 android:id="@+id/totalUnpaidRoyalJellyLayout"

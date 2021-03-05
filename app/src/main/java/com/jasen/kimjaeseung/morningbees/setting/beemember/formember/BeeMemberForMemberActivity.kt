@@ -1,5 +1,6 @@
 package com.jasen.kimjaeseung.morningbees.setting.beemember.formember
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -7,16 +8,20 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.app.GlobalApp
+import com.jasen.kimjaeseung.morningbees.login.LoginActivity
 import com.jasen.kimjaeseung.morningbees.model.beemember.BeeMember
 import com.jasen.kimjaeseung.morningbees.model.beemember.BeeMemberResponse
+import com.jasen.kimjaeseung.morningbees.model.error.ErrorResponse
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import com.jasen.kimjaeseung.morningbees.setting.beemember.formanager.BeeMemberForManagerActivity
 import com.jasen.kimjaeseung.morningbees.util.Dlog
 import com.jasen.kimjaeseung.morningbees.util.showToast
 import kotlinx.android.synthetic.main.activity_setting_bee_member_for_member.*
+import okhttp3.ResponseBody
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
+import retrofit2.Converter
 import retrofit2.Response
 
 class BeeMemberForMemberActivity : AppCompatActivity(), View.OnClickListener {
@@ -70,11 +75,28 @@ class BeeMemberForMemberActivity : AppCompatActivity(), View.OnClickListener {
                     }
 
                     400 -> {
-                        val jsonObject = JSONObject(response.errorBody()?.string())
-                        val message = jsonObject.getString("message")
-                        val code = jsonObject.getInt("code")
+                        val converter: Converter<ResponseBody, ErrorResponse> =
+                            MorningBeesService.retrofit.responseBodyConverter<ErrorResponse>(
+                                ErrorResponse::class.java,
+                                ErrorResponse::class.java.annotations
+                            )
 
-                        showToast { message }
+                        val errorResponse = converter.convert(response.errorBody())
+
+                        if(errorResponse.code == 111 || errorResponse.code == 110 || errorResponse.code == 120){
+                            val oldAccessToken = GlobalApp.prefs.accessToken
+                            GlobalApp.prefs.requestRenewalApi()
+                            val renewalAccessToken = GlobalApp.prefs.accessToken
+
+                            if (oldAccessToken == renewalAccessToken) {
+                                showToast { "다시 로그인해주세요." }
+                                gotoLogOut()
+                            } else
+                                requestBeeMemberApi()
+                        } else {
+                            showToast { errorResponse.message }
+                            finish()
+                        }
                     }
 
                     500 -> {
@@ -118,6 +140,13 @@ class BeeMemberForMemberActivity : AppCompatActivity(), View.OnClickListener {
         when (v.id) {
             R.id.toSettingBeeMemberActivityButtonForMember -> finish()
         }
+    }
+
+    private fun gotoLogOut() {
+        startActivity(
+            Intent(this, LoginActivity::class.java)
+                .putExtra("RequestLogOut", "")
+                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)        )
     }
 
     companion object {

@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/layout_mission_participate"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_part_payment"
     android:layout_width="match_parent"
-    android:layout_height="300dp"
-    android:background="@drawable/background_part_payment"
-    app:layout_behavior="@string/bottom_sheet_behavior">
+    android:layout_height="wrap_content"
+    app:layout_behavior="@string/bottom_sheet_behavior"
+    tools:context=".setting.royaljelly.RoyalJellyActivity">
 
     <TextView
         android:id="@+id/selectedPaymentText"
@@ -27,21 +28,66 @@
         android:gravity="center"
         android:textColor="#222222"
         android:textSize="30dp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:layout_marginBottom="19dp"/>
 
     <SeekBar
+        android:id="@+id/thumbSeekBar"
         android:layout_below="@id/selectedPayment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:max="10"
-        android:thumb="@drawable/icon_thumb"
-        android:theme="@style/Widget.AppCompat.SeekBar.Discrete"
-        android:progressDrawable="@drawable/seekbar_selected_payment" />
+        android:paddingStart="25dp"
+        android:paddingEnd="25dp"
+        android:paddingBottom="6dp"
+        android:layout_marginBottom="3dp"
+        android:thumb="@drawable/icon_thumb_resize"
+        android:progressDrawable="@color/transparent" />
 
-    <TextView
+    <SeekBar
+        android:id="@+id/selectSeekBar"
+        android:layout_below="@id/thumbSeekBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/selectedPaymentButton"
+        android:paddingStart="25dp"
+        android:paddingEnd="25dp"
+        android:progressDrawable="@drawable/seekbar_selected_payment"
+        android:layout_marginBottom="3dp"
+        android:tickMarkTint="#cccccc"
+        android:thumb="@color/transparent"/>
+
+    <RelativeLayout
+        android:id="@+id/selectSeekBarText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/selectSeekBar"
+        android:layout_marginStart="25dp"
+        android:layout_marginEnd="25dp"
+        android:layout_marginBottom="15dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:layout_alignParentStart="true"
+            android:textSize="13dp"
+            android:textColor="#aaaaaa"/>
+
+        <TextView
+            android:id="@+id/maxPaymentSeekBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="10,000"
+            android:layout_alignParentEnd="true"
+            android:textSize="13dp"
+            android:textColor="#aaaaaa"/>
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/selectSeekBarNoticeText"
+        android:layout_below="@id/selectSeekBarText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="27dp"
         android:gravity="center"
         android:text="1,000원 단위로 선택할 수 있습니다."
@@ -52,10 +98,9 @@
         android:id="@+id/selectedPaymentButton"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:layout_alignParentBottom="true"
         android:background="#FFDA22"
         android:text="선택한 액수만큼 차감"
-        android:textSize="15dp" />
-
-
+        android:textSize="15dp"
+        android:textStyle="bold"
+        android:layout_below="@id/selectSeekBarNoticeText"/>
 </RelativeLayout>

@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/white">
 
     <ImageButton
         android:id="@+id/go_back_step2_button"
@@ -44,7 +45,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="27dp"
-            android:text="로얄젤리는 모닝비즈 내 벌금이에요.\n매일 진행되는 미션을 수행하지 못한 꿀벌에게 부과해요."
+            android:text="'로얄젤리'는 모닝비즈 내 벌금이에요.\n매일 진행되는 미션을 수행하지 못한 꿀벌에게 부과해요."
             android:textColor="#cccccc" />
 
         <TextView
@@ -53,7 +54,8 @@
             android:layout_marginBottom="20dp"
             android:text="로얄젤리 (최소 2,000 ~ 최대 10,000원)"
             android:textColor="#777777"
-            android:textSize="13sp" />
+            android:textSize="13sp"
+            android:textStyle="bold"/>
 
         <RelativeLayout
             android:layout_width="wrap_content"

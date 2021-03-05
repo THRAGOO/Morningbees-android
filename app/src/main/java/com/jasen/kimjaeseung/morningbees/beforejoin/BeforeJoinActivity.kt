@@ -8,11 +8,10 @@ import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.app.GlobalApp
 import com.jasen.kimjaeseung.morningbees.createbee.CreateStep1Activity
 import com.jasen.kimjaeseung.morningbees.login.LoginActivity
+import com.jasen.kimjaeseung.morningbees.setting.SettingActivity
 import kotlinx.android.synthetic.main.activity_beforejoin.*
 
 class BeforeJoinActivity : AppCompatActivity(), View.OnClickListener {
-    lateinit var refreshToken: String
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_beforejoin)
@@ -45,12 +44,13 @@ class BeforeJoinActivity : AppCompatActivity(), View.OnClickListener {
     override fun onBackPressed() {
         startActivity(
             Intent(this, LoginActivity::class.java)
-                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                .putExtra("RequestLogOut", "")
+                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
         )
     }
 
     companion object {
         private const val TAG = "BeforeJoinActivity"
-        private const val REQUEST_TEST = 0
+        private const val REQUEST_SIGN_IN = 1007
     }
 }

@@ -117,15 +117,14 @@ class LoadMissionPhotoActivity : AppCompatActivity(), View.OnClickListener {
     private fun initRecyclerView() {
         missionPhotoRecyclerView.adapter = LoadMissionPhotoAdapter(missionList)
         missionPhotoRecyclerView.layoutManager =
-            LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true)
+            LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
     }
 
     private fun gotoLogOut() {
         startActivity(
             Intent(this, LoginActivity::class.java)
                 .putExtra("RequestLogOut", "")
-                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        )
+                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)        )
     }
 
     private fun clickItemMenu() {

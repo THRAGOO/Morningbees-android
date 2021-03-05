@@ -3,12 +3,14 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="88dp"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/white">
 
     <RelativeLayout
+        android:layout_marginTop="88dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        >
 
         <ImageView
             android:id="@+id/illust_inviteImageView"
@@ -16,9 +18,10 @@
             android:layout_height="238dp"
             android:src="@drawable/icon_invite"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="32dp"/>
+            android:layout_marginBottom="12dp"/>
 
         <RelativeLayout
+            android:id="@+id/inviteBeeText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
@@ -28,11 +31,12 @@
                 android:id="@+id/invite_textview1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="여왕벌로부터\n초대장이 도착하였습니다. "
-                android:textSize="22dp"
-                android:textColor="#222222"
+                android:layout_marginBottom="22dp"
                 android:gravity="center_horizontal"
-                android:layout_marginBottom="22dp"/>
+                android:text="여왕벌에게\n초대장이 도착하였습니다. "
+                android:textColor="#222222"
+                android:textSize="22dp"
+                android:textStyle="bold"/>
 
             <TextView
                 android:id="@+id/beeNameText"
@@ -46,7 +50,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/beeNameText"
-                android:layout_marginBottom="34dp"
+
                 android:text="미션을 함께 클리어해볼까요? "
                 android:layout_centerHorizontal="true"/>
         </RelativeLayout>
@@ -55,7 +59,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true">
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/inviteBeeText"
+            android:gravity="bottom">
 
             <Button
                 android:id="@+id/accept_invitebee_button"
@@ -64,7 +70,8 @@
                 android:background="@drawable/radius_button_selector"
                 android:layout_centerHorizontal="true"
                 android:layout_marginBottom="20dp"
-                android:text="모임에 참여하기 "/>
+                android:text="모임에 참여하기 "
+                android:stateListAnimator="@null"/>
 
             <Button
                 android:id="@+id/close_inviteView_button"
@@ -75,8 +82,7 @@
                 android:textColor="#777777"
                 android:layout_centerHorizontal="true"
                 android:text="닫기 "
-                android:layout_marginBottom="52dp" />
-
+                android:layout_marginBottom="20dp"/>
         </RelativeLayout>
 
     </RelativeLayout>

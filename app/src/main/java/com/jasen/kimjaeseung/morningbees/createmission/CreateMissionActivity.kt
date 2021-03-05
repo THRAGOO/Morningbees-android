@@ -24,6 +24,7 @@ import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.app.GlobalApp
 import com.jasen.kimjaeseung.morningbees.login.LoginActivity
 import com.jasen.kimjaeseung.morningbees.main.MainActivity
+import com.jasen.kimjaeseung.morningbees.model.error.ErrorResponse
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import com.jasen.kimjaeseung.morningbees.util.Dlog
 import com.jasen.kimjaeseung.morningbees.util.URIPathHelper
@@ -33,9 +34,11 @@ import kotlinx.android.synthetic.main.activity_create_mission.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.ResponseBody
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
+import retrofit2.Converter
 import retrofit2.Response
 import java.io.File
 import java.io.IOException
@@ -95,7 +98,7 @@ class CreateMissionActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(v: View) {
         when (v.id) {
             R.id.missionCreateCancelButton -> gotoMain()
-            R.id.missionCreateRegisterButton -> missionCreateServer()
+            R.id.missionCreateRegisterButton -> requestMissionCreateApi()
             R.id.takePictureButton -> gotoCamera()
             R.id.getGalleryButton -> gotoGallery()
             R.id.reloadMissionButton -> changeWrapView(CLICK_IMAGEVIEW)
@@ -141,24 +144,26 @@ class CreateMissionActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun isActivateButton() {
         Log.d(TAG, "description: $description")
-        Log.d(TAG, "image: $image")
+        Log.d(TAG, "bitmap: $bitmap")
         Log.d(TAG, "difficulty: $difficulty")
 
-        if ((description != "") && (image != null) && (difficulty != -1)) {
-            missionCreateRegisterButton.setTextColor(Color.parseColor("#F6CD00"))
-            missionCreateRegisterButton.isEnabled = true
-        } else {
+        if (description == "" || bitmap == null || difficulty == -1){
+            Log.d(TAG, "isEnable == false")
             missionCreateRegisterButton.setTextColor(Color.parseColor("#CCCCCC"))
             missionCreateRegisterButton.isEnabled = false
+        } else {
+            Log.d(TAG, "isEnable == true")
+            missionCreateRegisterButton.setTextColor(Color.parseColor("#F6CD00"))
+            missionCreateRegisterButton.isEnabled = true
         }
     }
 
-    private fun missionCreateServer() {
+    private fun requestMissionCreateApi() {
         when {
             difficulty == -1 -> {
                 showToast { "난이도 설정해주세요. " }
             }
-            image == null -> {
+            bitmap == null -> {
                 showToast { "사진을 선택해 주세요." }
             }
             description == "" -> {
@@ -196,11 +201,15 @@ class CreateMissionActivity : AppCompatActivity(), View.OnClickListener {
                                 }
 
                                 400 -> {
-                                    val jsonObject = JSONObject(response.errorBody()?.string())
-                                    val message = jsonObject.getString("message")
-                                    val code = jsonObject.getInt("code")
+                                    val converter: Converter<ResponseBody, ErrorResponse> =
+                                        MorningBeesService.retrofit.responseBodyConverter<ErrorResponse>(
+                                            ErrorResponse::class.java,
+                                            ErrorResponse::class.java.annotations
+                                        )
 
-                                    if (code == 120) {
+                                    val errorResponse = converter.convert(response.errorBody())
+
+                                    if(errorResponse.code == 111 || errorResponse.code == 110 || errorResponse.code == 120){
                                         val oldAccessToken = GlobalApp.prefs.accessToken
                                         GlobalApp.prefs.requestRenewalApi()
                                         val renewalAccessToken = GlobalApp.prefs.accessToken
@@ -209,12 +218,13 @@ class CreateMissionActivity : AppCompatActivity(), View.OnClickListener {
                                             showToast { "다시 로그인해주세요." }
                                             gotoLogOut()
                                         } else
-                                            missionCreateServer()
+                                            requestMissionCreateApi()
                                     } else {
-                                        showToast { message }
-                                        goFinish()
+                                        showToast { errorResponse.message }
+                                        finish()
                                     }
                                 }
+
                                 500 -> { //internal server error
                                     val jsonObject = JSONObject(response.errorBody()?.string())
                                     val message = jsonObject.getString("message")
@@ -251,7 +261,7 @@ class CreateMissionActivity : AppCompatActivity(), View.OnClickListener {
         startActivity(
             Intent(this, LoginActivity::class.java)
                 .putExtra("RequestLogOut", "")
-                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
         )
     }
 
@@ -341,21 +351,24 @@ class CreateMissionActivity : AppCompatActivity(), View.OnClickListener {
         } else if (requestCode == PICK_FROM_CAMERA) {
             // 카메라에서는 intent, data == null
             val selectedImage = BitmapFactory.decodeFile(tempFile?.absolutePath)
-            loadMissionView.setImageBitmap(
-                Bitmap.createScaledBitmap(
-                    selectedImage,
-                    120,
-                    120,
-                    false
+
+            if(selectedImage != null){
+                loadMissionView.setImageBitmap(
+                    Bitmap.createScaledBitmap(
+                        selectedImage,
+                        120,
+                        120,
+                        false
+                    )
                 )
-            )
-            loadMissionView.clipToOutline = true
-            bitmap = selectedImage
-            image = tempFile
+                loadMissionView.clipToOutline = true
+                bitmap = selectedImage
+                image = tempFile
+            }
             isActivateButton()
         }
 
-        if (intent == null) {
+        if (bitmap == null) {
             changeWrapView(CLICK_IMAGEVIEW)
         } else {
             changeWrapView(LOAD_IMAGEVIEW)
@@ -363,20 +376,17 @@ class CreateMissionActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun changeWrapView(status: Int) { // wrap view change
-        Log.d(TAG, "status : $status")
         if (status == CLICK_IMAGEVIEW) {
             missionImageUploadWrapLayout.visibility = View.VISIBLE
             missionLoadWrapLayout.visibility = View.INVISIBLE
-            missionCreateRegisterButton.setTextColor(Color.parseColor("#F6CD00"))
-            missionCreateRegisterButton.isEnabled = true
             image = null
+            bitmap = null
         }
         if (status == LOAD_IMAGEVIEW) {
             missionLoadWrapLayout.visibility = View.VISIBLE
             missionImageUploadWrapLayout.visibility = View.INVISIBLE
-            missionCreateRegisterButton.setTextColor(Color.parseColor("#CCCCCC"))
-            missionCreateRegisterButton.isEnabled = false
         }
+        isActivateButton()
     }
 
     private fun gotoMain() {
