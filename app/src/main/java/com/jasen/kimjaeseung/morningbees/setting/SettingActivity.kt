@@ -22,6 +22,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Converter
 import retrofit2.Response
+import java.text.DecimalFormat
 
 class SettingActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var accessToken: String
@@ -42,6 +43,10 @@ class SettingActivity : AppCompatActivity(), View.OnClickListener {
         beeTitle = GlobalApp.prefsBeeInfo.beeTitle
 
         requestBeeInfoApi()
+    }
+
+    private fun Int.getPriceAnnotation(): String {
+        return DecimalFormat("###,###").format(this)
     }
 
     private fun requestBeeInfoApi() {
@@ -99,31 +104,20 @@ class SettingActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun setLayoutToSetting(beeInfoResponse: BeeInfoResponse) {
         my_nickname_text.text = beeInfoResponse.nickname
+        myEmailText.text = GlobalApp.prefsBeeInfo.myEmail
         missionTimeInSetting.text =
             "${beeInfoResponse.startTime[0]}시-${beeInfoResponse.endTime[0]}시"
         pay = beeInfoResponse.pay
-        royalJellyInSetting.text = "${pay}원"
+        royalJellyInSetting.text = "${pay.getPriceAnnotation()}원"
         if (beeInfoResponse.manager) {
 //            managerNickname = beeInfoResponse.nickname
             wrap_bee_withdrawal_layout.visibility = View.INVISIBLE
-            wrap_bee_dismantle_layout.visibility = View.VISIBLE
-            goToRoyalJellyButton.visibility = View.VISIBLE
-//            gotoMissionTimeButton.visibility = View.VISIBLE
+          goToRoyalJellyButton.visibility = View.VISIBLE
         } else {
             wrap_bee_withdrawal_layout.visibility = View.VISIBLE
-            wrap_bee_dismantle_layout.visibility = View.INVISIBLE
             goToRoyalJellyButton.visibility = View.GONE
-//            gotoMissionTimeButton.visibility = View.GONE
         }
     }
-
-//    private fun setRoyalJelly() {
-//
-//    }
-//
-//    private fun setMissionTime() {
-//
-//    }
 
     private fun requestBeeWithdrawalApi() {
         GlobalApp.prefsBeeInfo.beeId = 0
@@ -170,15 +164,12 @@ class SettingActivity : AppCompatActivity(), View.OnClickListener {
                     500 -> {
                         val jsonObject = JSONObject(response.errorBody()!!.string())
                         val message = jsonObject.getString("message")
-                        showToast { message }
+                        gotoLogOut()
+//                        showToast { message }
                     }
                 }
             }
         })
-
-    }
-
-    private fun dismantleServer() {
 
     }
 
@@ -195,6 +186,11 @@ class SettingActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun gotoLogOut() {
+        GlobalApp.prefs.socialAccessToken = ""
+        GlobalApp.prefs.accessToken = ""
+        GlobalApp.prefs.refreshToken = ""
+        GlobalApp.prefs.provider = ""
+
         startActivity(
             Intent(this, LoginActivity::class.java)
                 .putExtra("RequestLogOut", REQUEST_LOGOUT)
@@ -205,7 +201,6 @@ class SettingActivity : AppCompatActivity(), View.OnClickListener {
     private fun gotoRoyalJelly(){
         startActivity(
             Intent(this, RoyalJellyActivity::class.java)
-                .putExtra("pay", pay)
         )
     }
 
@@ -215,8 +210,7 @@ class SettingActivity : AppCompatActivity(), View.OnClickListener {
 //            R.id.gotoMissionTimeButton -> setMissionTime()
             R.id.goToRoyalJellyButton -> gotoRoyalJelly()
             R.id.logout_button -> gotoLogOut()
-            R.id.bee_withdrawal_button -> requestBeeWithdrawalApi()
-            R.id.bee_dismantle_button -> requestBeeWithdrawalApi() // 수정 필요
+            R.id.wrap_bee_withdrawal_layout -> requestBeeWithdrawalApi()
             R.id.total_bee_member_button -> gotoTotalBeeMember()
         }
     }
@@ -227,8 +221,7 @@ class SettingActivity : AppCompatActivity(), View.OnClickListener {
         goToRoyalJellyButton.setOnClickListener(this)
         total_bee_member_button.setOnClickListener(this)
         logout_button.setOnClickListener(this)
-        bee_dismantle_button.setOnClickListener(this)
-        bee_withdrawal_button.setOnClickListener(this)
+        wrap_bee_withdrawal_layout.setOnClickListener(this)
     }
 
     companion object {

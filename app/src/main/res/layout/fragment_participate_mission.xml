@@ -37,7 +37,8 @@
             android:paddingBottom="36dp"
             android:stateListAnimator="@null"
             android:text="사진찍기"
-            android:textColor="#aaaaaa"
+            android:textStyle="bold"
+            android:textColor="#777777"
             android:textSize="13dp" />
 
         <Button
@@ -51,8 +52,9 @@
             android:paddingBottom="20dp"
             android:stateListAnimator="@null"
             android:text="갤러리에서\n가져오기"
-            android:textColor="#aaaaaa"
-            android:textSize="13dp" />
+            android:textColor="#777777"
+            android:textSize="13dp"
+            android:textStyle="bold"/>
     </RelativeLayout>
 
 

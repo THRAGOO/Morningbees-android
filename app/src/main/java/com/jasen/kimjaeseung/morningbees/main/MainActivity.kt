@@ -1,6 +1,7 @@
 package com.jasen.kimjaeseung.morningbees.main
 
 import android.Manifest
+import android.animation.ValueAnimator
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -17,6 +18,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.airbnb.lottie.LottieDrawable
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.MultiTransformation
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
@@ -113,6 +115,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
 
     // MARK:~ Method Extension
 
+    override fun onResume() {
+        super.onResume()
+        requestMainApi()
+    }
+
     private fun Date.getString(): String {
         return SimpleDateFormat("yyyy-MM-dd").format(this)
     }
@@ -138,15 +145,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
         val window = window
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+        window.statusBarColor = ContextCompat.getColor(this@MainActivity, R.color.mainStatusBarColor)
 
         mainNestedScrollView.viewTreeObserver.addOnScrollChangedListener(object : ViewTreeObserver.OnScrollChangedListener{
             override fun onScrollChanged() {
                 val view = mainNestedScrollView.getChildAt(mainNestedScrollView.childCount - 1)
-                Log.d(TAG, "height: ${mainNestedScrollView.height}")
-                Log.d(TAG, "bottom: ${view.bottom}")
-
-                Log.d(TAG, "diff: ${view.bottom - mainNestedScrollView.height}")
-                Log.d(TAG, "scrollY: ${mainNestedScrollView.scrollY}")
 
                 if (mainNestedScrollView.scrollY in 0..80){
                     window.statusBarColor = ContextCompat.getColor(this@MainActivity, R.color.mainStatusBarColor)
@@ -180,7 +183,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
         service.main(
             userAccessToken,
             targetDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
-            beeId
+            GlobalApp.prefsBeeInfo.beeId
         )
             .enqueue(object : Callback<MainResponse> {
                 override fun onFailure(call: Call<MainResponse>, t: Throwable) {
@@ -372,7 +375,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
 
     private fun setRecyclerView() {
         setMissionUrlType()
-
         missionParticipateRecyclerView.adapter = MainAdapter(missionUrlList, this)
         missionParticipateRecyclerView.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, true)
@@ -401,16 +403,18 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
 //                missionUrlList.add(MissionUrl(MissionUrl.LOAD_MORE_MISSION_BUTTON_TYPE, null, null))
             }
         } else {
-            if (targetDate == todayDate) {
-                missionUrlList.add(
-                    missionUrlList.size,
-                    MissionUrl(MissionUrl.MISSION_PARTICIPATE_BUTTON_TYPE, null, null)
-                )
-            }
-            if (missionUrlList.size >= 3) {
+            Log.d(TAG, "todayBee: $todayBee myNickname: $myNickname")
+            if (missionUrlList.size >= 1) {
                 missionUrlList.add(
                     0,
                     MissionUrl(MissionUrl.LOAD_MORE_MISSION_BUTTON_TYPE, null, null)
+                )
+            }
+            if (targetDate == todayDate && todayBee != myNickname) {
+                Log.d(TAG, "todayBee: $todayBee myNickname: $myNickname 호출됨 ")
+                missionUrlList.add(
+                    missionUrlList.size,
+                    MissionUrl(MissionUrl.MISSION_PARTICIPATE_BUTTON_TYPE, null, null)
                 )
             }
         }
@@ -445,8 +449,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
         val totalPenalty = beeInfoResponse.get("totalPenalty").asInt.getPriceAnnotation()
         totalJelly.text = " ${totalPenalty}원"
 
-        val todayProfileImage =
-            beeInfoResponse.get("todayQuestioner").asJsonObject.get("profileImage").asString
+//        val todayProfileImage =
+//            beeInfoResponse.get("todayQuestioner").asJsonObject.get("profileImage").asString
 
         todayBee = beeInfoResponse.get("todayQuestioner").asJsonObject.get("nickname").toString()
             .replace("\"", "")
@@ -455,10 +459,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
         nextBee = beeInfoResponse.get("nextQuestioner").asJsonObject.get("nickname").toString()
             .replace("\"", "")
 
-        Glide.with(this@MainActivity)
-            .load(todayProfileImage)
-            .centerCrop()
-            .into(todayQuestionerImage)
+//        Glide.with(this@MainActivity)
+//            .load(todayProfileImage)
+//            .centerCrop()
+//            .into(todayQuestionerImage)
     }
 
     private fun setMissionTimeImage(_startTime: String, _endTime: String) {
@@ -488,12 +492,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
         val formattedTargetEnd = LocalDateTime.parse(targetEnd, formatter)
 
         if (current > formattedTargetStart && current < formattedTargetEnd) {
-            missionTime.background =
-                applicationContext.getDrawable(R.drawable.image_of_mission_time)
+            missionTime.background = applicationContext.getDrawable(R.drawable.image_of_mission_time)
             lottie.playAnimation()
+            lottie.repeatCount = ValueAnimator.INFINITE
         } else {
-            missionTime.background =
-                applicationContext.getDrawable(R.drawable.image_outside_of_mission_time)
+            missionTime.background = applicationContext.getDrawable(R.drawable.image_outside_of_mission_time)
         }
     }
 
@@ -609,6 +612,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
                             myNickname = meResponse!!.nickname
                             GlobalApp.prefsBeeInfo.myNickname = myNickname
                             beeId = meResponse.beeId
+                            GlobalApp.prefsBeeInfo.myEmail = meResponse.email
                             GlobalApp.prefsBeeInfo.beeId = beeId
                             requestMainApi()
                         }

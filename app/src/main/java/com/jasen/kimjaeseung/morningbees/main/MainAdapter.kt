@@ -34,7 +34,7 @@ class MainAdapter(
                     .transform(
                         MultiTransformation(
                             CenterCrop(),
-                            RoundedCorners(30)
+                            RoundedCorners(50)
                         )
                     )
                     .error(R.drawable.mission_participate_button)

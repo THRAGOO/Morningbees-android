@@ -15,7 +15,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
-import android.view.ViewTreeObserver
+import android.widget.RelativeLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -73,26 +73,10 @@ class CreateMissionActivity : AppCompatActivity(), View.OnClickListener {
         chkPermission()
 
         missionCreateRegisterButton.isEnabled = false
-        hardButton.isSelected = false
-        normalButton.isSelected = false
-        easyButton.isSelected = false
+        setMissionDifficulty(DIFFICULTY_NONE)
 
         missionImageUploadWrapLayout.visibility = View.VISIBLE
         missionLoadWrapLayout.visibility = View.INVISIBLE
-
-        reloadMissionIcon.setColorFilter(Color.parseColor("#AAAAAA"))
-
-        initGlobalLayoutListener()
-    }
-
-    private fun initGlobalLayoutListener() {
-        difficultyBackground.viewTreeObserver.addOnGlobalLayoutListener(object :
-            ViewTreeObserver.OnGlobalLayoutListener {
-            override fun onGlobalLayout() {
-                difficultyButtonWrapLayout.layoutParams.height = difficultyBackground.height
-                difficultyBackground.viewTreeObserver.removeOnGlobalLayoutListener(this)
-            }
-        })
     }
 
     override fun onClick(v: View) {
@@ -103,9 +87,9 @@ class CreateMissionActivity : AppCompatActivity(), View.OnClickListener {
             R.id.getGalleryButton -> gotoGallery()
             R.id.reloadMissionButton -> changeWrapView(CLICK_IMAGEVIEW)
 
-            R.id.hardButton -> setMissionDifficulty(2)
-            R.id.normalButton -> setMissionDifficulty(1)
-            R.id.easyButton -> setMissionDifficulty(0)
+            R.id.hardButton -> setMissionDifficulty(DIFFICULTY_HARD)
+            R.id.normalButton -> setMissionDifficulty(DIFFICULTY_NORMAL)
+            R.id.easyButton -> setMissionDifficulty(DIFFICULTY_EASY)
         }
     }
 
@@ -400,74 +384,49 @@ class CreateMissionActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun setMissionDifficulty(mDifficulty: Int) {
         when (mDifficulty) {
-            2 -> {
-                //상
-                hardButton.background =
-                    applicationContext.getDrawable(R.drawable.difficulty_selected_button)
-                normalButton.background =
-                    applicationContext.getDrawable(R.drawable.difficulty_unselected_button)
-                easyButton.background =
-                    applicationContext.getDrawable(R.drawable.difficulty_unselected_button)
+            DIFFICULTY_NONE -> {
+                hardSelectedButton.visibility = View.GONE
+                hardUnSelectedButton.visibility = View.VISIBLE
 
-                hardPriceText.setTextColor(Color.parseColor("#b29227"))
-                hardText.setTextColor(Color.parseColor("#444444"))
+                normalSelectedButton.visibility = View.GONE
+                normalUnSelectedButton.visibility = View.VISIBLE
 
-                normalPriceButton.setTextColor(Color.parseColor("#cccccc"))
-                normalText.setTextColor(Color.parseColor("#cccccc"))
-
-                easyPriceText.setTextColor(Color.parseColor("#cccccc"))
-                easyText.setTextColor(Color.parseColor("#cccccc"))
-
-                hardButton.elevation = 5f
-//                hardButton.elevation = 0f
-                normalButton.elevation = 0f
-                easyButton.elevation = 0f
+                easySelectedButton.visibility = View.GONE
+                easyUnSelectedButton.visibility = View.VISIBLE
             }
-            1 -> {
-                //중
-                hardButton.background =
-                    applicationContext.getDrawable(R.drawable.difficulty_unselected_button)
-                normalButton.background =
-                    applicationContext.getDrawable(R.drawable.difficulty_selected_button)
-                easyButton.background =
-                    applicationContext.getDrawable(R.drawable.difficulty_unselected_button)
 
-                hardPriceText.setTextColor(Color.parseColor("#cccccc"))
-                hardText.setTextColor(Color.parseColor("#cccccc"))
+            DIFFICULTY_HARD -> {
+                hardSelectedButton.visibility = View.VISIBLE
+                hardUnSelectedButton.visibility = View.GONE
 
-                normalPriceButton.setTextColor(Color.parseColor("#b29227"))
-                normalText.setTextColor(Color.parseColor("#444444"))
+                normalSelectedButton.visibility = View.GONE
+                normalUnSelectedButton.visibility = View.VISIBLE
 
-                easyPriceText.setTextColor(Color.parseColor("#cccccc"))
-                easyText.setTextColor(Color.parseColor("#cccccc"))
+                easySelectedButton.visibility = View.GONE
+                easyUnSelectedButton.visibility = View.VISIBLE
 
-                hardButton.elevation = 0f
-                normalButton.elevation = 5f
-//                normalButton.elevation = 0f
-                easyButton.elevation = 0f
             }
-            0 -> {
-                //하
-                hardButton.background =
-                    applicationContext.getDrawable(R.drawable.difficulty_unselected_button)
-                normalButton.background =
-                    applicationContext.getDrawable(R.drawable.difficulty_unselected_button)
-                easyButton.background =
-                    applicationContext.getDrawable(R.drawable.difficulty_selected_button)
+            DIFFICULTY_NORMAL -> {
+                hardSelectedButton.visibility = View.GONE
+                hardUnSelectedButton.visibility = View.VISIBLE
 
-                hardPriceText.setTextColor(Color.parseColor("#cccccc"))
-                hardText.setTextColor(Color.parseColor("#cccccc"))
+                normalSelectedButton.visibility = View.VISIBLE
+                normalUnSelectedButton.visibility = View.GONE
 
-                normalPriceButton.setTextColor(Color.parseColor("#cccccc"))
-                normalText.setTextColor(Color.parseColor("#cccccc"))
+                easySelectedButton.visibility = View.GONE
+                easyUnSelectedButton.visibility = View.VISIBLE
 
-                easyPriceText.setTextColor(Color.parseColor("#b29227"))
-                easyText.setTextColor(Color.parseColor("#444444"))
+            }
 
-                hardButton.elevation = 0f
-                normalButton.elevation = 0f
-                easyButton.elevation = 5f
-//                easyButton.elevation = 0f
+            DIFFICULTY_EASY -> {
+                hardSelectedButton.visibility = View.GONE
+                hardUnSelectedButton.visibility = View.VISIBLE
+
+                normalSelectedButton.visibility = View.GONE
+                normalUnSelectedButton.visibility = View.VISIBLE
+
+                easySelectedButton.visibility = View.VISIBLE
+                easyUnSelectedButton.visibility = View.GONE
             }
         }
         difficulty = mDifficulty
@@ -500,8 +459,14 @@ class CreateMissionActivity : AppCompatActivity(), View.OnClickListener {
         private const val REQUEST_PERMISSION = 1000
         private const val PICK_FROM_ALBUM = 1001
         private const val PICK_FROM_CAMERA = 1002
-        private const val LOAD_IMAGEVIEW = 1
-        private const val CLICK_IMAGEVIEW = 2
+        private const val LOAD_IMAGEVIEW = 10
+        private const val CLICK_IMAGEVIEW = 11
+
+        private const val DIFFICULTY_NONE = 3
+        private const val DIFFICULTY_HARD = 2
+        private const val DIFFICULTY_NORMAL = 1
+        private const val DIFFICULTY_EASY = 0
+
         private const val TAG = "MissionCreateActivity"
     }
 }

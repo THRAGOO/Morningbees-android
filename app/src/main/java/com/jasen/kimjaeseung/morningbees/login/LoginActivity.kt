@@ -2,12 +2,11 @@ package com.jasen.kimjaeseung.morningbees.login
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.Log
+import android.util.TypedValue
 import android.view.View
-import android.view.ViewTreeObserver
 import android.widget.RelativeLayout
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -42,7 +41,6 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Converter
 import retrofit2.Response
-import kotlin.math.roundToInt
 
 class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
 
@@ -53,24 +51,21 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
     private lateinit var mGoogleSignInClient: GoogleSignInClient
     private lateinit var mOAuthLoginModule: OAuthLogin //naver sign in module
 
-    private lateinit var provider: String
-//    private var beeId: Int = 0
+    var translationY = 0.0f
 
     private val service = MorningBeesService.create()
 
     // MARK:~ Life Cycle
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(R.style.signInStatusBarTheme)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
         loginPresenter.takeView(this)
-
-        initAnimation()
-        initButtonListeners()
         initGoogleSignIn()
         initNaverSignIn()
-        initImage()
+        initButtonListeners()
 
         when {
             intent.hasExtra("RequestLogOut") -> {
@@ -79,22 +74,42 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
             intent.hasExtra("RequestSignIn") -> {
                 // 자동 로그인 & sign out 둘 다 X
             }
+            intent.hasExtra("RequestJoin") -> {
+                refreshIdToken()
+                setAutoLogin()
+            }
             else -> {
+                refreshIdToken()
                 setAutoLogin()
             }
         }
     }
 
-    private fun setAutoLogin(){
-        Log.d(TAG, "setAutoLogin: ${GlobalApp.prefs.socialAccessToken}")
-        if (GlobalApp.prefs.socialAccessToken != ""){
-            requestSignInApi(SignInRequest(GlobalApp.prefs.socialAccessToken, GlobalApp.prefs.provider))
-        }
+    override fun onResume() {
+        super.onResume()
+        initAnimation()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         loginPresenter.dropView()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        loginBeeImage.animate().translationY(translationY)
+    }
+
+    private fun setAutoLogin() {
+        Log.d(TAG, "setAutoLogin: ${GlobalApp.prefs.socialAccessToken}")
+        if (GlobalApp.prefs.socialAccessToken != "") {
+            requestSignInApi(
+                SignInRequest(
+                    GlobalApp.prefs.socialAccessToken,
+                    GlobalApp.prefs.provider
+                )
+            )
+        }
     }
 
     // MARK:~ MVP Init
@@ -123,36 +138,39 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
         val displayMetrics = DisplayMetrics()
         windowManager.defaultDisplay.getMetrics(displayMetrics)
 
-        Log.d(TAG, "heightPixels: ${displayMetrics.heightPixels}")
-        val translationY = displayMetrics.heightPixels * 0.27f
+        val heightPixel = displayMetrics.heightPixels
+        val widthDp = displayMetrics.widthPixels / displayMetrics.density
+        val heightDp = heightPixel / displayMetrics.density
+        val wDp = widthDp * 0.55f
+        val hDp = heightPixel * 3f
+
+        val width =
+            TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, wDp, resources.displayMetrics)
+                .toInt()
+
+        val height =
+            TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, hDp, resources.displayMetrics)
+                .toInt()
+
+        val beeHeight = loginBeeImage.layoutParams.height
+        loginBeeImage.layoutParams.width = (((loginBeeImage.layoutParams.width * heightDp * 0.27f) / beeHeight) * displayMetrics.density).toInt()
+
+        signInLogoTitle.layoutParams.width = width
+
+        val lp = RelativeLayout.LayoutParams(
+            RelativeLayout.LayoutParams.WRAP_CONTENT,
+            RelativeLayout.LayoutParams.WRAP_CONTENT
+        )
+        lp.topMargin = (heightPixel * 0.15f).toInt()
+        lp.bottomMargin = 13
+        lp.addRule(RelativeLayout.CENTER_HORIZONTAL)
+        signInText.layoutParams = lp
+
+        loginWhiteBackground.post {
+            translationY =
+                loginWhiteBackground.height.toFloat() - (login_naver_sign_in_button.height.toFloat() * 1.7f)
+        }
         loginBeeImage.animate().translationY(-translationY).duration = 500
-
-        val size = (380 * displayMetrics.density).roundToInt()
-        val backgroundParam = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT)
-        backgroundParam.topMargin = size
-
-        loginWhiteBackground.layoutParams = backgroundParam
-    }
-
-    private fun initImage(){
-//        loginBeeImage.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener{
-//            override fun onGlobalLayout() {
-//                val displayMetrics = DisplayMetrics()
-//                windowManager.defaultDisplay.getMetrics(displayMetrics)
-//                val params = loginBeeImage.layoutParams
-//                params.width = displayMetrics.widthPixels
-//                params.height = displayMetrics.heightPixels
-//                loginBeeImage.layoutParams = params
-//
-//                Log.d(TAG, "displayMetrics.widthPixels: ${displayMetrics.widthPixels}")
-//                Log.d(TAG, "displayMetrics.heightPixels: ${displayMetrics.heightPixels}")
-//
-//                Log.d(TAG, "loginBeeImage.width: ${loginBeeImage.width}")
-//                Log.d(TAG, "loginBeeImage.height: ${loginBeeImage.height}")
-//
-//                loginBeeImage.viewTreeObserver.removeOnGlobalLayoutListener(this)
-//            }
-//        })
     }
 
     // MARK:~ SNS Login Init
@@ -166,6 +184,12 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
         )
     }
 
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        initAnimation()
+        Log.d(TAG, "onWindowFocusChanged")
+    }
+
     override fun initGoogleSignIn() {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(this.getString(R.string.google_server_client_id))
@@ -174,7 +198,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
         Dlog().d("google sign in")
-        refreshIdToken()
+//        refreshIdToken()
     }
 
     override fun refreshIdToken() {
@@ -220,7 +244,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
 
             requestSignInApi(
                 SignInRequest(
-                    GlobalApp.prefs.socialAccessToken ,
+                    GlobalApp.prefs.socialAccessToken,
                     getString(R.string.naver)
                 )
             )
@@ -308,7 +332,8 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
     // MARK:~ JoinBee API Request
 
     private fun requestJoinBeeApi() {
-        val joinBeeRequest = JoinBeeRequest(GlobalApp.prefsBeeInfo.beeId,  GlobalApp.prefs.userId , "")
+        val joinBeeRequest =
+            JoinBeeRequest(GlobalApp.prefsBeeInfo.beeId, GlobalApp.prefs.userId, "")
         service.joinBee(GlobalApp.prefs.accessToken, joinBeeRequest)
             .enqueue(object : Callback<Void> {
                 override fun onFailure(call: Call<Void>, t: Throwable) {
@@ -333,7 +358,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
 
                             val errorResponse = converter.convert(response.errorBody())
 
-                            if(errorResponse.code == 111 || errorResponse.code == 110 || errorResponse.code == 120){
+                            if (errorResponse.code == 111 || errorResponse.code == 110 || errorResponse.code == 120) {
                                 val oldAccessToken = GlobalApp.prefs.accessToken
                                 GlobalApp.prefs.requestRenewalApi()
                                 val renewalAccessToken = GlobalApp.prefs.accessToken
@@ -413,12 +438,12 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
                 override fun onResponse(call: Call<MeResponse>, response: Response<MeResponse>) {
                     when (response.code()) {
                         200 -> {
-                            val meResponse: MeResponse? = response.body()
+                            val meResponse = response.body()
                             alreadyJoin = meResponse?.alreadyJoin
-                            GlobalApp.prefsBeeInfo.beeId = meResponse!!.beeId
 
                             if (alreadyJoin == true) {
                                 Log.d(TAG, "already bee join")
+                                GlobalApp.prefsBeeInfo.beeId = meResponse!!.beeId
                                 gotoMainActivity()
                             } else {
                                 Log.d(TAG, "not already bee join")
@@ -426,7 +451,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
                                 if (GlobalApp.prefsBeeInfo.beeId == 0)
                                     gotoBeforeJoin()
                                 else {
-                                    GlobalApp.prefs.userId = meResponse.userId
+                                    GlobalApp.prefs.userId = meResponse!!.userId
                                     requestJoinBeeApi()
                                 }
                             }
@@ -441,7 +466,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
 
                             val errorResponse = converter.convert(response.errorBody())
 
-                            if(errorResponse.code == 111 || errorResponse.code == 110 || errorResponse.code == 120){
+                            if (errorResponse.code == 111 || errorResponse.code == 110 || errorResponse.code == 120) {
                                 val oldAccessToken = GlobalApp.prefs.accessToken
                                 GlobalApp.prefs.requestRenewalApi()
                                 val renewalAccessToken = GlobalApp.prefs.accessToken

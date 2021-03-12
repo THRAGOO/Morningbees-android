@@ -319,18 +319,43 @@
                         android:layout_marginBottom="17dp"
                         android:text="오늘의 꿀벌 " />
 
-                    <ImageView
-                        android:id="@+id/todayQuestionerImage"
-                        android:layout_width="45dp"
-                        android:layout_height="45dp"
+                    <RelativeLayout
+                        android:id="@+id/todayQuestionerImageWrapLayout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:layout_below="@id/todayQuestionerText"
-                        android:layout_centerInParent="true" />
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginBottom="6dp">
+
+                        <RelativeLayout
+                            android:layout_width="45dp"
+                            android:layout_height="45dp"
+                            android:layout_centerVertical="true" >
+                            <ImageView
+                                android:id="@+id/todayQuestionerImage"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:src="@drawable/today_questioner_profile_image"/>
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_centerVertical="true"
+                            android:layout_marginStart="30dp">
+                            <ImageView
+                                android:id="@+id/nextQuestionerImage"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:src="@drawable/next_questioner_profile_image" />
+                        </RelativeLayout>
+                    </RelativeLayout>
 
                     <TextView
                         android:id="@+id/todayQuestionerNickname"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/todayQuestionerImage"
+                        android:layout_below="@id/todayQuestionerImageWrapLayout"
                         android:layout_centerHorizontal="true" />
 
                 </RelativeLayout>
@@ -501,8 +526,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textColor="#aaaaaa"
-                            android:textSize="15sp"
-                            android:textStyle="bold" />
+                            android:textSize="17dp"
+                            android:textStyle="bold"/>
                     </RelativeLayout>
 
                     <RelativeLayout
@@ -527,7 +552,8 @@
                 <RelativeLayout
                     android:id="@+id/missionUploadWrapLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:visibility="invisible">
 
                     <ImageView
                         android:id="@+id/missionImage"

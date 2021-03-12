@@ -42,6 +42,12 @@ class BeforeJoinActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     override fun onBackPressed() {
+        GlobalApp.prefs.socialAccessToken = ""
+        GlobalApp.prefs.accessToken = ""
+        GlobalApp.prefs.refreshToken = ""
+        GlobalApp.prefs.provider = ""
+
+
         startActivity(
             Intent(this, LoginActivity::class.java)
                 .putExtra("RequestLogOut", "")

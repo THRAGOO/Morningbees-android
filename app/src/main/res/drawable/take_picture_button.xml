@@ -13,10 +13,13 @@
         </shape>
     </item>
     <item
-        android:drawable="@drawable/icon_camera"
         android:width="20dp"
         android:height="20dp"
         android:gravity="center_horizontal"
         android:top="35dp"
-        android:bottom="15dp"/>
+        android:bottom="15dp">
+        <bitmap
+            android:alpha="0.3"
+            android:src="@drawable/icon_camera" />
+    </item>
 </layer-list>

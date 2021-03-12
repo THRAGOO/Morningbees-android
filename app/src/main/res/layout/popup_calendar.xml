@@ -6,46 +6,46 @@
     android:background="@drawable/rounded_calendar_dialog">
 
     <RelativeLayout
+        android:id="@+id/calendarButtonWrapLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/calendarButtonWrapLayout"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="28dp"
         android:layout_marginStart="27dp"
-        android:layout_marginEnd="27dp">
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="27dp"
+        android:layout_marginBottom="28dp">
 
         <ImageButton
             android:id="@+id/goPrevMonthButton"
-            android:layout_width="7dp"
+            android:layout_width="wrap_content"
             android:layout_height="14dp"
-            android:src="@drawable/icon_arrow_left_back"
             android:layout_alignParentStart="true"
-            android:adjustViewBounds="true"
-            android:scaleType="fitCenter"
-            android:background="#00ff0000"
+            android:layout_centerVertical="true"
             android:layout_marginEnd="77dp"
-            android:layout_centerVertical="true"/>
+            android:adjustViewBounds="true"
+            android:background="#00ff0000"
+            android:scaleType="fitCenter"
+            android:src="@drawable/icon_arrow_left_back" />
 
         <TextView
             android:id="@+id/currentMonthText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="20dp"
-            android:textStyle="bold"
             android:layout_centerInParent="true"
             android:layout_marginEnd="77dp"
-            android:textColor="#444444"/>
+            android:textColor="#444444"
+            android:textSize="20dp"
+            android:textStyle="bold" />
 
         <ImageButton
             android:id="@+id/goNextMonthButton"
-            android:layout_width="7dp"
+            android:layout_width="wrap_content"
             android:layout_height="14dp"
-            android:src="@drawable/icon_arrow_right_back"
-            android:adjustViewBounds="true"
-            android:scaleType="fitCenter"
-            android:background="#00ff0000"
             android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"/>
+            android:layout_centerVertical="true"
+            android:adjustViewBounds="true"
+            android:background="#00ff0000"
+            android:scaleType="fitCenter"
+            android:src="@drawable/icon_arrow_right_back" />
 
     </RelativeLayout>
 
@@ -150,5 +150,6 @@
         android:layout_height="match_parent"
         android:layout_below="@id/calendarBar"
         android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"/>
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"/>
 </RelativeLayout>

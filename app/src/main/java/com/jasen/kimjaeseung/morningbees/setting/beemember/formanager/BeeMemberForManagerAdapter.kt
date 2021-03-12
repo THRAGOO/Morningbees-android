@@ -45,7 +45,7 @@ class BeeMemberForManagerAdapter(
 
         fun bind(beeMember: BeeMember, managerNickname: String) {
             Glide.with(itemView.itemBeeMemberProfileForManager)
-                .load(beeMember.profileImage)
+                .load(R.drawable.default_profile_image)
                 .centerCrop()
                 .into(itemProfile)
 

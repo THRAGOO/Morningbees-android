@@ -5,7 +5,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.SeekBar
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.JsonObject
@@ -15,11 +14,11 @@ import com.jasen.kimjaeseung.morningbees.model.beepenalty.BeePenaltyResponse
 import com.jasen.kimjaeseung.morningbees.model.error.ErrorResponse
 import com.jasen.kimjaeseung.morningbees.model.paid.Paid
 import com.jasen.kimjaeseung.morningbees.model.penalty.Penalty
+import com.jasen.kimjaeseung.morningbees.model.penalty.PenaltyHistory
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import com.jasen.kimjaeseung.morningbees.setting.royaljelly.RoyalJellyActivity
 import com.jasen.kimjaeseung.morningbees.util.Dlog
 import kotlinx.android.synthetic.main.activity_royaljelly.*
-import kotlinx.android.synthetic.main.fragment_part_payment.*
 import kotlinx.android.synthetic.main.fragment_royaljelly_unpaid.*
 import okhttp3.ResponseBody
 import org.json.JSONObject
@@ -32,6 +31,7 @@ import java.text.DecimalFormat
 class UnPaidFragment : Fragment(), UnPaidAdapter.OnItemSelectedInterface {
     private val service = MorningBeesService.create()
     var penaltiesList = mutableListOf<Penalty>()
+    var penaltyHistoryList = mutableListOf<PenaltyHistory>()
     lateinit var selectedList: Array<Boolean>
     var userId: Long = 0
 
@@ -122,31 +122,36 @@ class UnPaidFragment : Fragment(), UnPaidAdapter.OnItemSelectedInterface {
                             val penaltiesResponse = response.body()?.penalties
 
                             penaltiesList = mutableListOf()
+                            penaltyHistoryList = mutableListOf()
 
                             if (penaltyHistoriesResponse?.size() == 0 || penaltyHistoriesResponse == null) {
-                                totalRoyalJelly.text = "0"
+                                GlobalApp.prefsBeeInfo.unPaidPenalty = 0
+                                totalUnPaidRoyalJelly.text = GlobalApp.prefsBeeInfo.unPaidPenalty.getPriceAnnotation()
                             } else {
                                 if (penaltyHistoriesResponse.size() > 0) {
-                                    lateinit var unPaidPenaltyHistory: JsonObject
-                                    lateinit var paidPenaltyHistory: JsonObject
-
-                                    if (penaltyHistoriesResponse[0].asJsonObject != null) {
-                                        unPaidPenaltyHistory =
-                                            penaltyHistoriesResponse[0].asJsonObject
-                                        GlobalApp.prefsBeeInfo.unPaidPenalty =
-                                            unPaidPenaltyHistory.get("total").asInt
-                                        totalUnPaidRoyalJelly.text = GlobalApp.prefsBeeInfo.unPaidPenalty.getPriceAnnotation()
-
+                                    for (i in 0 until penaltyHistoriesResponse.size()){
+                                        val penaltyHistory = penaltyHistoriesResponse[i].asJsonObject
+                                        penaltyHistoryList.add(PenaltyHistory(penaltyHistory.get("status").asInt, penaltyHistory.get("total").asInt))
                                     }
-                                    if (penaltyHistoriesResponse[1].asJsonObject != null) {
-                                        paidPenaltyHistory =
-                                            penaltyHistoriesResponse[1].asJsonObject
-                                        GlobalApp.prefsBeeInfo.paidPenalty =
-                                            paidPenaltyHistory.get("total").asInt
+
+                                    GlobalApp.prefsBeeInfo.unPaidPenalty = 0
+                                    GlobalApp.prefsBeeInfo.paidPenalty = 0
+
+                                    for (i in 0 until penaltyHistoryList.size){
+                                        if (penaltyHistoryList[i].status == 0){
+                                            GlobalApp.prefsBeeInfo.unPaidPenalty = penaltyHistoryList[i].total
+                                            totalUnPaidRoyalJelly.text = GlobalApp.prefsBeeInfo.unPaidPenalty.getPriceAnnotation()
+
+                                        } else if (penaltyHistoryList[i].status == 1) {
+                                            GlobalApp.prefsBeeInfo.paidPenalty = penaltyHistoryList[i].total
+                                        }
                                         (activity as RoyalJellyActivity).initLayout()
                                     }
                                 }
                             }
+
+                            totalUnPaidRoyalJelly.measure(0, 0)
+                            backgroundTotalUnPaid.layoutParams.width = totalUnPaidRoyalJelly.measuredWidth+ backgroundTotalUnPaid.layoutParams.width
 
                             if (penaltiesResponse != null) {
                                 if (penaltiesResponse.size() > 0) {

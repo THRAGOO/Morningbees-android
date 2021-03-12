@@ -76,7 +76,6 @@ class ParticipateMissionActivity : AppCompatActivity(), View.OnClickListener {
             pc_upload_img.setImageBitmap(selectedImage)
         }
 
-        pc_reload_img.setColorFilter(Color.parseColor("#aaaaaa"))
         initButtonListeners()
     }
 

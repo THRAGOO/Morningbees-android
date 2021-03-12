@@ -14,6 +14,7 @@ class BeeInfoManager(context: Context) {
     private val mUnPaidPenalty = "unPaidPenalty"
     private val mPaidPenalty = "paidPenalty"
     private val mSelectedUserId = "selectedUserId"
+    private val mMyEmail = "myEmail"
 
     private val prefsBeeInfo = context.getSharedPreferences(fileName, 0)
 
@@ -56,4 +57,8 @@ class BeeInfoManager(context: Context) {
     var myNickname: String
         get() = prefsBeeInfo.getString(mMyNickname, "")
         set(value) = prefsBeeInfo.edit().putString(mMyNickname, value).apply()
+
+    var myEmail: String
+        get() = prefsBeeInfo.getString(mMyEmail, "")
+        set(value) = prefsBeeInfo.edit().putString(mMyEmail, value).apply()
 }

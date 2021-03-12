@@ -18,41 +18,37 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:adjustViewBounds="true"
-                android:scaleType="fitCenter"
-                android:src="@drawable/icon_bg_signin_" />
+                android:scaleType="fitXY"
+                android:src="@drawable/icon_bg_sign" />
 
-            <RelativeLayout
+            <ImageView
                 android:id="@+id/loginBeeImage"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:adjustViewBounds="true"
-                    android:scaleType="matrix"
-                    android:src="@drawable/icon_bee"
-                    android:layout_centerInParent="true"/>
-            </RelativeLayout>
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/ic_bee" />
 
             <ImageView
                 android:id="@+id/loginWhiteBackground"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="420dp"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="0dp"
                 android:adjustViewBounds="true"
                 android:scaleType="fitCenter"
                 android:src="@drawable/icon_bg_sign_in_white" />
         </RelativeLayout>
 
         <LinearLayout
+            android:id="@+id/loginButtonLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:background="#ffffff"
-            android:orientation="vertical"
-            android:paddingBottom="20dp">
-
+            android:orientation="vertical">
             <ImageView
                 android:id="@+id/login_naver_sign_in_button"
                 android:layout_width="match_parent"
@@ -70,28 +66,31 @@
                 android:layout_marginTop="12dp"
                 android:layout_marginRight="16dp"
                 android:adjustViewBounds="true"
+                android:paddingBottom="47dp"
                 android:src="@drawable/icon_button_google" />
         </LinearLayout>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="109dp"
-            android:singleLine="true"
-            android:text="친구들과 함께하는 기상미션"
-            android:textColor="#000000"
-            android:textSize="15sp" />
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginLeft="81dp"
-            android:layout_marginTop="144dp"
-            android:layout_marginRight="81dp"
-            android:adjustViewBounds="true"
-            android:src="@drawable/icon_logo_title" />
     </FrameLayout>
+
+    <TextView
+        android:id="@+id/signInText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="85dp"
+        android:layout_marginBottom="13dp"
+        android:singleLine="true"
+        android:text="친구들과 함께하는 기상미션"
+        android:textColor="#444444"
+        android:textSize="16dp"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/signInLogoTitle"
+        android:layout_width="240dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/signInText"
+        android:layout_centerHorizontal="true"
+        android:adjustViewBounds="true"
+        android:src="@drawable/logo_title" />
 
 </RelativeLayout>

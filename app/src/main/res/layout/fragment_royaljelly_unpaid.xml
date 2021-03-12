@@ -39,7 +39,7 @@
 
             <View
                 android:id="@+id/backgroundTotalUnPaid"
-                android:layout_width="102dp"
+                android:layout_width="60dp"
                 android:layout_height="7dp"
                 android:layout_gravity="bottom"
                 android:background="@drawable/background_total_unpaid"/>

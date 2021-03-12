@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -57,27 +59,22 @@
         android:textStyle="bold"
         android:textSize="15dp" />
 
-    <com.google.android.material.textfield.TextInputLayout
+    <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="@style/EditTextGreyStyle"
-        android:theme="@style/EditTextGreyStyle"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
-        android:layout_marginBottom="-8dp"
-        android:hint="2~10자 이내로 입력해 주세요.">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/missionDescription"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:maxLength="10"
-            android:textColor="#444444"
-            android:textSize="15dp"
-            android:layout_marginBottom="52dp">
-        </com.google.android.material.textfield.TextInputEditText>
-
-    </com.google.android.material.textfield.TextInputLayout>
+        android:layout_marginTop="12dp"
+        android:paddingBottom="12dp"
+        android:id="@+id/missionDescription"
+        android:maxLength="10"
+        android:textColor="#444444"
+        android:textSize="15dp"
+        android:layout_marginBottom="52dp"
+        android:hint="2~10자 이내로 입력해 주세요."
+        android:background="@drawable/edittext_underline"
+        android:theme="@style/EditTextGreyStyle"
+        style="@style/EditTextGreyStyle"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -112,7 +109,8 @@
                     android:paddingTop="50dp"
                     android:stateListAnimator="@null"
                     android:text="사진찍기"
-                    android:textColor="#aaaaaa" />
+                    android:textColor="#aaaaaa"
+                    android:textStyle="bold"/>
 
                 <Button
                     android:id="@+id/getGalleryButton"
@@ -124,7 +122,8 @@
                     android:paddingTop="50dp"
                     android:stateListAnimator="@null"
                     android:text="갤러리에서\n가져오기"
-                    android:textColor="#aaaaaa" />
+                    android:textColor="#aaaaaa"
+                    android:textStyle="bold" />
             </RelativeLayout>
         </RelativeLayout>
 
@@ -153,7 +152,8 @@
                     android:layout_alignParentBottom="true"
                     android:adjustViewBounds="true"
                     android:background="@drawable/icon_reload"
-                    android:scaleType="fitCenter" />
+                    android:scaleType="fitCenter"
+                    android:alpha="0.3"/>
 
                 <Button
                     android:id="@+id/reloadMissionButton"
@@ -164,7 +164,8 @@
                     android:background="#00ff0000"
                     android:text="다시 올리기"
                     android:textColor="#AAAAAA"
-                    android:textSize="14dp" />
+                    android:textSize="14dp"
+                    android:textStyle="bold"/>
             </RelativeLayout>
         </RelativeLayout>
     </FrameLayout>
@@ -189,109 +190,201 @@
         android:textColor="#AAAAAA"
         android:textSize="13sp" />
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:padding="10dp">
+   <RelativeLayout
+       android:layout_width="match_parent"
+       android:layout_height="match_parent">
+       <ImageView
+           android:id="@+id/difficultyBackground"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:src="@drawable/difficulty_round_img_view"
+           android:layout_centerHorizontal="true" />
+       <RelativeLayout
+           android:layout_width="match_parent"
+           android:layout_height="match_parent"
+           android:gravity="center_horizontal">
 
-        <ImageView
-            android:id="@+id/difficultyBackground"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:adjustViewBounds="true"
-            android:src="@drawable/difficulty_round_img_view" />
+           <FrameLayout
+               android:id="@+id/hardButton"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content">
+               <RelativeLayout
+                   android:id="@+id/hardUnSelectedButton"
+                   android:layout_width="116dp"
+                   android:layout_height="96dp">
+                   <TextView
+                       android:id="@+id/hardText"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:layout_marginTop="25dp"
+                       android:layout_marginBottom="5dp"
+                       android:text="상"
+                       android:textSize="16dp"
+                       android:textStyle="bold"
+                       android:textColor="#cccccc"
+                       android:layout_centerHorizontal="true"/>
+                   <TextView
+                       android:id="@+id/hardPriceText"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:layout_below="@id/hardText"
+                       android:text="- 1,000"
+                       android:textColor="#cccccc"
+                       android:layout_centerHorizontal="true"/>
+               </RelativeLayout>
+               <RelativeLayout
+                   android:id="@+id/hardSelectedButton"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:layout_marginTop="-11dp"
+                   android:visibility="gone">
+                   <ImageView
+                       android:id="@+id/hardSelectedBackground"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:background="@drawable/difficulty_selected_button" />
+                   <TextView
+                       android:id="@+id/hardSelectedText"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:layout_marginTop="36dp"
+                       android:layout_marginBottom="5dp"
+                       android:text="상"
+                       android:textSize="16dp"
+                       android:textStyle="bold"
+                       android:textColor="#444444"
+                       android:layout_centerHorizontal="true" />
+                   <TextView
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="- 1,000"
+                       android:textColor="#b29227"
+                       android:layout_below="@id/hardSelectedText"
+                       android:layout_centerHorizontal="true"/>
+               </RelativeLayout>
+           </FrameLayout>
 
-        <LinearLayout
-            android:id="@+id/difficultyButtonWrapLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+           <FrameLayout
+               android:id="@+id/normalButton"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:layout_toEndOf="@id/hardButton">
+               <RelativeLayout
+                   android:id="@+id/normalUnSelectedButton"
+                   android:layout_width="116dp"
+                   android:layout_height="96dp">
+                   <TextView
+                       android:id="@+id/normalText"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:layout_marginTop="25dp"
+                       android:layout_marginBottom="5dp"
+                       android:text="중"
+                       android:textSize="16dp"
+                       android:textStyle="bold"
+                       android:textColor="#cccccc"
+                       android:layout_centerHorizontal="true"/>
+                   <TextView
+                       android:id="@+id/normalPriceText"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:layout_below="@id/normalText"
+                       android:text="기본값"
+                       android:textColor="#cccccc"
+                       android:layout_centerHorizontal="true"/>
+               </RelativeLayout>
+               <RelativeLayout
+                   android:id="@+id/normalSelectedButton"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:layout_marginTop="-11dp"
+                   android:visibility="gone">
+                   <ImageView
+                       android:id="@+id/normalSelectedBackground"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:background="@drawable/difficulty_selected_button" />
+                   <TextView
+                       android:id="@+id/normalSelectedText"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:layout_marginTop="36dp"
+                       android:layout_marginBottom="5dp"
+                       android:text="중"
+                       android:textSize="16dp"
+                       android:textStyle="bold"
+                       android:textColor="#444444"
+                       android:layout_centerHorizontal="true" />
+                   <TextView
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="기본값"
+                       android:textColor="#b29227"
+                       android:layout_below="@id/normalSelectedText"
+                       android:layout_centerHorizontal="true"/>
+               </RelativeLayout>
+           </FrameLayout>
 
-                <RelativeLayout
-                    android:id="@+id/hardButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1">
-
-                    <TextView
-                        android:id="@+id/hardText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginTop="25dp"
-                        android:layout_marginBottom="5dp"
-                        android:text="상"
-                        android:textSize="16dp"
-                        android:textStyle="bold"
-                        android:textColor="#cccccc"/>
-
-                    <TextView
-                        android:id="@+id/hardPriceText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/hardText"
-                        android:layout_centerHorizontal="true"
-                        android:text="- 1,000"
-                        android:textColor="#cccccc"/>
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/normalButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1">
-
-                    <TextView
-                        android:id="@+id/normalText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginTop="25dp"
-                        android:layout_marginBottom="5dp"
-                        android:text="중"
-                        android:textSize="16dp"
-                        android:textStyle="bold"
-                        android:textColor="#cccccc"/>
-
-                    <TextView
-                        android:id="@+id/normalPriceButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/normalText"
-                        android:layout_centerHorizontal="true"
-                        android:text="기본값"
-                        android:textColor="#cccccc"/>
-
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/easyButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1">
-
-                    <TextView
-                        android:id="@+id/easyText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginTop="25dp"
-                        android:layout_marginBottom="5dp"
-                        android:text="하"
-                        android:textSize="16dp"
-                        android:textStyle="bold"
-                        android:textColor="#cccccc"/>
-
-                    <TextView
-                        android:id="@+id/easyPriceText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/easyText"
-                        android:layout_centerHorizontal="true"
-                        android:text="+ 1,000원"
-                        android:textColor="#cccccc"/>
-                </RelativeLayout>
-        </LinearLayout>
-    </FrameLayout>
+           <FrameLayout
+               android:id="@+id/easyButton"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:layout_toEndOf="@id/normalButton">
+               <RelativeLayout
+                   android:id="@+id/easyUnSelectedButton"
+                   android:layout_width="116dp"
+                   android:layout_height="96dp">
+                   <TextView
+                       android:id="@+id/easyText"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:layout_marginTop="25dp"
+                       android:layout_marginBottom="5dp"
+                       android:text="하"
+                       android:textSize="16dp"
+                       android:textStyle="bold"
+                       android:textColor="#cccccc"
+                       android:layout_centerHorizontal="true"/>
+                   <TextView
+                       android:id="@+id/easyPriceText"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:layout_below="@id/easyText"
+                       android:text="+ 1,000"
+                       android:textColor="#cccccc"
+                       android:layout_centerHorizontal="true"/>
+               </RelativeLayout>
+               <RelativeLayout
+                   android:id="@+id/easySelectedButton"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:layout_marginTop="-11dp"
+                   android:visibility="gone">
+                   <ImageView
+                       android:id="@+id/easySelectedBackground"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:background="@drawable/difficulty_selected_button" />
+                   <TextView
+                       android:id="@+id/easySelectedText"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:layout_marginTop="36dp"
+                       android:layout_marginBottom="5dp"
+                       android:text="하"
+                       android:textSize="16dp"
+                       android:textStyle="bold"
+                       android:textColor="#444444"
+                       android:layout_centerHorizontal="true" />
+                   <TextView
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="+ 1,000"
+                       android:textColor="#b29227"
+                       android:layout_below="@id/easySelectedText"
+                       android:layout_centerHorizontal="true"/>
+               </RelativeLayout>
+           </FrameLayout>
+       </RelativeLayout>
+   </RelativeLayout>
 </LinearLayout>

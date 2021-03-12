@@ -121,8 +121,8 @@ class BeeMemberForManagerActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun sortBeeMemberList(){
-        Log.d(TAG, "manager: ${GlobalApp.prefsBeeInfo.beeManagerNickname}")
-        for(i in 0 until beeMemberList.size-1){
+        Log.d(TAG, "sortBeeMemberList")
+        for(i in 0 until beeMemberList.size){
             if(beeMemberList[i].nickname == GlobalApp.prefsBeeInfo.beeManagerNickname){
 
                 beeMemberList.addAll(0, listOf(beeMemberList[i]))
@@ -141,11 +141,7 @@ class BeeMemberForManagerActivity : AppCompatActivity(), View.OnClickListener {
 
         beeMemberRecyclerForManager.apply {
             layoutManager = LinearLayoutManager(applicationContext)
-            adapter =
-                BeeMemberForManagerAdapter(
-                    beeMemberList,
-                    this@BeeMemberForManagerActivity
-                )
+            adapter = BeeMemberForManagerAdapter(beeMemberList, this@BeeMemberForManagerActivity)
             setOnTouchListener { _,  _ ->
                 beeMemberSwipeHelperCallback.removePreviousClamp(this)
                 false

@@ -72,7 +72,17 @@
             android:layout_centerVertical="true"
             android:layout_marginStart="24dp"
             android:textColor="#444444"
-            android:textSize="15dp" />
+            android:textSize="15dp"/>
+
+        <TextView
+            android:id="@+id/myEmailText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="24dp"
+            android:layout_centerVertical="true"
+            android:textSize="13dp"
+            android:textColor="#777777"/>
     </RelativeLayout>
 
     <RelativeLayout
@@ -240,60 +250,29 @@
             android:background="@drawable/icon_arrow_right_back" />
     </RelativeLayout>
 
-    <FrameLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+    <RelativeLayout
+        android:id="@+id/wrap_bee_withdrawal_layout"
+        android:layout_width="match_parent"
+        android:layout_height="56dp">
 
-        <RelativeLayout
-            android:id="@+id/wrap_bee_dismantle_layout"
-            android:layout_width="match_parent"
-            android:layout_height="56dp">
+        <TextView
+            android:id="@+id/bee_withdrawal_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="24dp"
+            android:textColor="#444444"
+            android:textSize="15dp"
+            android:text="@string/withdrawal_bee"/>
 
-            <TextView
-                android:id="@+id/bee_dismantle_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="24dp"
-                android:textColor="#444444"
-                android:textSize="15dp"
-                android:text="@string/dismantle_bee"/>
-
-            <ImageButton
-                android:id="@+id/bee_dismantle_button"
-                android:layout_width="6dp"
-                android:layout_height="10dp"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="24dp"
-                android:background="@drawable/icon_arrow_right_back" />
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/wrap_bee_withdrawal_layout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <TextView
-                android:id="@+id/bee_withdrawal_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="24dp"
-                android:textColor="#444444"
-                android:textSize="15dp"
-                android:text="@string/withdrawal_bee"/>
-
-            <ImageButton
-                android:id="@+id/bee_withdrawal_button"
-                android:layout_width="6dp"
-                android:layout_height="10dp"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="24dp"
-                android:background="@drawable/icon_arrow_right_back" />
-        </RelativeLayout>
-    </FrameLayout>
+        <ImageButton
+            android:id="@+id/bee_withdrawal_button"
+            android:layout_width="6dp"
+            android:layout_height="10dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="24dp"
+            android:background="@drawable/icon_arrow_right_back" />
+    </RelativeLayout>
 </LinearLayout>

@@ -12,6 +12,7 @@ import com.jasen.kimjaeseung.morningbees.app.GlobalApp
 import com.jasen.kimjaeseung.morningbees.model.beepenalty.BeePenaltyResponse
 import com.jasen.kimjaeseung.morningbees.model.error.ErrorResponse
 import com.jasen.kimjaeseung.morningbees.model.penalty.Penalty
+import com.jasen.kimjaeseung.morningbees.model.penalty.PenaltyHistory
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import com.jasen.kimjaeseung.morningbees.setting.royaljelly.RoyalJellyActivity
 import com.jasen.kimjaeseung.morningbees.setting.royaljelly.unpaid.UnPaidFragment
@@ -29,6 +30,7 @@ import java.text.DecimalFormat
 class TotalFragment : Fragment() {
     private val service = MorningBeesService.create()
     var totalList = mutableListOf<Penalty>()
+    var penaltyHistoryList = mutableListOf<PenaltyHistory>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -42,6 +44,10 @@ class TotalFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         requestBeePenaltyApi(PAID_STATUS)
         initButtonListener()
+    }
+
+    private fun Int.getPriceAnnotation(): String {
+        return DecimalFormat("###,###").format(this)
     }
 
     private fun initButtonListener(){
@@ -67,10 +73,33 @@ class TotalFragment : Fragment() {
                 ) {
                     when (response.code()) {
                         200 -> {
+                            val penaltyHistoriesResponse = response.body()?.penaltyHistories
                             val penaltiesResponse = response.body()?.penalties
-                            totalList = mutableListOf()
 
-                            Log.d(UnPaidFragment.TAG, " penaltiesResponse.size: ${penaltiesResponse?.size()}")
+                            totalList = mutableListOf()
+                            penaltyHistoryList = mutableListOf()
+
+                            if (penaltyHistoriesResponse?.size() == 0 || penaltyHistoriesResponse == null) {
+                                GlobalApp.prefsBeeInfo.unPaidPenalty = 0
+                                totalUnPaidRoyalJelly.text = GlobalApp.prefsBeeInfo.unPaidPenalty.getPriceAnnotation()
+                            } else {
+                                if (penaltyHistoriesResponse.size() > 0) {
+                                    for (i in 0 until penaltyHistoriesResponse.size()){
+                                        val penaltyHistory = penaltyHistoriesResponse[i].asJsonObject
+                                        penaltyHistoryList.add(PenaltyHistory(penaltyHistory.get("status").asInt, penaltyHistory.get("total").asInt))
+                                    }
+
+                                    GlobalApp.prefsBeeInfo.paidPenalty = 0
+
+                                    for (i in 0 until penaltyHistoryList.size){
+                                         if (penaltyHistoryList[i].status == 1) {
+                                            GlobalApp.prefsBeeInfo.paidPenalty = penaltyHistoryList[i].total
+                                        }
+                                        (activity as RoyalJellyActivity).initLayout()
+                                    }
+                                }
+                            }
+
                             if (penaltiesResponse != null) {
                                 if (penaltiesResponse.size() > 0) {
                                     for (i in 0 until penaltiesResponse.size()) {
@@ -102,7 +131,6 @@ class TotalFragment : Fragment() {
                                 val renewalAccessToken = GlobalApp.prefs.accessToken
 
                                 if (oldAccessToken == renewalAccessToken) {
-//                                    showToast { "다시 로그인해주세요." }
                                     (activity as RoyalJellyActivity).gotoLogOut()
                                 } else
                                     requestBeePenaltyApi(status)

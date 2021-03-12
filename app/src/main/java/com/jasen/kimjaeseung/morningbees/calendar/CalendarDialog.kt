@@ -108,7 +108,9 @@ class CalendarDialog : DialogFragment() {
     }
 
     fun refreshCurrentMonth(calendar: Calendar) {
-        currentMonthText.text = calendar.time.toString("MMMM yyyy").format(calendar.time)
+        val sdf = SimpleDateFormat("MMMM yyyy", Locale.ENGLISH)
+//        currentMonthText.text = calendar.time.toString("MMMM yyyy").format(calendar.time)
+        currentMonthText.text = sdf.format(calendar.time)
         this.hyphenTargetDate = calendar.time.toString("yyyy-MM")
         this.targetDate = calendar.time.toString("yyyyMM")
     }

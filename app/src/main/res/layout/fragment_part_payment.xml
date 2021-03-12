@@ -38,7 +38,6 @@
         android:layout_height="wrap_content"
         android:paddingStart="25dp"
         android:paddingEnd="25dp"
-        android:paddingBottom="6dp"
         android:layout_marginBottom="3dp"
         android:thumb="@drawable/icon_thumb_resize"
         android:progressDrawable="@color/transparent" />
@@ -50,6 +49,8 @@
         android:layout_height="wrap_content"
         android:paddingStart="25dp"
         android:paddingEnd="25dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
         android:progressDrawable="@drawable/seekbar_selected_payment"
         android:layout_marginBottom="3dp"
         android:tickMarkTint="#cccccc"

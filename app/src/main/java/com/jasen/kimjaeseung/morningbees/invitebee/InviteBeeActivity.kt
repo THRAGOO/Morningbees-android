@@ -30,7 +30,7 @@ import retrofit2.Response
 
 class InviteBeeActivity : AppCompatActivity(), View.OnClickListener{
     private val service = MorningBeesService.create()
-//    private var accessToken = ""
+    private var accessToken = ""
     private var userId = 0
     private var beeId = 0
     private var beeTitle = ""
@@ -41,6 +41,19 @@ class InviteBeeActivity : AppCompatActivity(), View.OnClickListener{
         setContentView(R.layout.activity_invite_bee)
         getDynamicLink()
         initButtonListener()
+        accessToken = GlobalApp.prefs.accessToken
+    }
+
+    override fun onClick(v: View) {
+        when(v.id){
+            R.id.accept_invitebee_button -> getAccessToken()
+            R.id.close_inviteView_button -> clickCloseInviteButton()
+        }
+    }
+
+    private fun initButtonListener(){
+        accept_invitebee_button.setOnClickListener(this)
+        close_inviteView_button.setOnClickListener(this)
     }
 
     private fun getDynamicLink(){
@@ -63,15 +76,8 @@ class InviteBeeActivity : AppCompatActivity(), View.OnClickListener{
             .addOnFailureListener(this) { e -> Log.w(TAG, "getDynamicLink:onFailure", e) }
     }
 
-    private fun initButtonListener(){
-        accept_invitebee_button.setOnClickListener(this)
-        close_inviteView_button.setOnClickListener(this)
-    }
-
     private fun requestMeApi() {
-        Log.d(TAG, "accessToken: ${GlobalApp.prefs.accessToken}")
-
-        service.me(GlobalApp.prefs.accessToken)
+        service.me(accessToken)
             .enqueue(object : Callback<MeResponse>{
                 override fun onFailure(call: Call<MeResponse>, t: Throwable) {
                     Dlog().d(t.toString())
@@ -206,19 +212,35 @@ class InviteBeeActivity : AppCompatActivity(), View.OnClickListener{
             .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
     }
 
+    private fun getAccessToken(){
+        if(accessToken == ""){
+            startActivity(
+                Intent(this, LoginActivity::class.java)
+                    .putExtra("RequestJoin", "")
+                    .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            )
+        } else {
+            requestMeApi()
+        }
+    }
+
+    private fun clickCloseInviteButton(){
+        GlobalApp.prefsBeeInfo.beeId = 0
+        if(accessToken == ""){
+            startActivity(
+                Intent(this, LoginActivity::class.java)
+                    .putExtra("RequestSignIn", "")
+                    .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            )
+        } else {
+            gotoBeforeJoin()
+        }
+    }
+
     companion object{
         const val TAG = "InviteBeeActivity"
         private const val REQUEST_SIGN_IN = 1007
     }
-
-    override fun onClick(v: View) {
-        when(v.id){
-            R.id.accept_invitebee_button -> requestMeApi()
-            R.id.close_inviteView_button -> gotoBeforeJoin()
-        }
-    }
-
-
 }
 
 

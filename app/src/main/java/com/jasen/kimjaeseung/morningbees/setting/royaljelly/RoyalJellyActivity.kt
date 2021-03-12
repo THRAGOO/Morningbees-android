@@ -113,6 +113,7 @@ class RoyalJellyActivity : View.OnClickListener, FragmentActivity(),
 
     private fun setFragment(status: Int) {
         searchState = status
+        totalRoyalJelly.text = "0"
         when (status) {
             UNPAID_STATUS -> {
                 unPaidRoyallJellyButton.isSelected = true
@@ -225,8 +226,6 @@ class RoyalJellyActivity : View.OnClickListener, FragmentActivity(),
                 e.printStackTrace()
             }
         } else {
-            Log.d(TAG, "printedList[0]: ${printedList[0]}")
-            Log.d(TAG, "printedList: ${printedList}")
             try {
                 mutableList.add(Paid(GlobalApp.prefsBeeInfo.selectedPartPayment, GlobalApp.prefsBeeInfo.selectedUserId))
                 list = mutableList
