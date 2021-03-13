@@ -9,32 +9,29 @@ import android.util.TypedValue
 import android.view.View
 import android.widget.RelativeLayout
 import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
-import com.jasen.kimjaeseung.morningbees.R
-import kotlinx.android.synthetic.main.activity_login.*
-
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.tasks.Task
+import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.app.GlobalApp
 import com.jasen.kimjaeseung.morningbees.beforejoin.BeforeJoinActivity
-import com.jasen.kimjaeseung.morningbees.model.me.MeResponse
-import com.jasen.kimjaeseung.morningbees.model.signin.SignInRequest
-import com.jasen.kimjaeseung.morningbees.model.signin.SignInResponse
 import com.jasen.kimjaeseung.morningbees.main.MainActivity
 import com.jasen.kimjaeseung.morningbees.model.error.ErrorResponse
 import com.jasen.kimjaeseung.morningbees.model.joinbee.JoinBeeRequest
-
-import com.jasen.kimjaeseung.morningbees.signup.SignUpActivity
+import com.jasen.kimjaeseung.morningbees.model.me.MeResponse
+import com.jasen.kimjaeseung.morningbees.model.signin.SignInRequest
+import com.jasen.kimjaeseung.morningbees.model.signin.SignInResponse
 import com.jasen.kimjaeseung.morningbees.mvp.BaseActivity
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
+import com.jasen.kimjaeseung.morningbees.signup.SignUpActivity
 import com.jasen.kimjaeseung.morningbees.util.Dlog
 import com.jasen.kimjaeseung.morningbees.util.showToast
-
 import com.nhn.android.naverlogin.OAuthLogin
 import com.nhn.android.naverlogin.OAuthLoginHandler
 import com.nhn.android.naverlogin.data.OAuthLoginState
+import kotlinx.android.synthetic.main.activity_login.*
 import okhttp3.ResponseBody
 import org.json.JSONObject
 import retrofit2.Call
@@ -238,7 +235,6 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
             // 네이버 access token 으로 앱 로그인
 
             GlobalApp.prefs.socialAccessToken = mOAuthLoginModule.getAccessToken(this)
-//            GlobalApp.prefs.accessToken = mOAuthLoginModule.getAccessToken(this)
             GlobalApp.prefs.refreshToken = mOAuthLoginModule.getRefreshToken(this)
             GlobalApp.prefs.provider = getString(R.string.naver)
 

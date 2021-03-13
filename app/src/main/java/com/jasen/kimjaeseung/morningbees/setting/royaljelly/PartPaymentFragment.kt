@@ -1,7 +1,6 @@
 package com.jasen.kimjaeseung.morningbees.setting.royaljelly
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,8 +9,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.app.GlobalApp
 import com.jasen.kimjaeseung.morningbees.model.paid.Paid
+import com.jasen.kimjaeseung.morningbees.util.getPriceAnnotation
 import kotlinx.android.synthetic.main.fragment_part_payment.*
-import java.text.DecimalFormat
 
 class PartPaymentFragment(val partPaymentList: Paid) :
     BottomSheetDialogFragment() {
@@ -31,7 +30,6 @@ class PartPaymentFragment(val partPaymentList: Paid) :
         initButtonListener()
         initSeekBar()
 
-        Log.d(TAG, "partPaymentList: $partPaymentList")
         maxPaymentSeekBar.text = partPaymentList.penalty.getPriceAnnotation()
         selectSeekBar.max = (partPaymentList.penalty) / 1000
         thumbSeekBar.max = selectSeekBar.max
@@ -42,10 +40,6 @@ class PartPaymentFragment(val partPaymentList: Paid) :
             (activity as RoyalJellyActivity).setPaidApi(PART_PAYMENT_STATE)
             dismiss()
         }
-    }
-
-    private fun Int.getPriceAnnotation(): String {
-        return DecimalFormat("###,###").format(this)
     }
 
     private fun initSeekBar() {

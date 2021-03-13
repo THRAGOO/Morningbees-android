@@ -13,7 +13,7 @@
             android:id="@+id/viewBeeMemberForMember"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="#E5E5E5" />
+            android:background="#f1f1f1" />
 
         <RelativeLayout
             android:layout_width="match_parent"

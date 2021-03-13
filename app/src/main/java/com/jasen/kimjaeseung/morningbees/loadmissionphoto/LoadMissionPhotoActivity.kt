@@ -2,7 +2,6 @@ package com.jasen.kimjaeseung.morningbees.loadmissionphoto
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -11,7 +10,6 @@ import com.jasen.kimjaeseung.morningbees.app.GlobalApp
 import com.jasen.kimjaeseung.morningbees.login.LoginActivity
 import com.jasen.kimjaeseung.morningbees.model.error.ErrorResponse
 import com.jasen.kimjaeseung.morningbees.model.missioninfo.Mission
-import com.jasen.kimjaeseung.morningbees.model.missioninfo.MissionInfoResponse
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import com.jasen.kimjaeseung.morningbees.util.Dlog
 import com.jasen.kimjaeseung.morningbees.util.showToast
@@ -125,9 +123,5 @@ class LoadMissionPhotoActivity : AppCompatActivity(), View.OnClickListener {
             Intent(this, LoginActivity::class.java)
                 .putExtra("RequestLogOut", "")
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)        )
-    }
-
-    private fun clickItemMenu() {
-        // 변경 필요
     }
 }

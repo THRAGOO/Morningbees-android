@@ -58,7 +58,7 @@
             android:id="@+id/copyInviteLinkButtonForManager"
             android:background="@drawable/background_copy_invite_link_button"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="28dp"
             android:text="@string/copy_invite_link"
             android:textSize="12dp"
             android:layout_alignParentEnd="true"/>
@@ -73,6 +73,6 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#E5E5E5"
+        android:background="#f1f1f1"
         android:layout_marginBottom="13.5dp"/>
 </LinearLayout>

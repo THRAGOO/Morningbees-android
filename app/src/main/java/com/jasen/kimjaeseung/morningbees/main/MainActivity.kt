@@ -12,13 +12,15 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewTreeObserver
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.airbnb.lottie.LottieDrawable
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.MultiTransformation
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
@@ -41,6 +43,7 @@ import com.jasen.kimjaeseung.morningbees.participatemission.ParticipateMissionAc
 import com.jasen.kimjaeseung.morningbees.setting.SettingActivity
 import com.jasen.kimjaeseung.morningbees.setting.royaljelly.RoyalJellyActivity
 import com.jasen.kimjaeseung.morningbees.util.Dlog
+import com.jasen.kimjaeseung.morningbees.util.getPriceAnnotation
 import com.jasen.kimjaeseung.morningbees.util.showToast
 import jp.wasabeef.glide.transformations.BlurTransformation
 import kotlinx.android.synthetic.main.activity_main.*
@@ -62,10 +65,7 @@ import java.util.*
 
 // MARK:~ Sign Up
 
-// temp 단어 가급적이면 사용하지 말 것
 class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
-
-    // MARK:~ Properties
 
     private val service = MorningBeesService.create()
     private var userAccessToken = ""
@@ -108,9 +108,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
         changeIconColor()
         setTargetDate()
         requestMeApi()
-
-//        window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-//            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
     }
 
     // MARK:~ Method Extension
@@ -118,18 +115,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
     override fun onResume() {
         super.onResume()
         requestMainApi()
-    }
-
-    private fun Date.getString(): String {
-        return SimpleDateFormat("yyyy-MM-dd").format(this)
-    }
-
-    fun LocalDate.toString(type: String): String {
-        return SimpleDateFormat(type).format(this)
-    }
-
-    private fun Int.getPriceAnnotation(): String {
-        return DecimalFormat("###,###").format(this)
     }
 
     // MARK:~ Button Click
@@ -200,7 +185,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
                             val beeInfoResponse = response.body()?.beeInfo
                             missionUrlList = mutableListOf()
 
-                            //beeInfo
+                            //beeInfo Response
+
                             if (beeInfoResponse != null) {
                                 setLayoutToBeeInfo(beeInfoResponse)
 
@@ -212,7 +198,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
                                 GlobalApp.prefsBeeInfo.beeManagerNickname = managerNickname
                             }
 
-                            // missionsResponse
+                            // missionInfo Response
+
                             if (missionInfoResponse == null || missionInfoResponse.size() == 0) {
                                 when {
                                     todayDate == targetDate -> {
@@ -236,7 +223,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
                                 }
                                 setRecyclerView()
                             } else {
-                                // Exist Mission
                                 var countMissionUrlList = 0
                                 for (i in 0 until missionInfoResponse.size()) {
                                     val missionItem = missionInfoResponse.get(i).asJsonObject
@@ -260,7 +246,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
                                             )
                                         } else {
                                             if (countMissionUrlList < 2) {
-//                                                isParticipateMission = false
                                                 missionUrlList.add(
                                                     MissionUrl(
                                                         MissionUrl.MISSION_PARTICIPATE_IMAGE_TYPE,
@@ -400,7 +385,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
                     0,
                     MissionUrl(MissionUrl.LOAD_MORE_MISSION_BUTTON_TYPE, null, null)
                 )
-//                missionUrlList.add(MissionUrl(MissionUrl.LOAD_MORE_MISSION_BUTTON_TYPE, null, null))
             }
         } else {
             Log.d(TAG, "todayBee: $todayBee myNickname: $myNickname")
@@ -449,20 +433,12 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
         val totalPenalty = beeInfoResponse.get("totalPenalty").asInt.getPriceAnnotation()
         totalJelly.text = " ${totalPenalty}원"
 
-//        val todayProfileImage =
-//            beeInfoResponse.get("todayQuestioner").asJsonObject.get("profileImage").asString
-
         todayBee = beeInfoResponse.get("todayQuestioner").asJsonObject.get("nickname").toString()
             .replace("\"", "")
         todayQuestionerNickname.text = todayBee
 
         nextBee = beeInfoResponse.get("nextQuestioner").asJsonObject.get("nickname").toString()
             .replace("\"", "")
-
-//        Glide.with(this@MainActivity)
-//            .load(todayProfileImage)
-//            .centerCrop()
-//            .into(todayQuestionerImage)
     }
 
     private fun setMissionTimeImage(_startTime: String, _endTime: String) {
@@ -501,8 +477,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
     }
 
     private fun setLayoutToMission(state: Int) {
-//        missionUploadWrapLayout.background = applicationContext.getDrawable(R.color.transparent)
-//        missionNotUploadWrapLayout.background = applicationContext.getDrawable(R.color.transparent)
         if (state == EXIST_MISSION) {
             if (myNickname == todayBee || isParticipateMission) { // or 이미 미션을 participate 한 경우
                 missionUploadWrapLayout.visibility = View.VISIBLE

@@ -3,7 +3,6 @@ package com.jasen.kimjaeseung.morningbees.setting.royaljelly
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
@@ -19,6 +18,7 @@ import com.jasen.kimjaeseung.morningbees.setting.royaljelly.search.SearchPenalty
 import com.jasen.kimjaeseung.morningbees.setting.royaljelly.total.TotalFragment
 import com.jasen.kimjaeseung.morningbees.setting.royaljelly.unpaid.UnPaidFragment
 import com.jasen.kimjaeseung.morningbees.util.Dlog
+import com.jasen.kimjaeseung.morningbees.util.getPriceAnnotation
 import com.jasen.kimjaeseung.morningbees.util.showToast
 import kotlinx.android.synthetic.main.activity_royaljelly.*
 import okhttp3.ResponseBody
@@ -28,7 +28,6 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Converter
 import retrofit2.Response
-import java.text.DecimalFormat
 
 class RoyalJellyActivity : View.OnClickListener, FragmentActivity(),
     DialogInterface.OnDismissListener {
@@ -60,10 +59,6 @@ class RoyalJellyActivity : View.OnClickListener, FragmentActivity(),
                 supportFragmentManager.findFragmentById(R.id.fragmentContainer) as UnPaidFragment
             unPaidFragment.penaltiesList = printedList
         }
-    }
-
-    private fun Int.getPriceAnnotation(): String {
-        return DecimalFormat("###,###").format(this)
     }
 
     private fun initButtonListener() {

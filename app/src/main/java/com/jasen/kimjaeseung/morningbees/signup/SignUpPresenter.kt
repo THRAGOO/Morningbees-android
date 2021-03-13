@@ -20,7 +20,6 @@ import retrofit2.Converter
 import retrofit2.Response
 
 class SignUpPresenter(context: Context) : SignUpContract.Presenter {
-    //만약에 activity를 라이프사이클에 맞춰서 구현했으면 presenter에도 라이프사이클 해줘야함
     private var signUpView: SignUpContract.View? = null
     private val service = MorningBeesService.create()
     var nameValidCheckResponse: NameValidataionCheckResponse? = null
@@ -63,13 +62,11 @@ class SignUpPresenter(context: Context) : SignUpContract.Presenter {
 
                                 signUpView!!.showToastView { mContext.resources.getString(R.string.validnickname_ok) }
                                 signUpView!!.nicknameValidCheck(1)
-                                Log.d(TAG, "validnickname ok")
 
                             } else {
                                 validCheck = false
                                 signUpView!!.showToastView { mContext.resources.getString(R.string.validnickname_duplicate) }
                                 signUpView!!.nicknameValidCheck(0)
-                                Log.d(TAG, "validnickname duplicate")
                             }
                         }
 

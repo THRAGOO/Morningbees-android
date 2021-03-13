@@ -47,15 +47,14 @@ import java.util.*
 
 class CreateMissionActivity : AppCompatActivity(), View.OnClickListener {
     val service = MorningBeesService.create()
-    var difficulty: Int = -1
+    var difficulty: Int = DIFFICULTY_NONE
     var description: String = ""
     private var beeId: Int = 0
-    var tempFile: File? = null     // 카메라로 찍은 사진 File (갤러리에 저장)
-    var bitmap: Bitmap? = null     // 갤러리에서 가져온 사진 bitmap
-    var image: File? = null        // 서버에 보낼 image data
+    var tempFile: File? = null
+    var bitmap: Bitmap? = null
+    var image: File? = null
     var targetDate = ""
 
-    // 앱이 카메라 권한을 가지고 있는지 확인하는 변수 ( 카메라 권한이 없다면 -1 반환 )
     private val permissionCheckCamera by lazy {
         ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
     }
@@ -131,12 +130,10 @@ class CreateMissionActivity : AppCompatActivity(), View.OnClickListener {
         Log.d(TAG, "bitmap: $bitmap")
         Log.d(TAG, "difficulty: $difficulty")
 
-        if (description == "" || bitmap == null || difficulty == -1){
-            Log.d(TAG, "isEnable == false")
+        if (description == "" || bitmap == null || difficulty == DIFFICULTY_NONE){
             missionCreateRegisterButton.setTextColor(Color.parseColor("#CCCCCC"))
             missionCreateRegisterButton.isEnabled = false
         } else {
-            Log.d(TAG, "isEnable == true")
             missionCreateRegisterButton.setTextColor(Color.parseColor("#F6CD00"))
             missionCreateRegisterButton.isEnabled = true
         }
@@ -296,7 +293,6 @@ class CreateMissionActivity : AppCompatActivity(), View.OnClickListener {
         Log.d(TAG, "path 경로: $path")
         try {
             val tempFile = File.createTempFile(imageFileName, ".jpg", storageDir)
-            Log.d(TAG, "tempFile: $tempFile")
             return tempFile
         } catch (e: IOException) {
             e.printStackTrace()

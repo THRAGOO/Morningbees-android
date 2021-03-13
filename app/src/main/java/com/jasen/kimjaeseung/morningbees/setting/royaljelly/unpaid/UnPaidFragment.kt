@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.gson.JsonObject
 import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.app.GlobalApp
 import com.jasen.kimjaeseung.morningbees.model.beepenalty.BeePenaltyResponse
@@ -18,7 +17,7 @@ import com.jasen.kimjaeseung.morningbees.model.penalty.PenaltyHistory
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import com.jasen.kimjaeseung.morningbees.setting.royaljelly.RoyalJellyActivity
 import com.jasen.kimjaeseung.morningbees.util.Dlog
-import kotlinx.android.synthetic.main.activity_royaljelly.*
+import com.jasen.kimjaeseung.morningbees.util.getPriceAnnotation
 import kotlinx.android.synthetic.main.fragment_royaljelly_unpaid.*
 import okhttp3.ResponseBody
 import org.json.JSONObject
@@ -26,7 +25,6 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Converter
 import retrofit2.Response
-import java.text.DecimalFormat
 
 class UnPaidFragment : Fragment(), UnPaidAdapter.OnItemSelectedInterface {
     private val service = MorningBeesService.create()
@@ -99,10 +97,6 @@ class UnPaidFragment : Fragment(), UnPaidAdapter.OnItemSelectedInterface {
         unPaidRoyalJellyRecyclerView.adapter = UnPaidAdapter(penaltiesList, this)
         unPaidRoyalJellyRecyclerView.layoutManager =
             LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
-    }
-
-    private fun Int.getPriceAnnotation(): String {
-        return DecimalFormat("###,###").format(this)
     }
 
     private fun requestBeePenaltyApi(status: Int) {

@@ -7,9 +7,7 @@ class LoginPresenter : LoginContract.Presenter {
         loginView = view
     }
 
-
     override fun dropView() {
         loginView = null
     }
-
 }

@@ -9,6 +9,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.jasen.kimjaeseung.morningbees.R
+import com.jasen.kimjaeseung.morningbees.util.toString
 import kotlinx.android.synthetic.main.item_calendar.view.*
 import kotlinx.android.synthetic.main.popup_calendar.*
 import java.text.SimpleDateFormat
@@ -28,11 +29,7 @@ class CalendarDialog : DialogFragment() {
         dialog?.window?.setLayout(width, height)
     }
 
-    fun Date.toString(type: String): String {
-        return SimpleDateFormat(type).format(this)
-    }
-
-    override fun onCreateView( //view가 생성되는 동안 실행
+    override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -99,8 +96,6 @@ class CalendarDialog : DialogFragment() {
         } else {
             hyphenTargetDate += "-$position"
             targetDate += "$position"
-            Log.d(TAG, "hyphenTargetDate: $hyphenTargetDate")
-            Log.d(TAG, "targetDate: $targetDate")
         }
 
         mDialogFragment.finish(hyphenTargetDate, targetDate)
@@ -109,7 +104,6 @@ class CalendarDialog : DialogFragment() {
 
     fun refreshCurrentMonth(calendar: Calendar) {
         val sdf = SimpleDateFormat("MMMM yyyy", Locale.ENGLISH)
-//        currentMonthText.text = calendar.time.toString("MMMM yyyy").format(calendar.time)
         currentMonthText.text = sdf.format(calendar.time)
         this.hyphenTargetDate = calendar.time.toString("yyyy-MM")
         this.targetDate = calendar.time.toString("yyyyMM")

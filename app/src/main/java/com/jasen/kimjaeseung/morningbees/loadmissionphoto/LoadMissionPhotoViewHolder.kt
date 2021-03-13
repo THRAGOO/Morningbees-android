@@ -1,6 +1,5 @@
 package com.jasen.kimjaeseung.morningbees.loadmissionphoto
 
-import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -12,18 +11,13 @@ import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.model.missioninfo.Mission
 import kotlinx.android.synthetic.main.item_mission_photo.view.*
 import java.text.SimpleDateFormat
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.util.*
 
 class LoadMissionPhotoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    private val profileMissionPhoto = itemView.itemProfileMissionPhoto
     private val nicknameMissionPhoto = itemView.itemNicknameMissionPhoto
     private val imageMissionPhoto = itemView.itemMissionPhotoImage
     private val afterTimeMissionPhoto = itemView.itemAfterTimeMissionPhoto
 
     fun bind(mission : Mission){
-//        setProfileImage(mission.imageUrl)
         nicknameMissionPhoto.text = mission.nickname
         setMissionImage(mission.imageUrl)
         afterTimeMissionPhoto.text = setAfterTimeText(mission.createdAt)

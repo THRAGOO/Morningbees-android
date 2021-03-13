@@ -25,9 +25,7 @@ import retrofit2.Response
 
 
 class CreateStep3Activity : AppCompatActivity(), View.OnClickListener {
-    private var jellyCnt: Int = 0
-
-    //intent variables
+    private var jellyCount: Int = 0
     private var beeTitle = ""
     var startTime = 0
     var endTime = 0
@@ -64,7 +62,7 @@ class CreateStep3Activity : AppCompatActivity(), View.OnClickListener {
             R.id.go_back_step2_button -> onBackPressed()
 
             R.id.jelly_2 -> {
-                jellyCnt = 2
+                jellyCount = 2
                 jelly_2.isSelected = !jelly_2.isSelected
                 initButtonVisible()
 
@@ -95,7 +93,7 @@ class CreateStep3Activity : AppCompatActivity(), View.OnClickListener {
             }
 
             R.id.jelly_3 -> {
-                jellyCnt = 3
+                jellyCount = 3
                 jelly_3.isSelected = !jelly_3.isSelected
                 initButtonVisible()
 
@@ -125,7 +123,7 @@ class CreateStep3Activity : AppCompatActivity(), View.OnClickListener {
                 jelly_10.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
             }
             R.id.jelly_4 -> {
-                jellyCnt = 4
+                jellyCount = 4
                 jelly_4.isSelected = !jelly_4.isSelected
                 initButtonVisible()
 
@@ -155,7 +153,7 @@ class CreateStep3Activity : AppCompatActivity(), View.OnClickListener {
                 jelly_10.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
             }
             R.id.jelly_5 -> {
-                jellyCnt = 5
+                jellyCount = 5
                 jelly_5.isSelected = !jelly_5.isSelected
                 initButtonVisible()
 
@@ -185,7 +183,7 @@ class CreateStep3Activity : AppCompatActivity(), View.OnClickListener {
                 jelly_10.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
             }
             R.id.jelly_6 -> {
-                jellyCnt = 6
+                jellyCount = 6
                 jelly_6.isSelected = !jelly_6.isSelected
                 initButtonVisible()
 
@@ -215,7 +213,7 @@ class CreateStep3Activity : AppCompatActivity(), View.OnClickListener {
                 jelly_10.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
             }
             R.id.jelly_7 -> {
-                jellyCnt = 7
+                jellyCount = 7
                 jelly_7.isSelected = !jelly_7.isSelected
                 initButtonVisible()
 
@@ -245,7 +243,7 @@ class CreateStep3Activity : AppCompatActivity(), View.OnClickListener {
                 jelly_10.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
             }
             R.id.jelly_8 -> {
-                jellyCnt = 8
+                jellyCount = 8
                 jelly_8.isSelected = !jelly_8.isSelected
                 initButtonVisible()
 
@@ -275,7 +273,7 @@ class CreateStep3Activity : AppCompatActivity(), View.OnClickListener {
                 jelly_10.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
             }
             R.id.jelly_9 -> {
-                jellyCnt = 9
+                jellyCount = 9
                 jelly_9.isSelected = !jelly_9.isSelected
                 initButtonVisible()
 
@@ -305,7 +303,7 @@ class CreateStep3Activity : AppCompatActivity(), View.OnClickListener {
                 jelly_10.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
             }
             R.id.jelly_10 -> {
-                jellyCnt = 10
+                jellyCount = 10
                 jelly_10.isSelected = !jelly_10.isSelected
                 initButtonVisible()
 
@@ -364,7 +362,7 @@ class CreateStep3Activity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun requestCreateBeeApi() {
-        val pay: Int = (jellyCnt * 1000)
+        val pay: Int = (jellyCount * 1000)
         val createBeeRequest = CreateBeeRequest(beeTitle, startTime, endTime, pay, " ")
         service.createBee(accessToken, createBeeRequest)
             .enqueue(object : Callback<Void> {
@@ -428,10 +426,6 @@ class CreateStep3Activity : AppCompatActivity(), View.OnClickListener {
             Intent(this, LoginActivity::class.java)
                 .putExtra("RequestLogOut", "")
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)        )
-    }
-
-    companion object {
-        private const val TAG = "CreateStep3Activity"
     }
 }
 

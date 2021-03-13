@@ -20,7 +20,6 @@ class CalendarRecyclerViewAdapter(private val calendarDialog: CalendarDialog) :
         }
     }
 
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val view =
             LayoutInflater.from(parent.context).inflate(R.layout.item_calendar, parent, false)
@@ -46,7 +45,6 @@ class CalendarRecyclerViewAdapter(private val calendarDialog: CalendarDialog) :
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         bindDefaultView(holder as CalendarRecyclerViewHolder, position)
 
-        // setTextColor
         var mPosition = baseCalendar.data[position].toString()
         if (mPosition.toInt() in 1..9) mPosition = "0$mPosition"
         val mTargetDate = (calendarDialog.targetDate + mPosition).toInt()
@@ -67,7 +65,6 @@ class CalendarRecyclerViewAdapter(private val calendarDialog: CalendarDialog) :
             }
         }
 
-        // setTextStyle
         if (position < baseCalendar.prevMonthTailOffset || position >= baseCalendar.prevMonthTailOffset + baseCalendar.currentMonthMaxDate) {
             holder.itemView.itemCalendarDateText.alpha = 0f
         } else {

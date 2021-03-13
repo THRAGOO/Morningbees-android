@@ -5,7 +5,6 @@ import android.content.ContextWrapper
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Color
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
@@ -37,8 +36,6 @@ import java.util.*
 
 class ParticipateMissionActivity : AppCompatActivity(), View.OnClickListener {
     private val service = MorningBeesService.create()
-
-    // MissionCreate API
     var accessToken = ""
     var beeId = -1
     var imageFile: File? = null
@@ -54,7 +51,6 @@ class ParticipateMissionActivity : AppCompatActivity(), View.OnClickListener {
         difficulty = intent.getIntExtra("difficulty", -1)
         targetDate = intent.getStringExtra("targetDate")
 
-//        val byteArray: ByteArray = intent.getByteArrayExtra("missionImage")
         val uri = intent.getStringExtra("missionImage")
         val state = intent.getIntExtra("state", 0)
 
@@ -100,7 +96,6 @@ class ParticipateMissionActivity : AppCompatActivity(), View.OnClickListener {
         file = File(file, "${UUID.randomUUID()}.jpg")
 
         try {
-            //compress the bitmap and save in jpg format
             val stream: OutputStream = FileOutputStream(file)
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
             stream.flush()
@@ -108,11 +103,6 @@ class ParticipateMissionActivity : AppCompatActivity(), View.OnClickListener {
         } catch (e: IOException) {
             e.printStackTrace()
         }
-
-        Log.d(TAG, "Uri: ${Uri.parse(file.absolutePath)}")
-        Log.d(TAG, "file absolutePath: ${file.absolutePath}")
-        Log.d(TAG, "file: $file")
-
         return file
     }
 
@@ -168,7 +158,7 @@ class ParticipateMissionActivity : AppCompatActivity(), View.OnClickListener {
                                 }
                             }
 
-                            500 -> { //internal server error
+                            500 -> {
                                 val jsonObject = JSONObject(response.errorBody()!!.string())
                                 val timestamp = jsonObject.getString("timestamp")
                                 val status = jsonObject.getString("status")
@@ -181,7 +171,6 @@ class ParticipateMissionActivity : AppCompatActivity(), View.OnClickListener {
                     }
                 })
         }
-
     }
 
     private fun gotoParticipateDialog() {
@@ -195,7 +184,6 @@ class ParticipateMissionActivity : AppCompatActivity(), View.OnClickListener {
         setResult(FINISH, result)
         finish()
     }
-
 
     companion object {
         private const val TAG = "MissionParticipate"

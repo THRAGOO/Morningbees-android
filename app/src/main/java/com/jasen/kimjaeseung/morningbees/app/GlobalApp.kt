@@ -7,7 +7,6 @@ import android.content.pm.PackageManager
 import com.jasen.kimjaeseung.morningbees.util.BeeInfoManager
 import com.jasen.kimjaeseung.morningbees.util.SharedPreference
 
-
 class GlobalApp : Application() {
     var DEBUG = true   //for log in debug mode
 

@@ -1,7 +1,6 @@
 package com.jasen.kimjaeseung.morningbees.setting.royaljelly.total
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,8 +14,8 @@ import com.jasen.kimjaeseung.morningbees.model.penalty.Penalty
 import com.jasen.kimjaeseung.morningbees.model.penalty.PenaltyHistory
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import com.jasen.kimjaeseung.morningbees.setting.royaljelly.RoyalJellyActivity
-import com.jasen.kimjaeseung.morningbees.setting.royaljelly.unpaid.UnPaidFragment
 import com.jasen.kimjaeseung.morningbees.util.Dlog
+import com.jasen.kimjaeseung.morningbees.util.getPriceAnnotation
 import kotlinx.android.synthetic.main.fragment_royaljelly_total.*
 import kotlinx.android.synthetic.main.fragment_royaljelly_unpaid.*
 import okhttp3.ResponseBody
@@ -25,7 +24,6 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Converter
 import retrofit2.Response
-import java.text.DecimalFormat
 
 class TotalFragment : Fragment() {
     private val service = MorningBeesService.create()
@@ -44,10 +42,6 @@ class TotalFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         requestBeePenaltyApi(PAID_STATUS)
         initButtonListener()
-    }
-
-    private fun Int.getPriceAnnotation(): String {
-        return DecimalFormat("###,###").format(this)
     }
 
     private fun initButtonListener(){

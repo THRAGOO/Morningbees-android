@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.model.penalty.Penalty
+import com.jasen.kimjaeseung.morningbees.util.getPriceAnnotation
 import kotlinx.android.synthetic.main.item_royaljelly_total.view.*
 import java.text.DecimalFormat
 
@@ -25,10 +26,6 @@ class TotalAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         bindDefaultView(holder as TotalViewHolder, position)    }
-
-    private fun Int.getPriceAnnotation(): String {
-        return DecimalFormat("###,###").format(this)
-    }
 
     private fun bindDefaultView(holder: TotalViewHolder, position: Int) {
         val item = totalList[position]

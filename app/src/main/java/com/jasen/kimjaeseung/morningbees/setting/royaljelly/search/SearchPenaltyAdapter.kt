@@ -52,6 +52,5 @@ class SearchPenaltyAdapter(
     }
 
     private class SearchPenaltyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-
     }
 }

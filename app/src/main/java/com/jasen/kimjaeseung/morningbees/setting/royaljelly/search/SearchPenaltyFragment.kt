@@ -12,12 +12,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
-import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.android.material.textfield.TextInputLayout
 import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.model.paid.Paid
 import com.jasen.kimjaeseung.morningbees.model.penalty.Penalty
@@ -34,7 +32,6 @@ class SearchPenaltyFragment : BottomSheetDialogFragment(), SearchPenaltyAdapter.
         val rootView = inflater.inflate(R.layout.fragment_search_penalty_list, container)
         dialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
         return rootView
-//        return inflater.inflate(R.layout.fragment_search_penalty_list, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -89,7 +86,7 @@ class SearchPenaltyFragment : BottomSheetDialogFragment(), SearchPenaltyAdapter.
 
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
-        Log.d(TAG, "onDismiss")
+
         hideKeyboard()
         val activity = activity
         if (activity is DialogInterface.OnDismissListener) {
@@ -122,7 +119,7 @@ class SearchPenaltyFragment : BottomSheetDialogFragment(), SearchPenaltyAdapter.
 
     override fun onPause() {
         super.onPause()
-        Log.d(TAG, "onPause")
+
         hideKeyboard()
     }
 

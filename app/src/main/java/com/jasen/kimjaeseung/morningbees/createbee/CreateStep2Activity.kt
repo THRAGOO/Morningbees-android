@@ -1,6 +1,5 @@
 package com.jasen.kimjaeseung.morningbees.createbee
 
-import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -48,7 +47,6 @@ class CreateStep2Activity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun buttonPressed(pressedButton: Int) {
-        // 더 생각 ㄱ
         buttonColorChange(pressedButton)
 
         if (count == 1) {
@@ -155,28 +153,4 @@ class CreateStep2Activity : AppCompatActivity(), View.OnClickListener {
                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         )
     }
-
-//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-//        super.onActivityResult(requestCode, resultCode, data)
-//
-//        if (requestCode == REQUEST_TEST) {
-//            if (resultCode == Activity.RESULT_OK) {
-//                if (intent.hasExtra("firstMissionTime")) {
-//                    startTime = intent.getIntExtra("firstMissionTime", 0)
-//                    buttonPressed(startTime)
-//                }
-//
-//                if (intent.hasExtra("lastMissionTime")) {
-//                    endTime = intent.getIntExtra("lastMissionTime", 0)
-//                    buttonPressed(endTime)
-//                }
-//            }
-//        }
-//    }
-
-    companion object {
-        private const val TAG = "CreateStep2Activity"
-        private const val REQUEST_TEST = 2
-    }
-
 }

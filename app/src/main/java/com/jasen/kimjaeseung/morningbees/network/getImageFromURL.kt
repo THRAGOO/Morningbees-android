@@ -16,7 +16,4 @@ class getImageFromURL: AsyncTask<String, Void, Bitmap>() {
 
         }
     }
-
-
-
 }

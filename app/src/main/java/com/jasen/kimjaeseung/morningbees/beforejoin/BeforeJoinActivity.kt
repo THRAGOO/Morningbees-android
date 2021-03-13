@@ -8,7 +8,6 @@ import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.app.GlobalApp
 import com.jasen.kimjaeseung.morningbees.createbee.CreateStep1Activity
 import com.jasen.kimjaeseung.morningbees.login.LoginActivity
-import com.jasen.kimjaeseung.morningbees.setting.SettingActivity
 import kotlinx.android.synthetic.main.activity_beforejoin.*
 
 class BeforeJoinActivity : AppCompatActivity(), View.OnClickListener {
@@ -46,7 +45,6 @@ class BeforeJoinActivity : AppCompatActivity(), View.OnClickListener {
         GlobalApp.prefs.accessToken = ""
         GlobalApp.prefs.refreshToken = ""
         GlobalApp.prefs.provider = ""
-
 
         startActivity(
             Intent(this, LoginActivity::class.java)

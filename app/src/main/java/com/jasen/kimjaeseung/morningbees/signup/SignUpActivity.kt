@@ -4,14 +4,11 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import com.jasen.kimjaeseung.morningbees.R
-import com.jasen.kimjaeseung.morningbees.app.GlobalApp
 import com.jasen.kimjaeseung.morningbees.beforejoin.BeforeJoinActivity
 import com.jasen.kimjaeseung.morningbees.login.LoginActivity
 import com.jasen.kimjaeseung.morningbees.main.MainActivity
@@ -24,7 +21,6 @@ import java.util.regex.Pattern
 class SignUpActivity : BaseActivity(), SignUpContract.View, View.OnClickListener {
     private lateinit var signUpPresenter: SignUpPresenter
 
-    //    private var beeId : Int = 0
     private var socialAccessToken: String = ""
     private var provider: String = ""
 
@@ -128,7 +124,6 @@ class SignUpActivity : BaseActivity(), SignUpContract.View, View.OnClickListener
             }
             else -> {
                 signUpNickNameText.text = "2~10자 이내로 입력해 주세요."
-//                showToast { getString(R.string.nickname_byte_restriction) }
                 return ""
             }
         }
