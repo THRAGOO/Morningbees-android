@@ -23,11 +23,11 @@ class BeeInfoManager(context: Context) {
         set(value) = prefsBeeInfo.edit().putInt(mBeeId, value).apply()
 
     var beeTitle: String
-        get() = prefsBeeInfo.getString(mBeeTitle, "")
+        get() = prefsBeeInfo.getString(mBeeTitle, "").toString()
         set(value) = prefsBeeInfo.edit().putString(mBeeTitle, value).apply()
 
     var beeManagerNickname: String
-        get() = prefsBeeInfo.getString(mBeeManagerNickname, "")
+        get() = prefsBeeInfo.getString(mBeeManagerNickname, "").toString()
         set(value) = prefsBeeInfo.edit().putString(mBeeManagerNickname, value).apply()
 
     var startTime: Int
@@ -54,11 +54,11 @@ class BeeInfoManager(context: Context) {
         get() = prefsBeeInfo.getInt(mPaidPenalty, 0)
         set(value) = prefsBeeInfo.edit().putInt(mPaidPenalty, value).apply()
 
-    var myNickname: String
+    var myNickname: String?
         get() = prefsBeeInfo.getString(mMyNickname, "")
         set(value) = prefsBeeInfo.edit().putString(mMyNickname, value).apply()
 
-    var myEmail: String
+    var myEmail: String?
         get() = prefsBeeInfo.getString(mMyEmail, "")
         set(value) = prefsBeeInfo.edit().putString(mMyEmail, value).apply()
 }

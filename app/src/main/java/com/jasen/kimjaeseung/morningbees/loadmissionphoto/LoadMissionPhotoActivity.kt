@@ -28,7 +28,7 @@ class LoadMissionPhotoActivity : AppCompatActivity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_load_mission_photo)
-        targetDate = intent.getStringExtra("targetDate")
+        targetDate = intent.getStringExtra("targetDate")!!
 
         initButtonListener()
         requestMissionAPI()

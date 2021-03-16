@@ -49,7 +49,7 @@ class ParticipateMissionActivity : AppCompatActivity(), View.OnClickListener {
         accessToken = GlobalApp.prefs.accessToken
         beeId = GlobalApp.prefsBeeInfo.beeId
         difficulty = intent.getIntExtra("difficulty", -1)
-        targetDate = intent.getStringExtra("targetDate")
+        targetDate = intent.getStringExtra("targetDate")!!
 
         val uri = intent.getStringExtra("missionImage")
         val state = intent.getIntExtra("state", 0)

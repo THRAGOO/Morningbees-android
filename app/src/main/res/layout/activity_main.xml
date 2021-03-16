@@ -23,7 +23,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/icon_bg_main"
-                    android:scaleType="fitCenter" />
+                    android:scaleType="fitXY"
+                    android:adjustViewBounds="true"/>
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -494,8 +495,8 @@
                     android:id="@+id/missionNotUploadWrapLayout"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp">
+                    android:layout_marginStart="24dp"
+                    android:layout_marginEnd="24dp">
 
                     <ImageView
                         android:layout_width="match_parent"
@@ -508,8 +509,6 @@
                         android:id="@+id/notUploadMissionImage"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginEnd="10dp"
                         android:adjustViewBounds="true"
                         android:scaleType="fitXY"
                         android:src="@drawable/not_upload_mission_img_view" />
@@ -518,8 +517,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
-                        android:layout_marginStart="20dp"
-                        android:layout_marginEnd="20dp">
+                        android:layout_marginStart="24dp"
+                        android:layout_marginEnd="24dp">
 
                         <TextView
                             android:id="@+id/missionNotUploadText"
@@ -549,18 +548,18 @@
 
                     </RelativeLayout>
                 </RelativeLayout>
+
                 <RelativeLayout
                     android:id="@+id/missionUploadWrapLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:visibility="invisible">
+                    android:layout_height="match_parent">
 
                     <ImageView
                         android:id="@+id/missionImage"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginStart="20dp"
-                        android:layout_marginEnd="20dp"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginEnd="24dp"
                         android:adjustViewBounds="true"
                         android:scaleType="fitXY"
                         android:src="@drawable/upload_mission_img_view" />
@@ -569,8 +568,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_alignParentBottom="true"
-                        android:layout_marginStart="20dp"
-                        android:layout_marginEnd="20dp">
+                        android:layout_marginStart="24dp"
+                        android:layout_marginEnd="24dp">
 
                         <TextView
                             android:id="@+id/missionTargetDateText"

@@ -19,11 +19,11 @@ class SharedPreference(context: Context) {
     private val service = MorningBeesService.create()
 
     var accessToken: String
-        get() = prefs.getString(mAccessToken, "")
+        get() = prefs.getString(mAccessToken, "").toString()
         set(value) = prefs.edit().putString(mAccessToken, value).apply()
 
     var refreshToken: String
-        get() = prefs.getString(mRefreshToken, "")
+        get() = prefs.getString(mRefreshToken, "").toString()
         set(value) = prefs.edit().putString(mRefreshToken, value).apply()
 
     var userId: Int
@@ -31,11 +31,11 @@ class SharedPreference(context: Context) {
         set(value) = prefs.edit().putInt(mUserId, value).apply()
 
     var provider: String
-        get() = prefs.getString(mProvider, "")
+        get() = prefs.getString(mProvider, "").toString()
         set(value) = prefs.edit().putString(mProvider, value).apply()
 
     var socialAccessToken: String
-        get() = prefs.getString(mSocialAccessToken, "")
+        get() = prefs.getString(mSocialAccessToken, "").toString()
         set(value) = prefs.edit().putString(mSocialAccessToken, value).apply()
 
     fun requestRenewalApi() {

@@ -30,8 +30,8 @@ class SignUpActivity : BaseActivity(), SignUpContract.View, View.OnClickListener
 
         setContentView(R.layout.activity_signup)
 
-        socialAccessToken = intent.getStringExtra("socialAccessToken")
-        provider = intent.getStringExtra("provider")
+        socialAccessToken = intent.getStringExtra("socialAccessToken").toString()
+        provider = intent.getStringExtra("provider").toString()
 
         initButtonListeners()
         signUpPresenter.takeView(this)

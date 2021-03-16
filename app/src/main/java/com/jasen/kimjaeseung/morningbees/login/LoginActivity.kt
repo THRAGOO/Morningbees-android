@@ -2,6 +2,7 @@ package com.jasen.kimjaeseung.morningbees.login
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.Log
@@ -133,7 +134,13 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
 
     private fun initAnimation() {
         val displayMetrics = DisplayMetrics()
-        windowManager.defaultDisplay.getMetrics(displayMetrics)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            display!!.getRealMetrics(displayMetrics)
+            Log.d(TAG, "R displayMetrics.density: ${displayMetrics.density}")
+        } else {
+            windowManager.defaultDisplay.getMetrics(displayMetrics)
+            Log.d(TAG, "displayMetrics.density: ${displayMetrics.density}")
+        }
 
         val heightPixel = displayMetrics.heightPixels
         val widthDp = displayMetrics.widthPixels / displayMetrics.density

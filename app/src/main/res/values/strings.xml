@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">Morningbees</string>
     <string name="google_server_client_id">804125796572-li56pv8pm8f95kc1f3u1irj43nle6oiu.apps.googleusercontent.com</string>
-    <string name="naver_oauth_client_secret">NOIcUU6bcT</string>
-    <string name="naver_oauth_client_id">5ZQIXFnwSx2XDv1Xcvpz</string>
+    <string name="naver_oauth_client_secret">praiBTB8hN</string>
+    <string name="naver_oauth_client_id">BvB6b9Zgxwpo5y_BYzH7</string>
     <string name="naver_oauth_client_name">Morningbees</string>
     <string name="baseUrl">http://www.API.com/api/v1/auth/sign_up</string>
     <string name="signup_start_button_text">시작하기</string>

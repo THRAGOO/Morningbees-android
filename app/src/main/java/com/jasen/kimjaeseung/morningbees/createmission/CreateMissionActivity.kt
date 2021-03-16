@@ -64,7 +64,7 @@ class CreateMissionActivity : AppCompatActivity(), View.OnClickListener {
         setContentView(R.layout.activity_create_mission)
 
         beeId = GlobalApp.prefsBeeInfo.beeId
-        targetDate = intent.getStringExtra("targetDate")
+        targetDate = intent.getStringExtra("targetDate").toString()
 
         initButtonListeners()
         initEditTextListeners()
@@ -314,18 +314,20 @@ class CreateMissionActivity : AppCompatActivity(), View.OnClickListener {
                     }
                 }
 
-                loadMissionView.setImageBitmap(
-                    Bitmap.createScaledBitmap(
-                        selectedImage,
-                        120,
-                        120,
-                        false
+                if (selectedImage != null){
+                    loadMissionView.setImageBitmap(
+                        Bitmap.createScaledBitmap(
+                            selectedImage,
+                            120,
+                            120,
+                            false
+                        )
                     )
-                )
-                loadMissionView.clipToOutline = true
+                    loadMissionView.clipToOutline = true
 
-                bitmap = selectedImage!!
-                image = File(URIPathHelper().getPath(this, photoUri))
+                    bitmap = selectedImage
+                    image = File(URIPathHelper().getPath(this, photoUri))
+                }
             }
             isActivateButton()
         } else if (requestCode == PICK_FROM_CAMERA) {
