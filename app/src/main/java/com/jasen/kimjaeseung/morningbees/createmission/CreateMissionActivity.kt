@@ -315,6 +315,7 @@ class CreateMissionActivity : AppCompatActivity(), View.OnClickListener {
                 }
 
                 if (selectedImage != null){
+
                     loadMissionView.setImageBitmap(
                         Bitmap.createScaledBitmap(
                             selectedImage,

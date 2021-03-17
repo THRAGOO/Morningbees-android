@@ -22,6 +22,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DecodeFormat
 import com.bumptech.glide.load.MultiTransformation
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -468,11 +469,13 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
         val formattedTargetEnd = LocalDateTime.parse(targetEnd, formatter)
 
         if (current > formattedTargetStart && current < formattedTargetEnd) {
+            lottie.visibility = View.VISIBLE
             missionTime.background = applicationContext.getDrawable(R.drawable.image_of_mission_time)
             lottie.playAnimation()
             lottie.repeatCount = ValueAnimator.INFINITE
         } else {
             missionTime.background = applicationContext.getDrawable(R.drawable.image_outside_of_mission_time)
+            lottie.visibility = View.INVISIBLE
         }
     }
 
@@ -532,6 +535,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
     private fun applyImageUrl(imageUrl: String?) {
         Glide.with(this@MainActivity)
             .load(imageUrl)
+            .format(DecodeFormat.PREFER_ARGB_8888)
             .apply(RequestOptions().override(312, 400))
             .transform(MultiTransformation(CenterCrop(), RoundedCorners(30)))
             .error(R.drawable.not_upload_mission_img_view)
