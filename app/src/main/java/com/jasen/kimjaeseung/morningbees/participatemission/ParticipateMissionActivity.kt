@@ -12,6 +12,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
+import android.view.ViewTreeObserver
 import androidx.appcompat.app.AppCompatActivity
 import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.app.GlobalApp
@@ -19,6 +20,7 @@ import com.jasen.kimjaeseung.morningbees.model.error.ErrorResponse
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import com.jasen.kimjaeseung.morningbees.util.Dlog
 import com.jasen.kimjaeseung.morningbees.util.showToast
+import kotlinx.android.synthetic.main.activity_create_mission.*
 import kotlinx.android.synthetic.main.activity_participate_upload_mission.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -41,6 +43,7 @@ class ParticipateMissionActivity : AppCompatActivity(), View.OnClickListener {
     var imageFile: File? = null
     var difficulty = -1
     var targetDate = ""
+    private var currentPhotoPath = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,147 +54,139 @@ class ParticipateMissionActivity : AppCompatActivity(), View.OnClickListener {
         difficulty = intent.getIntExtra("difficulty", -1)
         targetDate = intent.getStringExtra("targetDate")!!
 
-        val uri = intent.getStringExtra("missionImage")
+        currentPhotoPath = intent.getStringExtra("photoPath").toString()
         val state = intent.getIntExtra("state", 0)
-
-        if (state == PICK_FROM_ALBUM) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                val source = ImageDecoder.createSource(contentResolver, Uri.parse(uri))
-                val bitmap = ImageDecoder.decodeBitmap(source)
-                imageFile = bitmapToFile(bitmap)
-                pc_upload_img.setImageBitmap(bitmap)
-            } else {
-                val bitmap =
-                    MediaStore.Images.Media.getBitmap(this.contentResolver, Uri.parse(uri))
-                imageFile = bitmapToFile(bitmap)
-                pc_upload_img.setImageBitmap(bitmap)
-            }
-        } else if (state == PICK_FROM_CAMERA) {
-            val selectedImage = BitmapFactory.decodeFile(uri)
-            imageFile = bitmapToFile(selectedImage)
-            pc_upload_img.setImageBitmap(selectedImage)
-        }
-
         initButtonListeners()
+
+        pc_upload_img.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                setPic(pc_upload_img.width, pc_upload_img.height)
+                pc_upload_img.viewTreeObserver.removeOnGlobalLayoutListener(this)
+            }
+        })
     }
 
-    private fun initButtonListeners() {
-        cancel_participate_upload_btn.setOnClickListener(this)
-        pc_reload_img_btn.setOnClickListener(this)
-        share_participate_upload_btn.setOnClickListener(this)
+    private fun setPic(targetW: Int, targetH: Int) {
+        val bmOptions = BitmapFactory.Options().apply {
+        inJustDecodeBounds = true
+        val photoW = outWidth
+        val photoH = outHeight
+
+        val scaleFactor = Math.min(photoW / targetW, photoH / targetH)
+
+        inJustDecodeBounds = false
+        inSampleSize = scaleFactor
     }
 
-    override fun onClick(v: View) {
-        val i = v.id
-        when (i) {
-            R.id.cancel_participate_upload_btn -> gotoMain()
-            R.id.pc_reload_img_btn -> gotoParticipateDialog()
-            R.id.share_participate_upload_btn -> requestMissionCreateApi()
-        }
+    BitmapFactory.decodeFile(currentPhotoPath, bmOptions)?.also {
+        bitmap ->
+        pc_upload_img.setImageBitmap(bitmap)
     }
+    pc_upload_img.clipToOutline = true
+}
 
-    private fun bitmapToFile(bitmap: Bitmap): File {
-        val wrapper = ContextWrapper(applicationContext)
-        var file = wrapper.getDir("Images", Context.MODE_PRIVATE)
-        file = File(file, "${UUID.randomUUID()}.jpg")
+private fun initButtonListeners() {
+    cancel_participate_upload_btn.setOnClickListener(this)
+    pc_reload_img_btn.setOnClickListener(this)
+    share_participate_upload_btn.setOnClickListener(this)
+}
 
-        try {
-            val stream: OutputStream = FileOutputStream(file)
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
-            stream.flush()
-            stream.close()
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-        return file
+override fun onClick(v: View) {
+    when (v.id) {
+        R.id.cancel_participate_upload_btn -> gotoMain()
+        R.id.pc_reload_img_btn -> gotoParticipateDialog()
+        R.id.share_participate_upload_btn -> requestMissionCreateApi()
     }
+}
 
-    private fun requestMissionCreateApi() {
-        if (imageFile == null) {
-            showToast { "사진을 선택해 주세요." }
-        } else {
-            val image: File = imageFile!!
-            val testImage: MultipartBody.Part = MultipartBody.Part.createFormData(
-                "image",
-                image.name,
-                image.asRequestBody("image/*".toMediaTypeOrNull())
-            )
+private fun requestMissionCreateApi() {
+    if (currentPhotoPath == "") {
+        showToast { "사진을 선택해 주세요." }
+    } else {
+        val image = File(currentPhotoPath)
 
-            service.missionCreate(accessToken, testImage, beeId, "", 2, difficulty, targetDate)
-                .enqueue(object : retrofit2.Callback<Void> {
-                    override fun onFailure(call: Call<Void>, t: Throwable) {
-                        Dlog().d(t.toString())
-                    }
+        val testImage: MultipartBody.Part = MultipartBody.Part.createFormData(
+            "image",
+            image.name,
+            image.asRequestBody("image/*".toMediaTypeOrNull())
+        )
+        // 이 부분을 고쳐야할 듯.. 자꾸 화질이 낮아진당.. 
 
-                    override fun onResponse(
-                        call: Call<Void>,
-                        response: Response<Void>
-                    ) {
-                        when (response.code()) {
-                            201 -> {
-                                gotoMain()
-                                Log.d(TAG, "mission participate success")
-                            }
+        service.missionCreate(accessToken, testImage, beeId, "", 2, difficulty, targetDate)
+            .enqueue(object : retrofit2.Callback<Void> {
+                override fun onFailure(call: Call<Void>, t: Throwable) {
+                    Dlog().d(t.toString())
+                }
 
-                            400 -> {
-                                val converter: Converter<ResponseBody, ErrorResponse> =
-                                    MorningBeesService.retrofit.responseBodyConverter<ErrorResponse>(
-                                        ErrorResponse::class.java,
-                                        ErrorResponse::class.java.annotations
-                                    )
+                override fun onResponse(
+                    call: Call<Void>,
+                    response: Response<Void>
+                ) {
+                    when (response.code()) {
+                        201 -> {
+                            gotoMain()
+                            Log.d(TAG, "mission participate success")
+                        }
 
-                                val errorResponse = converter.convert(response.errorBody())
+                        400 -> {
+                            val converter: Converter<ResponseBody, ErrorResponse> =
+                                MorningBeesService.retrofit.responseBodyConverter<ErrorResponse>(
+                                    ErrorResponse::class.java,
+                                    ErrorResponse::class.java.annotations
+                                )
 
-                                if(errorResponse.code == 111 || errorResponse.code == 110 || errorResponse.code == 120){
-                                    val oldAccessToken = GlobalApp.prefs.accessToken
-                                    GlobalApp.prefs.requestRenewalApi()
-                                    val renewalAccessToken = GlobalApp.prefs.accessToken
+                            val errorResponse = converter.convert(response.errorBody())
 
-                                    if (oldAccessToken == renewalAccessToken) {
-                                        showToast { "다시 로그인해주세요." }
-                                        gotoMain()
-                                    } else
-                                        requestMissionCreateApi()
-                                } else {
-                                    showToast { errorResponse.message }
-                                    finish()
-                                }
-                            }
+                            if (errorResponse.code == 111 || errorResponse.code == 110 || errorResponse.code == 120) {
+                                val oldAccessToken = GlobalApp.prefs.accessToken
+                                GlobalApp.prefs.requestRenewalApi()
+                                val renewalAccessToken = GlobalApp.prefs.accessToken
 
-                            500 -> {
-                                val jsonObject = JSONObject(response.errorBody()!!.string())
-                                val timestamp = jsonObject.getString("timestamp")
-                                val status = jsonObject.getString("status")
-                                val message = jsonObject.getString("message")
-                                val code = jsonObject.getInt("code")
-                                gotoMain()
-                                showToast { message }
+                                if (oldAccessToken == renewalAccessToken) {
+                                    showToast { "다시 로그인해주세요." }
+                                    gotoMain()
+                                } else
+                                    requestMissionCreateApi()
+                            } else {
+                                showToast { errorResponse.message }
+                                finish()
                             }
                         }
+
+                        500 -> {
+                            val jsonObject = JSONObject(response.errorBody()!!.string())
+                            val timestamp = jsonObject.getString("timestamp")
+                            val status = jsonObject.getString("status")
+                            val message = jsonObject.getString("message")
+                            val code = jsonObject.getInt("code")
+                            gotoMain()
+                            showToast { message }
+                        }
                     }
-                })
-        }
+                }
+            })
     }
+}
 
-    private fun gotoParticipateDialog() {
-        val result = Intent()
-        setResult(RELOAD, result)
-        finish()
-    }
+private fun gotoParticipateDialog() {
+    val result = Intent()
+    setResult(RELOAD, result)
+    finish()
+}
 
-    private fun gotoMain() {
-        val result = Intent()
-        setResult(FINISH, result)
-        finish()
-    }
+private fun gotoMain() {
+    val result = Intent()
+    setResult(FINISH, result)
+    finish()
+}
 
-    companion object {
-        private const val TAG = "MissionParticipate"
-        private const val RELOAD = 120
-        private const val FINISH = 121
+companion object {
+    private const val TAG = "MissionParticipate"
+    private const val RELOAD = 120
+    private const val FINISH = 121
 
-        private const val PICK_FROM_ALBUM = 1001
-        private const val PICK_FROM_CAMERA = 1002
-    }
+    private const val PICK_FROM_ALBUM = 1001
+    private const val PICK_FROM_CAMERA = 1002
+}
 
 }

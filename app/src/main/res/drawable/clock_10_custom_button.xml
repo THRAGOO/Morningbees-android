@@ -1,21 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<rotate xmlns:android="http://schemas.android.com/apk/res/android"
-    android:fromDegrees="90"
-    android:pivotX="50%"
-    android:pivotY="50%"
-    android:toDegrees="90">
-    <vector
-        android:height="66dp"
-        android:width="66dp"
-        android:viewportHeight="240.0"
-        android:viewportWidth="240.0"
-        android:tint="@color/selector_clock_10_color"
-        android:tintMode="multiply"
-        xmlns:android="http://schemas.android.com/apk/res/android">
-
-        <path
-            android:fillColor="@color/round_button"
-            android:pathData="M230.359,137.849C237.277,125.165 237.277,109.835 230.359,97.151L193.628,29.804C186.181,16.15 171.87,7.654 156.317,7.654L87.683,7.654C72.13,7.654 57.819,16.15 50.372,29.804L13.641,97.151C6.723,109.835 6.723,125.165 13.641,137.849L50.372,205.196C57.819,218.85 72.13,227.346 87.683,227.346L156.317,227.346C171.87,227.346 186.181,218.85 193.628,205.196L230.359,137.849Z" />
-    </vector>
-</rotate>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_selected="true">
+        <layer-list>
+            <item>
+                <shape android:shape="rectangle">
+                    <solid android:color="@color/clock_10_button"/>
+                </shape>
+            </item>
+            <item android:drawable="@drawable/btn_time_outline"/>
+        </layer-list>
+    </item>
+    <item android:state_selected="false">
+        <layer-list>
+            <item>
+                <shape android:shape="rectangle">
+                    <solid android:color="@color/round_button"/>
+                </shape>
+            </item>
+            <item android:drawable="@drawable/btn_time_outline"/>
+        </layer-list>
+    </item>
+</selector>

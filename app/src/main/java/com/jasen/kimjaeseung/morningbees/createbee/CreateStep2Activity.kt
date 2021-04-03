@@ -2,12 +2,18 @@ package com.jasen.kimjaeseung.morningbees.createbee
 
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.Point
+import android.os.Build
 import android.os.Bundle
-import android.view.View
+import android.util.DisplayMetrics
+import android.view.*
+import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.app.GlobalApp
+import kotlinx.android.synthetic.main.activity_create_step1.*
 import kotlinx.android.synthetic.main.activity_create_step2.*
+
 
 class CreateStep2Activity : AppCompatActivity(), View.OnClickListener {
     var startTime = 0
@@ -22,6 +28,14 @@ class CreateStep2Activity : AppCompatActivity(), View.OnClickListener {
         initButtonListeners()
         buttonPressed(GlobalApp.prefsBeeInfo.startTime)
         buttonPressed(GlobalApp.prefsBeeInfo.endTime)
+
+        clock_6_button.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                initImageView()
+                clock_6_button.viewTreeObserver.removeOnGlobalLayoutListener(this)
+            }
+        })
+        initTextView()
     }
 
     override fun onClick(v: View) {
@@ -44,6 +58,59 @@ class CreateStep2Activity : AppCompatActivity(), View.OnClickListener {
         clock_10_button.setOnClickListener(this)
         create_step2_next_button.setOnClickListener(this)
         go_back_step1_button.setOnClickListener(this)
+    }
+
+    private fun initImageView(){
+        val lp = LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        lp.width = clock_6_button.width
+        lp.height = clock_6_button.height
+        lp.gravity = Gravity.CENTER
+        text6Clock.layoutParams = lp
+
+        lp.width = clock_7_button.width
+        lp.height = clock_7_button.height
+        lp.gravity = Gravity.CENTER
+        text7Clock.layoutParams = lp
+
+        lp.width = clock_8_button.width
+        lp.height = clock_8_button.height
+        lp.gravity = Gravity.CENTER
+        text8Clock.layoutParams = lp
+
+        lp.width = clock_9_button.width
+        lp.height = clock_9_button.height
+        lp.gravity = Gravity.CENTER
+        text9Clock.layoutParams = lp
+
+        lp.width = clock_10_button.width
+        lp.height = clock_10_button.height
+        lp.gravity = Gravity.CENTER
+        text10Clock.layoutParams = lp
+    }
+
+    private fun initTextView(){
+        val displayMetrics = DisplayMetrics()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            display!!.getRealMetrics(displayMetrics)
+        } else {
+            windowManager.defaultDisplay.getMetrics(displayMetrics)
+        }
+        val width = (displayMetrics.widthPixels / displayMetrics.density).toInt()
+        val heightPixel = displayMetrics.heightPixels
+
+        createBeeText1.textSize = (width / 15).toFloat()
+        createBeeText2.textSize = (width / 15).toFloat()
+        createBeeTimeText.textSize = (width / 30).toFloat()
+
+        text6Clock.textSize = (width / 25).toFloat()
+        text7Clock.textSize = (width / 25).toFloat()
+        text8Clock.textSize = (width / 25).toFloat()
+        text9Clock.textSize = (width / 25).toFloat()
+        text10Clock.textSize = (width / 25).toFloat()
+
+        create_step2_next_button.layoutParams.width = displayMetrics.widthPixels
+        create_step2_next_button.layoutParams.height = (heightPixel * 0.07f).toInt()
+        create_step2_next_button.textSize = (width / 25).toFloat()
     }
 
     private fun buttonPressed(pressedButton: Int) {
@@ -82,6 +149,7 @@ class CreateStep2Activity : AppCompatActivity(), View.OnClickListener {
 
     private fun buttonColorChange(pressedButton: Int) {
         if (pressedButton == 6 && !clock_6_button.isSelected && count != 2) {
+//            clock_6_button.setBackgroundColor(Color.parseColor("#FFEF8E"))
             clock_6_button.isSelected = true
             missionTimeArr[0] = true
             count++
@@ -152,5 +220,9 @@ class CreateStep2Activity : AppCompatActivity(), View.OnClickListener {
             Intent(this, CreateStep1Activity::class.java)
                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         )
+    }
+
+    companion object {
+        const val TAG = "CreateStep2Activity"
     }
 }

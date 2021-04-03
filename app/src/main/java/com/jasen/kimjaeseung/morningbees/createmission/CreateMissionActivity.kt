@@ -6,6 +6,7 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.*
+import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -15,7 +16,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
-import android.widget.RelativeLayout
+import android.view.ViewTreeObserver
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -50,10 +51,11 @@ class CreateMissionActivity : AppCompatActivity(), View.OnClickListener {
     var difficulty: Int = DIFFICULTY_NONE
     var description: String = ""
     private var beeId: Int = 0
-    var tempFile: File? = null
-    var bitmap: Bitmap? = null
+    var mBitmap: Bitmap? = null
     var image: File? = null
     var targetDate = ""
+    var currentPhotoPath = ""
+    var uriSavedImage = ""
 
     private val permissionCheckCamera by lazy {
         ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
@@ -82,7 +84,7 @@ class CreateMissionActivity : AppCompatActivity(), View.OnClickListener {
         when (v.id) {
             R.id.missionCreateCancelButton -> gotoMain()
             R.id.missionCreateRegisterButton -> requestMissionCreateApi()
-            R.id.takePictureButton -> gotoCamera()
+            R.id.takePictureButton -> dispatchTakePictureIntent()
             R.id.getGalleryButton -> gotoGallery()
             R.id.reloadMissionButton -> changeWrapView(CLICK_IMAGEVIEW)
 
@@ -127,10 +129,10 @@ class CreateMissionActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun isActivateButton() {
         Log.d(TAG, "description: $description")
-        Log.d(TAG, "bitmap: $bitmap")
+        Log.d(TAG, "bitmap: $mBitmap")
         Log.d(TAG, "difficulty: $difficulty")
 
-        if (description == "" || bitmap == null || difficulty == DIFFICULTY_NONE){
+        if (description == "" || mBitmap == null || difficulty == DIFFICULTY_NONE) {
             missionCreateRegisterButton.setTextColor(Color.parseColor("#CCCCCC"))
             missionCreateRegisterButton.isEnabled = false
         } else {
@@ -144,14 +146,15 @@ class CreateMissionActivity : AppCompatActivity(), View.OnClickListener {
             difficulty == -1 -> {
                 showToast { "난이도 설정해주세요. " }
             }
-            bitmap == null -> {
+            mBitmap == null -> {
                 showToast { "사진을 선택해 주세요." }
             }
             description == "" -> {
                 showToast { "미션 타이틀을 등록해주세요. " }
             }
             else -> {
-                val imageFile = image!!
+                val imageFile = File(currentPhotoPath)
+
                 val testImage = MultipartBody.Part.createFormData(
                     "image",
                     imageFile.name,
@@ -190,7 +193,7 @@ class CreateMissionActivity : AppCompatActivity(), View.OnClickListener {
 
                                     val errorResponse = converter.convert(response.errorBody())
 
-                                    if(errorResponse.code == 111 || errorResponse.code == 110 || errorResponse.code == 120){
+                                    if (errorResponse.code == 111 || errorResponse.code == 110 || errorResponse.code == 120) {
                                         val oldAccessToken = GlobalApp.prefs.accessToken
                                         GlobalApp.prefs.requestRenewalApi()
                                         val renewalAccessToken = GlobalApp.prefs.accessToken
@@ -219,7 +222,7 @@ class CreateMissionActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    private fun goFinish(){
+    private fun goFinish() {
         finish()
     }
 
@@ -238,7 +241,7 @@ class CreateMissionActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    private fun gotoLogOut(){
+    private fun gotoLogOut() {
         startActivity(
             Intent(this, LoginActivity::class.java)
                 .putExtra("RequestLogOut", "")
@@ -248,74 +251,89 @@ class CreateMissionActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun gotoGallery() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            .putExtra(MediaStore.EXTRA_OUTPUT, uriSavedImage)
         intent.type = "image/*"
         startActivityForResult(intent, PICK_FROM_ALBUM)
     }
 
-    private fun gotoCamera() {
-        //외장 메모리 (sd card) 연결 여부 확인
+    private fun dispatchTakePictureIntent() {
         val state: String = Environment.getExternalStorageState()
         if (state != Environment.MEDIA_MOUNTED) {
             Log.d(TAG, "SD card is not mounted")
             return
         }
 
-        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        tempFile = createImageFile()
-        tempFile?.let {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                val photoUri = FileProvider.getUriForFile(
-                    this,
-                    "${application.packageName}.provider",
-                    it
-                )
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
-                startActivityForResult(intent, PICK_FROM_CAMERA)
-            } else {
-                val photoUri = Uri.fromFile(it)
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
-                startActivityForResult(intent, PICK_FROM_CAMERA)
+        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
+            takePictureIntent.resolveActivity(packageManager)?.also {
+                val photoFile: File? = try {
+                    createImageFile()
+                } catch (ex: IOException) {
+                    null
+                }
+
+                photoFile?.also {
+                    val photoURI: Uri = FileProvider.getUriForFile(
+                        this,
+                        "com.jasen.kimjaeseung.morningbees",
+                        it
+                    )
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+                    startActivityForResult(takePictureIntent, PICK_FROM_CAMERA)
+                }
             }
         }
     }
 
     private fun createImageFile(): File? {
         val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
-        val imageFileName = "morningbees"
+        val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
 
-        // 외부 앱 전용 저장소
-        val path = getExternalFilesDir(Environment.DIRECTORY_PICTURES)?.absolutePath
-
-        val storageDir = File(path)
-        if (!storageDir.exists()) {
-            storageDir.mkdirs()
+        return File.createTempFile(
+            "JPEG_${timeStamp}_",
+            ".jpg",
+            storageDir
+        ).apply {
+            currentPhotoPath = absolutePath
         }
-        Log.d(TAG, "path 경로: $path")
-        try {
-            val tempFile = File.createTempFile(imageFileName, ".jpg", storageDir)
-            return tempFile
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-        return null
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
+    private fun galleryAddPicture() {
+        val file = File(currentPhotoPath)
+        var mediaScannerConnection: MediaScannerConnection? = null
+
+        val mediaScannerClient = object : MediaScannerConnection.MediaScannerConnectionClient {
+            override fun onMediaScannerConnected() {
+                mediaScannerConnection?.scanFile(file.path, null)
+                Log.d(TAG, "media scan success")
+            }
+
+            override fun onScanCompleted(path: String?, uri: Uri?) {
+                Log.d(TAG, "media scan completed")
+                mediaScannerConnection?.disconnect()
+            }
+        }
+
+        mediaScannerConnection = MediaScannerConnection(this, mediaScannerClient)
+        mediaScannerConnection.connect()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, intent)
         if (requestCode == PICK_FROM_ALBUM) {
-            intent?.data?.let { photoUri ->
+            data?.data?.let { photoUri ->
+                currentPhotoPath = URIPathHelper().getPath(this, photoUri).toString()
+
                 val selectedImage = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                     val source = ImageDecoder.createSource(contentResolver, photoUri)
-                    // ImageDecorder.source를 객체로 전달해 Bitmap 생성
                     ImageDecoder.decodeBitmap(source)
                 } else {
                     contentResolver.openInputStream(photoUri)?.use { inputStream ->
                         BitmapFactory.decodeStream(inputStream)
                     }
                 }
-
+//                setPic()
                 if (selectedImage != null){
-
+                    mBitmap = selectedImage
                     loadMissionView.setImageBitmap(
                         Bitmap.createScaledBitmap(
                             selectedImage,
@@ -325,37 +343,43 @@ class CreateMissionActivity : AppCompatActivity(), View.OnClickListener {
                         )
                     )
                     loadMissionView.clipToOutline = true
-
-                    bitmap = selectedImage
-                    image = File(URIPathHelper().getPath(this, photoUri))
                 }
             }
-            isActivateButton()
         } else if (requestCode == PICK_FROM_CAMERA) {
-            // 카메라에서는 intent, data == null
-            val selectedImage = BitmapFactory.decodeFile(tempFile?.absolutePath)
-
-            if(selectedImage != null){
-                loadMissionView.setImageBitmap(
-                    Bitmap.createScaledBitmap(
-                        selectedImage,
-                        120,
-                        120,
-                        false
-                    )
-                )
-                loadMissionView.clipToOutline = true
-                bitmap = selectedImage
-                image = tempFile
-            }
-            isActivateButton()
+            galleryAddPicture()
+            setPic()
         }
 
-        if (bitmap == null) {
+        isActivateButton()
+
+        Log.d(TAG, "on mBitmap: $mBitmap")
+        if (mBitmap == null) {
             changeWrapView(CLICK_IMAGEVIEW)
         } else {
             changeWrapView(LOAD_IMAGEVIEW)
         }
+    }
+
+    private fun setPic() {
+        val targetW = loadMissionView.width
+        val targetH = loadMissionView.height
+
+        val bmOptions = BitmapFactory.Options().apply {
+            inJustDecodeBounds = true
+            val photoW = outWidth
+            val photoH = outHeight
+
+            val scaleFactor = Math.min(photoW / targetW, photoH / targetH)
+
+            inJustDecodeBounds = false
+            inSampleSize = scaleFactor
+        }
+
+        BitmapFactory.decodeFile(currentPhotoPath, bmOptions)?.also { bitmap ->
+            mBitmap = bitmap
+            loadMissionView.setImageBitmap(Bitmap.createScaledBitmap(bitmap, 120, 120, false))
+        }
+        loadMissionView.clipToOutline = true
     }
 
     private fun changeWrapView(status: Int) { // wrap view change
@@ -363,7 +387,7 @@ class CreateMissionActivity : AppCompatActivity(), View.OnClickListener {
             missionImageUploadWrapLayout.visibility = View.VISIBLE
             missionLoadWrapLayout.visibility = View.INVISIBLE
             image = null
-            bitmap = null
+            mBitmap = null
         }
         if (status == LOAD_IMAGEVIEW) {
             missionLoadWrapLayout.visibility = View.VISIBLE

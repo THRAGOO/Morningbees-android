@@ -7,25 +7,24 @@
     android:background="@color/white">
 
     <RelativeLayout
-        android:layout_marginTop="88dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        >
-
-        <ImageView
-            android:id="@+id/illust_inviteImageView"
-            android:layout_width="238dp"
-            android:layout_height="238dp"
-            android:src="@drawable/icon_invite"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="12dp"/>
-
+        android:layout_marginTop="88dp">
         <RelativeLayout
             android:id="@+id/inviteBeeText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_centerHorizontal="true"
-            android:layout_below="@id/illust_inviteImageView">
+            android:layout_marginTop="12dp">
+
+            <ImageView
+                android:id="@+id/illust_inviteImageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/illust_invite"
+                android:layout_centerHorizontal="true"
+                android:layout_above="@id/invite_textview1"
+                android:layout_marginBottom="15dp" />
 
             <TextView
                 android:id="@+id/invite_textview1"
@@ -36,53 +35,60 @@
                 android:text="여왕벌에게\n초대장이 도착하였습니다. "
                 android:textColor="#222222"
                 android:textSize="22dp"
-                android:textStyle="bold"/>
+                android:textStyle="bold"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"/>
 
             <TextView
                 android:id="@+id/beeNameText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:layout_below="@id/invite_textview1"/>
+                android:layout_below="@id/invite_textview1"
+                android:layout_marginBottom="5dp"
+                android:textSize="14dp"
+                android:textColor="#aaaaaa"/>
 
             <TextView
                 android:id="@+id/invite_textview2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/beeNameText"
-
+                android:textSize="14dp"
                 android:text="미션을 함께 클리어해볼까요? "
-                android:layout_centerHorizontal="true"/>
-        </RelativeLayout>
+                android:layout_centerHorizontal="true"
+                android:textColor="#aaaaaa"/>
 
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@+id/inviteBeeText"
-            android:gravity="bottom">
-
-            <Button
-                android:id="@+id/accept_invitebee_button"
+            <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/radius_button_selector"
+                android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
-                android:layout_marginBottom="20dp"
-                android:text="모임에 참여하기 "
-                android:stateListAnimator="@null"/>
+                android:layout_below="@+id/invite_textview2"
+                android:gravity="bottom">
 
-            <Button
-                android:id="@+id/close_inviteView_button"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:layout_below="@id/accept_invitebee_button"
-                android:background="#00ff0000"
-                android:textColor="#777777"
-                android:layout_centerHorizontal="true"
-                android:text="닫기 "
-                android:layout_marginBottom="20dp"/>
+                <Button
+                    android:id="@+id/accept_invitebee_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/radius_button_selector"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="20dp"
+                    android:text="모임에 참여하기 "
+                    android:stateListAnimator="@null"
+                    android:textStyle="bold"/>
+
+                <Button
+                    android:id="@+id/close_inviteView_button"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_below="@id/accept_invitebee_button"
+                    android:background="#00ff0000"
+                    android:textColor="#777777"
+                    android:layout_centerHorizontal="true"
+                    android:text="닫기 "
+                    android:layout_marginBottom="20dp"/>
+            </RelativeLayout>
         </RelativeLayout>
 
     </RelativeLayout>

@@ -2,9 +2,11 @@ package com.jasen.kimjaeseung.morningbees.createbee
 
 import android.content.Intent
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.DisplayMetrics
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -12,6 +14,7 @@ import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.app.GlobalApp
 import com.jasen.kimjaeseung.morningbees.beforejoin.BeforeJoinActivity
 import kotlinx.android.synthetic.main.activity_create_step1.*
+import kotlinx.android.synthetic.main.activity_create_step2.*
 
 class CreateStep1Activity : AppCompatActivity(), View.OnClickListener {
     var beeTitle = ""
@@ -22,6 +25,7 @@ class CreateStep1Activity : AppCompatActivity(), View.OnClickListener {
 
         initButtonListeners()
         initEditTextListeners()
+        initTextView()
 
         beeTitle = GlobalApp.prefsBeeInfo.beeTitle
         create_beename_text.setText(beeTitle)
@@ -39,6 +43,27 @@ class CreateStep1Activity : AppCompatActivity(), View.OnClickListener {
     private fun initButtonListeners() {
         go_back_start_button.setOnClickListener(this)
         create_step1_next_button.setOnClickListener(this)
+    }
+
+    private fun initTextView(){
+        val displayMetrics = DisplayMetrics()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            display!!.getRealMetrics(displayMetrics)
+        } else {
+            windowManager.defaultDisplay.getMetrics(displayMetrics)
+        }
+        val width = (displayMetrics.widthPixels / displayMetrics.density).toInt()
+        val heightPixel = displayMetrics.heightPixels
+        val widthPixel = displayMetrics.widthPixels
+        val heightDp = heightPixel / displayMetrics.density
+
+        createStep1Text1.textSize = (width / 15).toFloat()
+        createStep1Text2.textSize = (width / 15).toFloat()
+        createStep1Text3.textSize = (width / 30).toFloat()
+
+        create_step1_next_button.layoutParams.width = displayMetrics.widthPixels
+        create_step1_next_button.layoutParams.height = (heightPixel * 0.07f).toInt()
+        create_step1_next_button.textSize = (width / 25).toFloat()
     }
 
     private fun initEditTextListeners() {

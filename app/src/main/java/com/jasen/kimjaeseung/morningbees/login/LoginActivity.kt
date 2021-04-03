@@ -2,6 +2,7 @@ package com.jasen.kimjaeseung.morningbees.login
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
@@ -15,9 +16,12 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
+import com.google.firebase.dynamiclinks.ktx.dynamicLinks
+import com.google.firebase.ktx.Firebase
 import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.app.GlobalApp
 import com.jasen.kimjaeseung.morningbees.beforejoin.BeforeJoinActivity
+import com.jasen.kimjaeseung.morningbees.invitebee.InviteBeeActivity
 import com.jasen.kimjaeseung.morningbees.main.MainActivity
 import com.jasen.kimjaeseung.morningbees.model.error.ErrorResponse
 import com.jasen.kimjaeseung.morningbees.model.joinbee.JoinBeeRequest
@@ -32,6 +36,7 @@ import com.jasen.kimjaeseung.morningbees.util.showToast
 import com.nhn.android.naverlogin.OAuthLogin
 import com.nhn.android.naverlogin.OAuthLoginHandler
 import com.nhn.android.naverlogin.data.OAuthLoginState
+import kotlinx.android.synthetic.main.activity_invite_bee.*
 import kotlinx.android.synthetic.main.activity_login.*
 import okhttp3.ResponseBody
 import org.json.JSONObject
@@ -52,6 +57,10 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
     var translationY = 0.0f
 
     private val service = MorningBeesService.create()
+
+    private var beeId = 0
+    private var beeTitle = ""
+    private var parameter = ""
 
     // MARK:~ Life Cycle
 
@@ -81,6 +90,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
                 setAutoLogin()
             }
         }
+        getDynamicLink()
     }
 
     override fun onResume() {
@@ -110,6 +120,26 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
         }
     }
 
+    private fun getDynamicLink(){
+        Firebase.dynamicLinks
+            .getDynamicLink(intent)
+            .addOnSuccessListener(this) { pendingDynamicLinkData ->
+                val deepLink: Uri?
+                if (pendingDynamicLinkData != null) {
+                    deepLink = pendingDynamicLinkData.link
+                    parameter = deepLink?.getQueryParameter("beeId").orEmpty()
+                    beeTitle = deepLink?.getQueryParameter("beeTitle").orEmpty()
+                    beeId = Integer.parseInt(parameter)
+
+                    GlobalApp.prefsBeeInfo.beeId = beeId
+                    GlobalApp.prefsBeeInfo.beeTitle = beeTitle
+
+                    startActivity(Intent(this, InviteBeeActivity::class.java))
+                }
+            }
+            .addOnFailureListener(this) { e -> Log.w(TAG, "getDynamicLink:onFailure", e) }
+    }
+
     // MARK:~ MVP Init
 
     override fun initPresenter() {
@@ -133,18 +163,32 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
     // MARK:~ View Design
 
     private fun initAnimation() {
-        val displayMetrics = DisplayMetrics()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            display!!.getRealMetrics(displayMetrics)
-            Log.d(TAG, "R displayMetrics.density: ${displayMetrics.density}")
-        } else {
-            windowManager.defaultDisplay.getMetrics(displayMetrics)
-            Log.d(TAG, "displayMetrics.density: ${displayMetrics.density}")
+        val displayMetrics : DisplayMetrics
+        val heightPixel : Int
+        val widthPixel : Int
+        val density : Float
+
+        if (GlobalApp.prefsDeviceInfo.density == 0f || GlobalApp.prefsDeviceInfo.heightPixel == 0 || GlobalApp.prefsDeviceInfo.widthPixel == 0){
+            displayMetrics = DisplayMetrics()
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                display!!.getRealMetrics(displayMetrics)
+            } else {
+                windowManager.defaultDisplay.getMetrics(displayMetrics)
+            }
+
+            GlobalApp.prefsDeviceInfo.heightPixel = displayMetrics.heightPixels
+            GlobalApp.prefsDeviceInfo.widthPixel = displayMetrics.widthPixels
+            GlobalApp.prefsDeviceInfo.density = displayMetrics.density
         }
 
-        val heightPixel = displayMetrics.heightPixels
-        val widthDp = displayMetrics.widthPixels / displayMetrics.density
-        val heightDp = heightPixel / displayMetrics.density
+        heightPixel = GlobalApp.prefsDeviceInfo.heightPixel
+        widthPixel = GlobalApp.prefsDeviceInfo.widthPixel
+        density = GlobalApp.prefsDeviceInfo.density
+
+        val widthDp = widthPixel / density
+        val heightDp = heightPixel / density
+
         val wDp = widthDp * 0.55f
         val hDp = heightPixel * 3f
 
@@ -157,7 +201,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
                 .toInt()
 
         val beeHeight = loginBeeImage.layoutParams.height
-        loginBeeImage.layoutParams.width = (((loginBeeImage.layoutParams.width * heightDp * 0.27f) / beeHeight) * displayMetrics.density).toInt()
+        loginBeeImage.layoutParams.width = (((loginBeeImage.layoutParams.width * heightDp * 0.27f) / beeHeight) * density).toInt()
 
         signInLogoTitle.layoutParams.width = width
 
@@ -220,6 +264,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
         GlobalApp.prefs.accessToken = ""
         GlobalApp.prefs.refreshToken = ""
         GlobalApp.prefs.provider = ""
+        GlobalApp.prefsBeeInfo.beeId = 0
 
         mGoogleSignInClient.signOut().addOnCompleteListener(this) {
             Dlog().d("Google Sign Out")
@@ -371,6 +416,8 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
                                     signOut()
                                 } else
                                     requestJoinBeeApi()
+                            } else if (errorResponse.code == 170){
+                                signOut()
                             } else {
                                 showToast { errorResponse.message }
                                 finish()
@@ -450,11 +497,13 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
                                 gotoMainActivity()
                             } else {
                                 Log.d(TAG, "not already bee join")
+                                Log.d(TAG, "Global beeId: ${GlobalApp.prefsBeeInfo.beeId}")
+                                Log.d(TAG, "beeId: ${meResponse!!.beeId}")
 
                                 if (GlobalApp.prefsBeeInfo.beeId == 0)
                                     gotoBeforeJoin()
                                 else {
-                                    GlobalApp.prefs.userId = meResponse!!.userId
+                                    GlobalApp.prefs.userId = meResponse.userId
                                     requestJoinBeeApi()
                                 }
                             }
@@ -479,6 +528,11 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
                                     signOut()
                                 } else
                                     requestMeApi()
+                            }
+
+                            if (errorResponse.code == 170){
+                                Log.d(TAG, "170 여기 ")
+                                signOut()
                             } else {
                                 showToast { errorResponse.message }
                                 finish()
@@ -506,7 +560,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
             Intent(
                 this,
                 MainActivity::class.java
-            ).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            ).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
         )
     }
 

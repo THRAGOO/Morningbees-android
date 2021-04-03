@@ -7,7 +7,8 @@
         android:required="true" />
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <application
@@ -17,7 +18,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:requestLegacyExternalStorage="true">
         <activity
             android:name=".main.MainActivity"
             android:screenOrientation="portrait"
@@ -30,6 +32,14 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:host="thragoo.com" android:scheme="https"/>
+                <data android:host="thragoo.page.link" android:scheme="https"/>
+                <data android:host="thragoo.page.link" android:scheme="http"/>
             </intent-filter>
         </activity>
         <activity
@@ -65,13 +75,6 @@
         <activity android:name=".invitebee.InviteBeeActivity"
             android:screenOrientation="portrait"
             android:theme="@style/whiteStatusBarTheme">
-            <intent-filter android:autoVerify="true">
-                <action android:name="android.intent.action.VIEW"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.BROWSABLE"/>
-                <data android:host="thragoo.page.link" android:scheme="https"/>
-                <data android:host="thragoo.page.link" android:scheme="http"/>
-            </intent-filter>
         </activity>
 
         <activity android:name=".participatemission.ParticipateMissionActivity"
@@ -99,7 +102,7 @@
             android:theme="@style/whiteStatusBarTheme"/>
 
         <provider
-            android:authorities="com.jasen.kimjaeseung.morningbees.provider"
+            android:authorities="com.jasen.kimjaeseung.morningbees"
             android:name="androidx.core.content.FileProvider"
             android:exported="false"
             android:grantUriPermissions="true">

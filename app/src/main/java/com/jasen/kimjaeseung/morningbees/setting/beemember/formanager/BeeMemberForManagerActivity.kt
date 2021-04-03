@@ -9,7 +9,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.dynamiclinks.DynamicLink
 import com.google.firebase.dynamiclinks.ShortDynamicLink
+import com.google.firebase.dynamiclinks.ktx.androidParameters
 import com.google.firebase.dynamiclinks.ktx.dynamicLinks
 import com.google.firebase.dynamiclinks.ktx.iosParameters
 import com.google.firebase.dynamiclinks.ktx.shortLinkAsync
@@ -164,12 +166,20 @@ class BeeMemberForManagerActivity : AppCompatActivity(), View.OnClickListener {
     private fun createDynamicLink() {
         val shortLinkTask = Firebase.dynamicLinks.shortLinkAsync {
             //link = Uri.parse("https://www.app.thragoo.com?beeId=$beeId?beeTitle=$beeTitle")
-            link = Uri.parse("https://www.app.thragoo.com").buildUpon()
+//            link = Uri.parse("https://www.thragoo.com").buildUpon()
+            link = Uri.parse("https://www.thragoo.com").buildUpon()
                 .appendQueryParameter("beeId", beeId.toString())
                 .appendQueryParameter("beeTitle", beeTitle)
                 .build()
             domainUriPrefix = "https://thragoo.page.link"
-            iosParameters("com.thragoo.Morningbees-iOS") {}
+            androidParameters {
+                setFallbackUrl(
+                    Uri.parse("https://play.google.com/store/apps/details?id=com.jasen.kimjaeseung.morningbees")
+                )
+            }
+            iosParameters("com.thragoo.Morningbees-iOS") {
+                setAppStoreId("1557197440")
+            }
         }.addOnCompleteListener(this, OnCompleteListener<ShortDynamicLink>() {
             if (it.isSuccessful) {
                 val shortLink = it.result?.shortLink

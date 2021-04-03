@@ -3,7 +3,9 @@ package com.jasen.kimjaeseung.morningbees.createbee
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
+import android.os.Build
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.jasen.kimjaeseung.morningbees.R
@@ -15,6 +17,7 @@ import com.jasen.kimjaeseung.morningbees.model.error.ErrorResponse
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import com.jasen.kimjaeseung.morningbees.util.Dlog
 import com.jasen.kimjaeseung.morningbees.util.showToast
+import kotlinx.android.synthetic.main.activity_create_step2.*
 import kotlinx.android.synthetic.main.activity_create_step3.*
 import okhttp3.ResponseBody
 import org.json.JSONObject
@@ -45,6 +48,7 @@ class CreateStep3Activity : AppCompatActivity(), View.OnClickListener {
 
         startTime = GlobalApp.prefsBeeInfo.startTime
         endTime = GlobalApp.prefsBeeInfo.endTime
+        initTextView()
     }
 
     override fun onBackPressed() {
@@ -55,6 +59,35 @@ class CreateStep3Activity : AppCompatActivity(), View.OnClickListener {
         )
     }
 
+    private fun initTextView(){
+        val displayMetrics = DisplayMetrics()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            display!!.getRealMetrics(displayMetrics)
+        } else {
+            windowManager.defaultDisplay.getMetrics(displayMetrics)
+        }
+        val width = (displayMetrics.widthPixels / displayMetrics.density).toInt()
+        val heightPixel = displayMetrics.heightPixels
+
+        createStep3Text1.textSize = (width / 15).toFloat()
+        createStep3Text2.textSize = (width / 15).toFloat()
+        createStep3Description.textSize = (width / 30).toFloat()
+        createStep3Text3.textSize = (width / 30).toFloat()
+
+        jelly_2_text.textSize = (width / 30).toFloat()
+        jelly_3_text.textSize = (width / 30).toFloat()
+        jelly_4_text.textSize = (width / 30).toFloat()
+        jelly_5_text.textSize = (width / 30).toFloat()
+        jelly_6_text.textSize = (width / 30).toFloat()
+        jelly_7_text.textSize = (width / 30).toFloat()
+        jelly_8_text.textSize = (width / 30).toFloat()
+        jelly_9_text.textSize = (width / 30).toFloat()
+        jelly_10_text.textSize = (width / 30).toFloat()
+
+        create_step3_next_button.layoutParams.width = displayMetrics.widthPixels
+        create_step3_next_button.layoutParams.height = (heightPixel * 0.07f).toInt()
+        create_step3_next_button.textSize = (width / 25).toFloat()
+    }
 
     override fun onClick(v: View) {
         when (v.id) {

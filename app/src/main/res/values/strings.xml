@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Morningbees</string>
+    <string name="app_name">모닝비즈</string>
     <string name="google_server_client_id">804125796572-li56pv8pm8f95kc1f3u1irj43nle6oiu.apps.googleusercontent.com</string>
     <string name="naver_oauth_client_secret">praiBTB8hN</string>
     <string name="naver_oauth_client_id">BvB6b9Zgxwpo5y_BYzH7</string>

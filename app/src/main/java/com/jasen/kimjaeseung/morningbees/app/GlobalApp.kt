@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import com.jasen.kimjaeseung.morningbees.util.BeeInfoManager
+import com.jasen.kimjaeseung.morningbees.util.DeviceInfoManager
 import com.jasen.kimjaeseung.morningbees.util.SharedPreference
 
 class GlobalApp : Application() {
@@ -13,11 +14,13 @@ class GlobalApp : Application() {
     companion object {
         lateinit var prefs: SharedPreference
         lateinit var prefsBeeInfo: BeeInfoManager
+        lateinit var prefsDeviceInfo: DeviceInfoManager
     }
 
     override fun onCreate() {
         prefs = SharedPreference(applicationContext)
         prefsBeeInfo = BeeInfoManager(applicationContext)
+        prefsDeviceInfo = DeviceInfoManager(applicationContext)
 
         super.onCreate()
         this.DEBUG = isDebuggable(this);

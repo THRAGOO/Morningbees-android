@@ -1,5 +1,6 @@
 package com.jasen.kimjaeseung.morningbees.loadmissionphoto
 
+import android.util.TypedValue
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -51,13 +52,14 @@ class LoadMissionPhotoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemV
     }
 
     private fun setMissionImage(imageUrl: String){
+        val px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30f, itemView.context.resources.displayMetrics).toInt()
+
         Glide.with(itemView.context)
             .load(imageUrl)
-            .apply(RequestOptions().override(327, 407))
             .transform(
                 MultiTransformation(
                     CenterCrop(),
-                    RoundedCorners(30)
+                    RoundedCorners(px)
                 )
             )
             .error(R.drawable.not_upload_mission_img_view)

@@ -128,6 +128,7 @@ class SignUpPresenter(context: Context) : SignUpContract.Presenter {
                             GlobalApp.prefs.accessToken = signUpResponse!!.accessToken
                             GlobalApp.prefs.refreshToken = signUpResponse!!.refreshToken
 
+                            Log.d(TAG, "signUpMorningbeesServer beeId: ${GlobalApp.prefsBeeInfo.beeId}")
                             if (GlobalApp.prefsBeeInfo.beeId == 0) {
                                 signUpView!!.gotoBeforeJoin()
                             } else {
@@ -181,6 +182,7 @@ class SignUpPresenter(context: Context) : SignUpContract.Presenter {
                         200 -> {
                             val meResponse: MeResponse? = response.body()
                             userId = meResponse!!.userId
+                            Log.d(TAG, "meServer beeId: ${GlobalApp.prefsBeeInfo.beeId}")
                             joinBeeServer(userId)
                         }
 

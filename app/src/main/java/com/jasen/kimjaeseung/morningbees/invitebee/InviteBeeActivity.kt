@@ -2,8 +2,11 @@ package com.jasen.kimjaeseung.morningbees.invitebee
 
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.util.Log
+import android.util.TypedValue
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.dynamiclinks.ktx.dynamicLinks
@@ -19,8 +22,10 @@ import com.jasen.kimjaeseung.morningbees.model.me.MeResponse
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import com.jasen.kimjaeseung.morningbees.util.Dlog
 import com.jasen.kimjaeseung.morningbees.util.showToast
+import kotlinx.android.synthetic.main.activity_beforejoin.*
 
 import kotlinx.android.synthetic.main.activity_invite_bee.*
+import kotlinx.android.synthetic.main.activity_login.*
 import okhttp3.ResponseBody
 import org.json.JSONObject
 import retrofit2.Call
@@ -34,14 +39,19 @@ class InviteBeeActivity : AppCompatActivity(), View.OnClickListener{
     private var userId = 0
     private var beeId = 0
     private var beeTitle = ""
-    private var parameter = ""
+//    private var parameter = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_invite_bee)
-        getDynamicLink()
+//        getDynamicLink()
         initButtonListener()
         accessToken = GlobalApp.prefs.accessToken
+        beeId = GlobalApp.prefsBeeInfo.beeId
+        beeTitle = GlobalApp.prefsBeeInfo.beeTitle
+        beeNameText.text = ("${beeTitle}에 참여하여")
+        initImageView()
+        initTextView()
     }
 
     override fun onClick(v: View) {
@@ -56,25 +66,54 @@ class InviteBeeActivity : AppCompatActivity(), View.OnClickListener{
         close_inviteView_button.setOnClickListener(this)
     }
 
-    private fun getDynamicLink(){
-        Firebase.dynamicLinks
-            .getDynamicLink(intent)
-            .addOnSuccessListener(this) { pendingDynamicLinkData ->
-                val deepLink: Uri?
-                if (pendingDynamicLinkData != null) {
-                    deepLink = pendingDynamicLinkData.link
-                    parameter = deepLink?.getQueryParameter("beeId").orEmpty()
-                    beeTitle = deepLink?.getQueryParameter("beeTitle").orEmpty()
-                    beeId = Integer.parseInt(parameter)
+    private fun initImageView(){
 
-                    GlobalApp.prefsBeeInfo.beeId = beeId
-                    GlobalApp.prefsBeeInfo.beeTitle = beeTitle
-
-                    beeNameText.text = ("${beeTitle}에 참여하여")
-                }
-            }
-            .addOnFailureListener(this) { e -> Log.w(TAG, "getDynamicLink:onFailure", e) }
     }
+
+    private fun initTextView(){
+        val displayMetrics = DisplayMetrics()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            display!!.getRealMetrics(displayMetrics)
+        } else {
+            windowManager.defaultDisplay.getMetrics(displayMetrics)
+        }
+        val width = (displayMetrics.widthPixels / displayMetrics.density).toInt()
+        val heightPixel = displayMetrics.heightPixels
+        val widthPixel = displayMetrics.widthPixels
+        val heightDp = heightPixel / displayMetrics.density
+
+        invite_textview1.textSize = (width / 17).toFloat()
+        beeNameText.textSize = (width / 28).toFloat()
+        invite_textview2.textSize = (width / 28).toFloat()
+
+        val resizeHeight = illust_inviteImageView.layoutParams.height
+        illust_inviteImageView.layoutParams.width = (((illust_inviteImageView.layoutParams.width * heightDp * 0.35f) / resizeHeight) * displayMetrics.density).toInt()
+        illust_inviteImageView.layoutParams.height = illust_inviteImageView.layoutParams.width
+
+        accept_invitebee_button.layoutParams.width = (widthPixel * 0.6f).toInt()
+        accept_invitebee_button.layoutParams.height = (heightPixel * 0.06f).toInt()
+        accept_invitebee_button.textSize = (width / 30).toFloat()
+    }
+
+//    private fun getDynamicLink(){
+//        Firebase.dynamicLinks
+//            .getDynamicLink(intent)
+//            .addOnSuccessListener(this) { pendingDynamicLinkData ->
+//                val deepLink: Uri?
+//                if (pendingDynamicLinkData != null) {
+//                    deepLink = pendingDynamicLinkData.link
+//                    parameter = deepLink?.getQueryParameter("beeId").orEmpty()
+//                    beeTitle = deepLink?.getQueryParameter("beeTitle").orEmpty()
+//                    beeId = Integer.parseInt(parameter)
+//
+//                    GlobalApp.prefsBeeInfo.beeId = beeId
+//                    GlobalApp.prefsBeeInfo.beeTitle = beeTitle
+//
+//                    beeNameText.text = ("${beeTitle}에 참여하여")
+//                }
+//            }
+//            .addOnFailureListener(this) { e -> Log.w(TAG, "getDynamicLink:onFailure", e) }
+//    }
 
     private fun requestMeApi() {
         service.me(accessToken)
@@ -196,7 +235,6 @@ class InviteBeeActivity : AppCompatActivity(), View.OnClickListener{
                             val message = jsonObject.getString("message")
                             showToast { message }
                         }
-
                     }
                 }
             })
@@ -204,16 +242,19 @@ class InviteBeeActivity : AppCompatActivity(), View.OnClickListener{
 
     private fun gotoMain(){
         startActivity(Intent(this, MainActivity::class.java)
-            .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+            .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP))
+        finish()
     }
 
     private fun gotoBeforeJoin(){
         startActivity(Intent(this, BeforeJoinActivity::class.java)
-            .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+            .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP))
     }
 
     private fun getAccessToken(){
-        if(accessToken == ""){
+        Log.d(TAG, "accessToken: ${GlobalApp.prefs.accessToken}")
+        Log.d(TAG, "accessToken: ${accessToken}")
+        if(GlobalApp.prefs.accessToken == ""){
             startActivity(
                 Intent(this, LoginActivity::class.java)
                     .putExtra("RequestJoin", "")

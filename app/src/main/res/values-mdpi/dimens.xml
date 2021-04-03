@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="calendar_width">328dp</dimen>
+    <dimen name="calendar_height">340dp</dimen>
+    <dimen name="zero_dp">0dp</dimen>
+    <dimen name="ten_dp">10dp</dimen>
+    <dimen name="minus_ten_dp">-10dp</dimen>
+    <dimen name="createBeeText1FontSize">24sp</dimen>
+    <dimen name="createBeeTimeTextFontSize">13sp</dimen>
+</resources>

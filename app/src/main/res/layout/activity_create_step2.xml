@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:src="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:src="http://schemas.android.com/tools"
     android:background="@color/white">
 
     <LinearLayout
+        android:id="@+id/wrapTextLinearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginTop="35dp"
         android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp">
+        android:layout_marginTop="35dp"
+        android:layout_marginEnd="24dp"
+        android:orientation="vertical">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -23,11 +24,11 @@
                 android:id="@+id/go_back_step1_button"
                 android:layout_width="12dp"
                 android:layout_height="20dp"
-                android:src="@drawable/icon_arrow_left_back"
+                android:layout_alignParentStart="true"
+                android:background="#00ff0000"
                 android:padding="0sp"
                 android:scaleType="fitCenter"
-                android:layout_alignParentStart="true"
-                android:background="#00ff0000"/>
+                android:src="@drawable/icon_arrow_left_back" />
         </RelativeLayout>
 
         <LinearLayout
@@ -36,97 +37,189 @@
             android:orientation="vertical">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:id="@+id/createBeeText1"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="24sp"
                 android:lineHeight="33sp"
-                android:textColor="#222222"
                 android:text="미션 수행 시간을"
-                android:textStyle="bold"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="24sp"
-                android:lineHeight="33sp"
                 android:textColor="#222222"
-                android:text="선택해 주세요."
+                android:textSize="@dimen/createBeeText1FontSize"
                 android:textStyle="bold"/>
 
             <TextView
+                android:id="@+id/createBeeText2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:lineHeight="33sp"
+                android:text="선택해 주세요."
+                android:textColor="#222222"
+                android:textSize="@dimen/createBeeText1FontSize"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/createBeeTimeText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="56dp"
                 android:layout_marginBottom="16dp"
+                android:text="시작 및 종료 시간"
                 android:textColor="#777777"
-                android:textSize="13sp"
-                android:text="시작 및 종료 시간" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/clock_6_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/clock_6_custom_button"
-                    android:layout_marginEnd="6dp"
-                    android:scaleType="fitCenter"
-                    android:text="6"
-                    android:layout_weight="1"/>
-
-                <Button
-                    android:id="@+id/clock_7_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="6dp"
-                    android:background="@drawable/clock_7_custom_button"
-                    android:gravity="center"
-                    android:text="7"
-                    android:layout_weight="1"/>
-
-                <Button
-                    android:id="@+id/clock_8_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="6dp"
-                    android:background="@drawable/clock_8_custom_button"
-                    android:text="8"
-                    android:layout_weight="1"/>
-
-                <Button
-                    android:id="@+id/clock_9_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/clock_9_custom_button"
-                    android:layout_marginEnd="6dp"
-                    android:text="9"
-                    android:layout_weight="1"/>
-
-                <Button
-                    android:id="@+id/clock_10_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/clock_10_custom_button"
-                    android:textAlignment="center"
-                    android:text="10"
-                    android:layout_weight="1"/>
-            </LinearLayout>
+                android:textSize="@dimen/createBeeTimeTextFontSize"/>
         </LinearLayout>
     </LinearLayout>
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/wrapTextLinearLayout"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/clock_6_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                android:src="@drawable/clock_6_custom_button"
+                android:background="#0000ff00"
+                android:layout_marginEnd="8dp"/>
+
+            <ImageButton
+                android:id="@+id/clock_7_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:background="#0000ff00"
+                android:scaleType="fitCenter"
+                android:src="@drawable/clock_7_custom_button"
+                android:layout_marginEnd="8dp"/>
+
+            <ImageButton
+                android:id="@+id/clock_8_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:background="#0000ff00"
+                android:scaleType="fitCenter"
+                android:src="@drawable/clock_8_custom_button"
+                android:layout_marginEnd="8dp"/>
+
+            <ImageButton
+                android:id="@+id/clock_9_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:background="#0000ff00"
+                android:scaleType="fitCenter"
+                android:src="@drawable/clock_9_custom_button"
+                android:layout_marginEnd="8dp"/>
+
+            <ImageButton
+                android:id="@+id/clock_10_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:background="#0000ff00"
+                android:scaleType="fitCenter"
+                android:src="@drawable/clock_10_custom_button" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/text6Clock"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="6"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textSize="17dp"
+                android:textColor="#444444"
+                android:textStyle="bold"/>
+            <View
+                android:layout_width="8dp"
+                android:layout_height="1dp"/>
+            <TextView
+                android:id="@+id/text7Clock"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="7"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textSize="17dp"
+                android:textColor="#444444"
+                android:textStyle="bold"/>
+
+            <View
+                android:layout_width="8dp"
+                android:layout_height="1dp"/>
+
+            <TextView
+                android:id="@+id/text8Clock"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="8"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textSize="17dp"
+                android:textColor="#444444"
+                android:textStyle="bold"/>
+
+            <View
+                android:layout_width="8dp"
+                android:layout_height="1dp"/>
+
+            <TextView
+                android:id="@+id/text9Clock"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="9"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textSize="17dp"
+                android:textColor="#444444"
+                android:textStyle="bold"/>
+
+            <View
+                android:layout_width="8dp"
+                android:layout_height="1dp"/>
+
+            <TextView
+                android:id="@+id/text10Clock"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="10"
+                android:gravity="center"
+                android:layout_weight="1"
+                android:textSize="17dp"
+                android:textColor="#444444"
+                android:textStyle="bold"/>
+        </LinearLayout>
+    </RelativeLayout>
+
     <Button
         android:id="@+id/create_step2_next_button"
-        android:text="다음 2/3"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:textSize="15sp"
-        android:textAlignment="center"
-        android:letterSpacing="0.02"
-        android:textColor="#aaaaaa"
+        android:layout_alignParentBottom="true"
         android:background="@drawable/selector_custom_button"
-        android:layout_alignParentBottom="true" />
+        android:letterSpacing="0.02"
+        android:text="다음 2/3"
+        android:textAlignment="center"
+        android:textColor="#aaaaaa"
+        android:textSize="15sp" />
 
 </RelativeLayout>

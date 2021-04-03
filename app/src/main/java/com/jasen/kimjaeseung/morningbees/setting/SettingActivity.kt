@@ -180,6 +180,7 @@ class SettingActivity : AppCompatActivity(), View.OnClickListener {
         GlobalApp.prefs.accessToken = ""
         GlobalApp.prefs.refreshToken = ""
         GlobalApp.prefs.provider = ""
+        GlobalApp.prefsBeeInfo.beeId = 0
 
         startActivity(
             Intent(this, LoginActivity::class.java)

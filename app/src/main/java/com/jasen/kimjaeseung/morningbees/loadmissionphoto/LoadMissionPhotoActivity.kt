@@ -1,7 +1,10 @@
 package com.jasen.kimjaeseung.morningbees.loadmissionphoto
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.util.DisplayMetrics
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,7 +16,9 @@ import com.jasen.kimjaeseung.morningbees.model.missioninfo.Mission
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import com.jasen.kimjaeseung.morningbees.util.Dlog
 import com.jasen.kimjaeseung.morningbees.util.showToast
+import kotlinx.android.synthetic.main.activity_create_step3.*
 import kotlinx.android.synthetic.main.activity_load_mission_photo.*
+import kotlinx.android.synthetic.main.item_mission_photo.*
 import okhttp3.ResponseBody
 import org.json.JSONObject
 import retrofit2.Call
@@ -31,6 +36,7 @@ class LoadMissionPhotoActivity : AppCompatActivity(), View.OnClickListener {
         targetDate = intent.getStringExtra("targetDate")!!
 
         initButtonListener()
+//        initImageView()
         requestMissionAPI()
     }
 
@@ -38,6 +44,19 @@ class LoadMissionPhotoActivity : AppCompatActivity(), View.OnClickListener {
         when (v.id) {
             R.id.gotoMainFromMissionPhotoButton -> finish()
         }
+    }
+
+    private fun initImageView(){
+        val displayMetrics = DisplayMetrics()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            display!!.getRealMetrics(displayMetrics)
+        } else {
+            windowManager.defaultDisplay.getMetrics(displayMetrics)
+        }
+
+        Log.d("activity", "displayMetrics.widthPixels ${displayMetrics.widthPixels}")
+        itemMissionPhotoImage.layoutParams.width = displayMetrics.widthPixels
+        itemMissionPhotoImage.layoutParams.height = displayMetrics.widthPixels / 3 * 4
     }
 
     private fun requestMissionAPI() {

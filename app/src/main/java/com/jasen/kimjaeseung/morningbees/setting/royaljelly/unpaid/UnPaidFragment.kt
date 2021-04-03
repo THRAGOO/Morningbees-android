@@ -33,7 +33,7 @@ class UnPaidFragment : Fragment(), UnPaidAdapter.OnItemSelectedInterface {
     lateinit var selectedList: Array<Boolean>
     var userId: Long = 0
 
-    lateinit var partPaymentList : Paid
+    lateinit var partPaymentList: Paid
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -123,21 +123,30 @@ class UnPaidFragment : Fragment(), UnPaidAdapter.OnItemSelectedInterface {
                                 totalUnPaidRoyalJelly.text = GlobalApp.prefsBeeInfo.unPaidPenalty.getPriceAnnotation()
                             } else {
                                 if (penaltyHistoriesResponse.size() > 0) {
-                                    for (i in 0 until penaltyHistoriesResponse.size()){
-                                        val penaltyHistory = penaltyHistoriesResponse[i].asJsonObject
-                                        penaltyHistoryList.add(PenaltyHistory(penaltyHistory.get("status").asInt, penaltyHistory.get("total").asInt))
+                                    for (i in 0 until penaltyHistoriesResponse.size()) {
+                                        val penaltyHistory =
+                                            penaltyHistoriesResponse[i].asJsonObject
+                                        penaltyHistoryList.add(
+                                            PenaltyHistory(
+                                                penaltyHistory.get("status").asInt,
+                                                penaltyHistory.get("total").asInt
+                                            )
+                                        )
                                     }
 
                                     GlobalApp.prefsBeeInfo.unPaidPenalty = 0
                                     GlobalApp.prefsBeeInfo.paidPenalty = 0
 
-                                    for (i in 0 until penaltyHistoryList.size){
-                                        if (penaltyHistoryList[i].status == 0){
-                                            GlobalApp.prefsBeeInfo.unPaidPenalty = penaltyHistoryList[i].total
-                                            totalUnPaidRoyalJelly.text = GlobalApp.prefsBeeInfo.unPaidPenalty.getPriceAnnotation()
+                                    for (i in 0 until penaltyHistoryList.size) {
+                                        if (penaltyHistoryList[i].status == 0) {
+                                            GlobalApp.prefsBeeInfo.unPaidPenalty =
+                                                penaltyHistoryList[i].total
+                                            totalUnPaidRoyalJelly.text =
+                                                GlobalApp.prefsBeeInfo.unPaidPenalty.getPriceAnnotation()
 
                                         } else if (penaltyHistoryList[i].status == 1) {
-                                            GlobalApp.prefsBeeInfo.paidPenalty = penaltyHistoryList[i].total
+                                            GlobalApp.prefsBeeInfo.paidPenalty =
+                                                penaltyHistoryList[i].total
                                         }
                                         (activity as RoyalJellyActivity).initLayout()
                                     }
@@ -145,7 +154,8 @@ class UnPaidFragment : Fragment(), UnPaidAdapter.OnItemSelectedInterface {
                             }
 
                             totalUnPaidRoyalJelly.measure(0, 0)
-                            backgroundTotalUnPaid.layoutParams.width = totalUnPaidRoyalJelly.measuredWidth+ backgroundTotalUnPaid.layoutParams.width
+                            backgroundTotalUnPaid.layoutParams.width =
+                                totalUnPaidRoyalJelly.measuredWidth + backgroundTotalUnPaid.layoutParams.width
 
                             if (penaltiesResponse != null) {
                                 if (penaltiesResponse.size() > 0) {

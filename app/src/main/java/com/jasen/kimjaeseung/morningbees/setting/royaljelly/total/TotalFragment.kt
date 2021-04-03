@@ -75,7 +75,6 @@ class TotalFragment : Fragment() {
 
                             if (penaltyHistoriesResponse?.size() == 0 || penaltyHistoriesResponse == null) {
                                 GlobalApp.prefsBeeInfo.unPaidPenalty = 0
-                                totalUnPaidRoyalJelly.text = GlobalApp.prefsBeeInfo.unPaidPenalty.getPriceAnnotation()
                             } else {
                                 if (penaltyHistoriesResponse.size() > 0) {
                                     for (i in 0 until penaltyHistoriesResponse.size()){

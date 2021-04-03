@@ -1,10 +1,17 @@
 package com.jasen.kimjaeseung.morningbees.loadmissionphoto
 
+import android.os.Build
+import android.util.DisplayMetrics
+import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.RelativeLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.jasen.kimjaeseung.morningbees.R
+import com.jasen.kimjaeseung.morningbees.app.GlobalApp
 import com.jasen.kimjaeseung.morningbees.model.missioninfo.Mission
+import kotlinx.android.synthetic.main.item_mission_photo.view.*
 
 class LoadMissionPhotoAdapter(
     private val missionList: List<Mission>
@@ -15,17 +22,27 @@ class LoadMissionPhotoAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return LoadMissionPhotoViewHolder(
-            LayoutInflater.from(parent.context)
-                .inflate(R.layout.item_mission_photo, parent, false)
-        )
+        val itemImageView =
+            LayoutInflater.from(parent.context).inflate(R.layout.item_mission_photo, parent, false)
+
+        val imageViewWidth = GlobalApp.prefsDeviceInfo.widthPixel
+
+
+        itemImageView.itemMissionPhotoImage.layoutParams.width = (imageViewWidth - 50 * GlobalApp.prefsDeviceInfo.density).toInt()
+        itemImageView.itemMissionPhotoImage.layoutParams.height = (imageViewWidth / 3) * 4
+
+        return LoadMissionPhotoViewHolder(itemImageView)
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         bindDefaultView(holder as LoadMissionPhotoViewHolder, position)
     }
 
-    private fun bindDefaultView(holder: LoadMissionPhotoViewHolder, position: Int){
+    private fun bindDefaultView(holder: LoadMissionPhotoViewHolder, position: Int) {
         holder.bind(missionList[position])
+    }
+
+    companion object {
+        const val TAG = "LoadMissionPhotoAdpater"
     }
 }

@@ -15,6 +15,7 @@ class SharedPreference(context: Context) {
     private val mUserId = "UserId"
     private val mProvider = "Provider"
     private val mSocialAccessToken = "SocialAccessToken"
+
     private val prefs = context.getSharedPreferences(fileName, 0)
     private val service = MorningBeesService.create()
 

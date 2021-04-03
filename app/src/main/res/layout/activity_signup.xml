@@ -35,12 +35,11 @@
                 android:layout_height="38dp"
                 android:layout_marginStart="24dp"
                 android:layout_marginBottom="27dp"
-
                 android:fontFamily="sans-serif-black"
                 android:letterSpacing="0.02"
                 android:text="SIGN UP"
                 android:textColor="#444444"
-                android:textSize="32sp"
+                android:textSize="32dp"
                 android:textStyle="normal"/>
         </RelativeLayout>
 
@@ -50,20 +49,22 @@
             android:layout_marginStart="24dp"
             android:layout_marginBottom="28dp"
             android:letterSpacing="-0.04"
-            android:lineSpacingExtra="11sp"
+            android:lineSpacingExtra="11dp"
             android:text="모닝비즈에 오신 것을 환영합니다.\n닉네임을 만들고\n기상미션에 참여하세요 :)"
             android:textColor="#aaaaaa"
-            android:textSize="15sp" />
+            android:textSize="15dp"
+            android:textStyle="bold"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="20dp"
             android:text="사용할 닉네임"
-            android:textSize="14sp"
+            android:textSize="14dp"
             android:textColor="#777777"
             android:letterSpacing="-0.04"
             android:layout_marginStart="24dp"
-            android:layout_marginBottom="12dp">
+            android:layout_marginBottom="12dp"
+            android:textStyle="bold">
 
        </TextView>
 
@@ -96,7 +97,7 @@
                 android:layout_width="70dp"
                 android:layout_height="36dp"
 
-                android:textSize="13sp"
+                android:textSize="13dp"
                 android:textColor="#444444"
                 android:letterSpacing="-0.04"
 
@@ -128,6 +129,6 @@
         android:letterSpacing="-0.02"
         android:text="@string/signup_start_button_text"
         android:textColor="#aaaaaa"
-        android:textSize="16sp" />
+        android:textSize="16dp" />
 </RelativeLayout>
 

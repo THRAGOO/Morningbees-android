@@ -35,29 +35,32 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/createStep1Text1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="생성할 모임의"
                 android:textColor="#222222"
-                android:textSize="24sp"
+                android:textSize="@dimen/createBeeText1FontSize"
                 android:textStyle="bold"/>
 
             <TextView
+                android:id="@+id/createStep1Text2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="이름을 정해주세요."
                 android:textColor="#222222"
-                android:textSize="24sp"
+                android:textSize="@dimen/createBeeText1FontSize"
                 android:textStyle="bold"/>
 
             <TextView
+                android:id="@+id/createStep1Text3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="56dp"
                 android:layout_marginBottom="12dp"
                 android:text="모임명 "
                 android:textColor="#777777"
-                android:textSize="13sp" />
+                android:textSize="@dimen/createBeeTimeTextFontSize" />
 
             <RelativeLayout
                 android:layout_width="match_parent"

@@ -17,6 +17,7 @@
         android:src="@drawable/icon_arrow_left_back" />
 
     <LinearLayout
+        android:id="@+id/wrapCreateBeeStep3Text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/go_back_step2_button"
@@ -25,294 +26,309 @@
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/createStep3Text1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:lineHeight="33sp"
             android:text="로얄젤리를"
             android:textColor="#222222"
-            android:textSize="24sp" />
+            android:textSize="@dimen/createBeeText1FontSize"
+            android:textStyle="bold"/>
 
         <TextView
+            android:id="@+id/createStep3Text2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
             android:lineHeight="33sp"
             android:text="설정해주세요."
             android:textColor="#222222"
-            android:textSize="24sp" />
+            android:textSize="@dimen/createBeeText1FontSize"
+            android:textStyle="bold"/>
 
         <TextView
+            android:id="@+id/createStep3Description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="27dp"
             android:text="'로얄젤리'는 모닝비즈 내 벌금이에요.\n매일 진행되는 미션을 수행하지 못한 꿀벌에게 부과해요."
-            android:textColor="#cccccc" />
+            android:textColor="#cccccc"
+            android:textSize="13dp" />
 
         <TextView
+            android:id="@+id/createStep3Text3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
             android:text="로얄젤리 (최소 2,000 ~ 최대 10,000원)"
             android:textColor="#777777"
-            android:textSize="13sp"
+            android:textSize="13dp"
             android:textStyle="bold"/>
-
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <ImageView
-                android:id="@+id/jelly_backgroundImageView"
-                android:layout_width="match_parent"
-                android:layout_height="18dp"
-                android:layout_alignParentTop="true"
-                android:layout_marginTop="3dp"
-                android:background="@drawable/round_imageview" />
-
-            <LinearLayout
-                android:id="@+id/jelly_linearLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <RelativeLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1">
-
-                    <ImageButton
-                        android:id="@+id/jelly_2"
-                        android:layout_width="25dp"
-                        android:layout_height="25dp"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginEnd="5dp"
-                        android:background="#00000000"
-                        android:src="@drawable/jelly_button_selector" />
-
-                    <TextView
-                        android:id="@+id/jelly_2_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/jelly_2"
-                        android:layout_centerInParent="true"
-                        android:text="2,000"
-                        android:textSize="13dp" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1">
-
-                    <ImageButton
-                        android:id="@+id/jelly_3"
-                        android:layout_width="25dp"
-                        android:layout_height="25dp"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginEnd="5dp"
-                        android:background="#00000000"
-                        android:src="@drawable/jelly_button_selector" />
-
-                    <TextView
-                        android:id="@+id/jelly_3_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/jelly_3"
-                        android:layout_centerInParent="true"
-                        android:text="3,000"
-                        android:textSize="13dp"
-                        android:textStyle="bold"
-                        android:visibility="invisible" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1">
-
-                    <ImageButton
-                        android:id="@+id/jelly_4"
-                        android:layout_width="25dp"
-                        android:layout_height="25dp"
-                        android:layout_gravity="center"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginEnd="5dp"
-                        android:background="#00000000"
-                        android:src="@drawable/jelly_button_selector" />
-
-                    <TextView
-                        android:id="@+id/jelly_4_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/jelly_4"
-                        android:layout_centerInParent="true"
-                        android:text="4,000"
-                        android:textStyle="bold"
-                        android:visibility="invisible" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1">
-
-                    <ImageButton
-                        android:id="@+id/jelly_5"
-                        android:layout_width="25dp"
-                        android:layout_height="25dp"
-                        android:layout_gravity="center"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginEnd="5dp"
-                        android:background="#00000000"
-                        android:src="@drawable/jelly_button_selector" />
-
-                    <TextView
-                        android:id="@+id/jelly_5_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/jelly_5"
-                        android:layout_centerInParent="true"
-                        android:text="5,000"
-                        android:textStyle="bold"
-                        android:visibility="invisible" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1">
-
-                    <ImageButton
-                        android:id="@+id/jelly_6"
-                        android:layout_width="25dp"
-                        android:layout_height="25dp"
-                        android:layout_gravity="center"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginEnd="5dp"
-                        android:background="#00000000"
-                        android:src="@drawable/jelly_button_selector" />
-
-                    <TextView
-                        android:id="@+id/jelly_6_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/jelly_6"
-                        android:layout_centerInParent="true"
-                        android:text="6,000"
-                        android:textStyle="bold"
-                        android:visibility="invisible" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1">
-
-                    <ImageButton
-                        android:id="@+id/jelly_7"
-                        android:layout_width="25dp"
-                        android:layout_height="25dp"
-                        android:layout_gravity="center"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginEnd="5dp"
-                        android:background="#00000000"
-                        android:src="@drawable/jelly_button_selector" />
-
-                    <TextView
-                        android:id="@+id/jelly_7_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/jelly_7"
-                        android:layout_centerInParent="true"
-                        android:text="7,000"
-                        android:textStyle="bold"
-                        android:visibility="invisible" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1">
-
-                    <ImageButton
-                        android:id="@+id/jelly_8"
-                        android:layout_width="25dp"
-                        android:layout_height="25dp"
-                        android:layout_gravity="center"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginEnd="5dp"
-                        android:background="#00000000"
-                        android:src="@drawable/jelly_button_selector" />
-
-                    <TextView
-                        android:id="@+id/jelly_8_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/jelly_8"
-                        android:layout_centerInParent="true"
-                        android:text="8,000"
-                        android:textStyle="bold"
-                        android:visibility="invisible" />
-
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1">
-
-                    <ImageButton
-                        android:id="@+id/jelly_9"
-                        android:layout_width="25dp"
-                        android:layout_height="25dp"
-                        android:layout_gravity="center"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginEnd="5dp"
-                        android:background="#00000000"
-                        android:src="@drawable/jelly_button_selector" />
-
-                    <TextView
-                        android:id="@+id/jelly_9_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/jelly_9"
-                        android:layout_centerInParent="true"
-                        android:text="9,000"
-                        android:textStyle="bold"
-                        android:visibility="invisible" />
-                </RelativeLayout>
-
-
-                <RelativeLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1">
-
-                    <ImageButton
-                        android:id="@+id/jelly_10"
-                        android:layout_width="25dp"
-                        android:layout_height="25dp"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginEnd="5dp"
-                        android:background="#00000000"
-                        android:src="@drawable/jelly_button_selector" />
-
-                    <TextView
-                        android:id="@+id/jelly_10_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/jelly_10"
-                        android:layout_centerInParent="true"
-                        android:text="10,000" />
-                </RelativeLayout>
-
-            </LinearLayout>
-
-        </RelativeLayout>
     </LinearLayout>
 
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/wrapCreateBeeStep3Text"
+        android:paddingStart="23dp"
+        android:paddingEnd="23dp" >
+
+        <ImageView
+            android:id="@+id/jelly_backgroundImageView"
+            android:layout_width="match_parent"
+            android:layout_height="18dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="3dp"
+            android:background="@drawable/round_imageview" />
+
+        <LinearLayout
+            android:id="@+id/jelly_linearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <ImageButton
+                    android:id="@+id/jelly_2"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:background="#00000000"
+                    android:src="@drawable/jelly_button_selector" />
+
+                <TextView
+                    android:id="@+id/jelly_2_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/jelly_2"
+                    android:layout_centerInParent="true"
+                    android:text="2,000"
+                    android:textSize="12dp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <ImageButton
+                    android:id="@+id/jelly_3"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:background="#00000000"
+                    android:src="@drawable/jelly_button_selector" />
+
+                <TextView
+                    android:id="@+id/jelly_3_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/jelly_3"
+                    android:layout_centerInParent="true"
+                    android:text="3,000"
+                    android:textStyle="bold"
+                    android:visibility="invisible"
+                    android:textSize="12dp"/>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <ImageButton
+                    android:id="@+id/jelly_4"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:background="#00000000"
+                    android:src="@drawable/jelly_button_selector" />
+
+                <TextView
+                    android:id="@+id/jelly_4_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/jelly_4"
+                    android:layout_centerInParent="true"
+                    android:text="4,000"
+                    android:textStyle="bold"
+                    android:visibility="invisible"
+                    android:textSize="12dp"/>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <ImageButton
+                    android:id="@+id/jelly_5"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:background="#00000000"
+                    android:src="@drawable/jelly_button_selector" />
+
+                <TextView
+                    android:id="@+id/jelly_5_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/jelly_5"
+                    android:layout_centerInParent="true"
+                    android:text="5,000"
+                    android:textStyle="bold"
+                    android:visibility="invisible"
+                    android:textSize="12dp"/>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <ImageButton
+                    android:id="@+id/jelly_6"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:background="#00000000"
+                    android:src="@drawable/jelly_button_selector" />
+
+                <TextView
+                    android:id="@+id/jelly_6_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/jelly_6"
+                    android:layout_centerInParent="true"
+                    android:text="6,000"
+                    android:textStyle="bold"
+                    android:visibility="invisible"
+                    android:textSize="12dp"/>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <ImageButton
+                    android:id="@+id/jelly_7"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:background="#00000000"
+                    android:src="@drawable/jelly_button_selector" />
+
+                <TextView
+                    android:id="@+id/jelly_7_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/jelly_7"
+                    android:layout_centerInParent="true"
+                    android:text="7,000"
+                    android:textStyle="bold"
+                    android:visibility="invisible"
+                    android:textSize="12dp"/>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <ImageButton
+                    android:id="@+id/jelly_8"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:background="#00000000"
+                    android:src="@drawable/jelly_button_selector" />
+
+                <TextView
+                    android:id="@+id/jelly_8_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/jelly_8"
+                    android:layout_centerInParent="true"
+                    android:text="8,000"
+                    android:textStyle="bold"
+                    android:visibility="invisible"
+                    android:textSize="12dp"/>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <ImageButton
+                    android:id="@+id/jelly_9"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:background="#00000000"
+                    android:src="@drawable/jelly_button_selector" />
+
+                <TextView
+                    android:id="@+id/jelly_9_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/jelly_9"
+                    android:layout_centerInParent="true"
+                    android:text="9,000"
+                    android:textStyle="bold"
+                    android:visibility="invisible"
+                    android:textSize="12dp"/>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <ImageButton
+                    android:id="@+id/jelly_10"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:background="#00000000"
+                    android:src="@drawable/jelly_button_selector" />
+
+                <TextView
+                    android:id="@+id/jelly_10_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/jelly_10"
+                    android:layout_centerInParent="true"
+                    android:text="10,000"
+                    android:layout_marginEnd="-10dp"
+                    android:textSize="12dp"/>
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </RelativeLayout>
 
     <Button
         android:id="@+id/create_step3_next_button"

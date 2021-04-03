@@ -6,12 +6,15 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.DisplayMetrics
 import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewTreeObserver
@@ -44,6 +47,7 @@ import com.jasen.kimjaeseung.morningbees.participatemission.ParticipateMissionAc
 import com.jasen.kimjaeseung.morningbees.setting.SettingActivity
 import com.jasen.kimjaeseung.morningbees.setting.royaljelly.RoyalJellyActivity
 import com.jasen.kimjaeseung.morningbees.util.Dlog
+import com.jasen.kimjaeseung.morningbees.util.URIPathHelper
 import com.jasen.kimjaeseung.morningbees.util.getPriceAnnotation
 import com.jasen.kimjaeseung.morningbees.util.showToast
 import jp.wasabeef.glide.transformations.BlurTransformation
@@ -85,6 +89,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
     var missionUrlList = mutableListOf<MissionUrl?>()
 
     var imageFile: File? = null
+    var currentPhotoPath = ""
     private lateinit var bottomSheetDialog: BottomSheetDialog
 
     private var beeTitle = ""
@@ -111,6 +116,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
         requestMeApi()
     }
 
+    override fun onBackPressed() {
+        super.onBackPressed()
+        finish()
+    }
+
     // MARK:~ Method Extension
 
     override fun onResume() {
@@ -127,18 +137,21 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
         royalJellyCheckButton.setOnClickListener(this)
     }
 
-    private fun initScrollListener(){
+    private fun initScrollListener() {
         val window = window
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-        window.statusBarColor = ContextCompat.getColor(this@MainActivity, R.color.mainStatusBarColor)
+        window.statusBarColor =
+            ContextCompat.getColor(this@MainActivity, R.color.mainStatusBarColor)
 
-        mainNestedScrollView.viewTreeObserver.addOnScrollChangedListener(object : ViewTreeObserver.OnScrollChangedListener{
+        mainNestedScrollView.viewTreeObserver.addOnScrollChangedListener(object :
+            ViewTreeObserver.OnScrollChangedListener {
             override fun onScrollChanged() {
                 val view = mainNestedScrollView.getChildAt(mainNestedScrollView.childCount - 1)
 
-                if (mainNestedScrollView.scrollY in 0..80){
-                    window.statusBarColor = ContextCompat.getColor(this@MainActivity, R.color.mainStatusBarColor)
+                if (mainNestedScrollView.scrollY in 0..80) {
+                    window.statusBarColor =
+                        ContextCompat.getColor(this@MainActivity, R.color.mainStatusBarColor)
                 } else {
                     window.statusBarColor = ContextCompat.getColor(this@MainActivity, R.color.white)
                 }
@@ -317,7 +330,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
                         400 -> {
                             val jsonObject = JSONObject(response.errorBody()?.string())
                             val message = jsonObject.getString("message")
-                            showToast { message }
 
                             applyImageUrl(null)
                             setLayoutToMission(NOT_EXIST_MISSION)
@@ -470,11 +482,13 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
 
         if (current > formattedTargetStart && current < formattedTargetEnd) {
             lottie.visibility = View.VISIBLE
-            missionTime.background = applicationContext.getDrawable(R.drawable.image_of_mission_time)
+            missionTime.background =
+                applicationContext.getDrawable(R.drawable.image_of_mission_time)
             lottie.playAnimation()
             lottie.repeatCount = ValueAnimator.INFINITE
         } else {
-            missionTime.background = applicationContext.getDrawable(R.drawable.image_outside_of_mission_time)
+            missionTime.background =
+                applicationContext.getDrawable(R.drawable.image_outside_of_mission_time)
             lottie.visibility = View.INVISIBLE
         }
     }
@@ -533,11 +547,12 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
     }
 
     private fun applyImageUrl(imageUrl: String?) {
+        val px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30f, applicationContext.resources.displayMetrics).toInt()
+
         Glide.with(this@MainActivity)
             .load(imageUrl)
             .format(DecodeFormat.PREFER_ARGB_8888)
-            .apply(RequestOptions().override(312, 400))
-            .transform(MultiTransformation(CenterCrop(), RoundedCorners(30)))
+            .transform(MultiTransformation(CenterCrop(), RoundedCorners(px)))
             .error(R.drawable.not_upload_mission_img_view)
             .into(missionImage)
     }
@@ -664,7 +679,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
 
         bottomSheetView.pc_take_picture_btn.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View) {
-                gotoCamera()
+                dispatchTakePictureIntent()
             }
         })
     }
@@ -675,56 +690,79 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
         startActivityForResult(intent, PICK_FROM_ALBUM)
     }
 
-    private fun gotoCamera() {
+    private fun dispatchTakePictureIntent() {
         val state: String = Environment.getExternalStorageState()
         if (state != Environment.MEDIA_MOUNTED) {
             Log.d(TAG, "SD card is not mounted")
             return
         }
-        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        imageFile = createImageFile()
-        imageFile?.let {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                val photoUri = FileProvider.getUriForFile(
-                    this@MainActivity, "${application.packageName}.provider",
-                    it
-                )
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
-                startActivityForResult(intent, PICK_FROM_CAMERA)
-            } else {
-                val photoUri = Uri.fromFile(it)
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
-                startActivityForResult(intent, PICK_FROM_CAMERA)
+
+        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also {takePictureIntent ->
+            takePictureIntent.resolveActivity(packageManager)?.also {
+                val photoFile: File? = try {
+                    createImageFile()
+                } catch (ex: IOException) {
+                    null
+                }
+
+                photoFile?.also {
+                    val photoURI: Uri = FileProvider.getUriForFile(
+                        this,
+                        "com.jasen.kimjaeseung.morningbees",
+                        it
+                    )
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+                    startActivityForResult(takePictureIntent, PICK_FROM_CAMERA)
+                }
             }
         }
     }
 
+    private fun galleryAddPicture(){
+        val file = File(currentPhotoPath)
+        var mediaScannerConnection : MediaScannerConnection? = null
+
+        val mediaScannerClient = object : MediaScannerConnection.MediaScannerConnectionClient {
+            override fun onMediaScannerConnected() {
+                mediaScannerConnection?.scanFile(file.path, null)
+                Log.d(TAG, "media scan success")
+            }
+
+            override fun onScanCompleted(path: String?, uri: Uri?) {
+                Log.d(TAG, "media scan completed")
+                mediaScannerConnection?.disconnect()
+            }
+        }
+
+        mediaScannerConnection = MediaScannerConnection(this, mediaScannerClient)
+        mediaScannerConnection.connect()
+
+    }
+
     private fun createImageFile(): File? {
-        val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
-        val imageFileName = "morningbees_"
+        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
 
-        val path = Environment.getExternalStorageDirectory().absolutePath
-        val storageDir = File(path)
-
-        if (!storageDir.exists()) {
-            storageDir.mkdirs()
+        return File.createTempFile(
+            "JPEG_${timeStamp}_",
+            ".jpg",
+            storageDir
+        ).apply {
+            currentPhotoPath = absolutePath
         }
-        try {
-            return File.createTempFile(imageFileName, ".jpg", storageDir)
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-        return null
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == PICK_FROM_ALBUM && resultCode == Activity.RESULT_OK && data != null && data.data != null) {
-            val selectedImageUri = data.data!!
-            gotoMissionParticipate(selectedImageUri.toString(), PICK_FROM_ALBUM)
+            data.data?.let {photoUri ->
+                currentPhotoPath = URIPathHelper().getPath(this, photoUri).toString()
+            }
+            gotoMissionParticipate(currentPhotoPath, PICK_FROM_ALBUM)
         } else if (requestCode == PICK_FROM_CAMERA && resultCode == Activity.RESULT_OK) {
-            gotoMissionParticipate(imageFile?.absolutePath, PICK_FROM_CAMERA)
+            galleryAddPicture()
+            gotoMissionParticipate(currentPhotoPath, PICK_FROM_CAMERA)
         } else if (requestCode == GO_TO_PARTICIPATE && resultCode == FINISH) {
             bottomSheetDialog.dismiss()
             missionUrlList = mutableListOf()
@@ -781,15 +819,16 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
         startActivity(
             Intent(this, LoginActivity::class.java)
                 .putExtra("RequestLogOut", "")
-                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)        )
+                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        )
     }
 
     // MARK:~ Mission Participate
 
-    private fun gotoMissionParticipate(uri: String?, state: Int) {
+    private fun gotoMissionParticipate(path: String?, state: Int) {
         startActivityForResult(
             Intent(this, ParticipateMissionActivity::class.java)
-                .putExtra("missionImage", uri)
+                .putExtra("photoPath", path)
                 .putExtra("state", state)
                 .putExtra(
                     "targetDate",
@@ -798,7 +837,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
         )
     }
 
-    private fun gotoRoyalJelly(){
+    private fun gotoRoyalJelly() {
         startActivity(
             Intent(this, RoyalJellyActivity::class.java)
         )
