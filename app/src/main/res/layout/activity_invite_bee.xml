@@ -18,16 +18,16 @@
             android:layout_marginTop="12dp">
 
             <ImageView
-                android:id="@+id/illust_inviteImageView"
+                android:id="@+id/inviteBeeImage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/illust_invite"
                 android:layout_centerHorizontal="true"
-                android:layout_above="@id/invite_textview1"
+                android:layout_above="@id/inviteBeeText1"
                 android:layout_marginBottom="15dp" />
 
             <TextView
-                android:id="@+id/invite_textview1"
+                android:id="@+id/inviteBeeText1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="22dp"
@@ -44,13 +44,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:layout_below="@id/invite_textview1"
+                android:layout_below="@id/inviteBeeText1"
                 android:layout_marginBottom="5dp"
                 android:textSize="14dp"
                 android:textColor="#aaaaaa"/>
 
             <TextView
-                android:id="@+id/invite_textview2"
+                android:id="@+id/inviteBeeText2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/beeNameText"
@@ -64,11 +64,11 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
-                android:layout_below="@+id/invite_textview2"
+                android:layout_below="@+id/inviteBeeText2"
                 android:gravity="bottom">
 
                 <Button
-                    android:id="@+id/accept_invitebee_button"
+                    android:id="@+id/acceptInviteBeeButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/radius_button_selector"
@@ -79,10 +79,10 @@
                     android:textStyle="bold"/>
 
                 <Button
-                    android:id="@+id/close_inviteView_button"
+                    android:id="@+id/denyInviteBeeButton"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
-                    android:layout_below="@id/accept_invitebee_button"
+                    android:layout_below="@id/acceptInviteBeeButton"
                     android:background="#00ff0000"
                     android:textColor="#777777"
                     android:layout_centerHorizontal="true"

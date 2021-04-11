@@ -14,10 +14,14 @@ import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.app.GlobalApp
 import com.jasen.kimjaeseung.morningbees.beforejoin.BeforeJoinActivity
 import kotlinx.android.synthetic.main.activity_create_step1.*
-import kotlinx.android.synthetic.main.activity_create_step2.*
 
 class CreateStep1Activity : AppCompatActivity(), View.OnClickListener {
+
+    // Properties
+
     var beeTitle = ""
+
+    // Life Cycle for Activity
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,16 +37,27 @@ class CreateStep1Activity : AppCompatActivity(), View.OnClickListener {
         beeNameTextInputLayer.setEndIconDrawable(R.drawable.icon_delete_all)
     }
 
+    // Callback Method
+
     override fun onClick(v: View) {
         when (v.id) {
-            R.id.go_back_start_button -> onBackPressed()
-            R.id.create_step1_next_button -> gotoStep2()
+            R.id.gotoSignInFromCreateStep1Button -> onBackPressed()
+            R.id.gotoStep2FromStep1Button -> gotoStep2()
         }
     }
 
+    override fun onBackPressed() {
+        startActivity(
+            Intent(this, BeforeJoinActivity::class.java)
+                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        )
+    }
+
+    // Init Method
+
     private fun initButtonListeners() {
-        go_back_start_button.setOnClickListener(this)
-        create_step1_next_button.setOnClickListener(this)
+        gotoSignInFromCreateStep1Button.setOnClickListener(this)
+        gotoStep2FromStep1Button.setOnClickListener(this)
     }
 
     private fun initTextView(){
@@ -61,50 +76,50 @@ class CreateStep1Activity : AppCompatActivity(), View.OnClickListener {
         createStep1Text2.textSize = (width / 15).toFloat()
         createStep1Text3.textSize = (width / 30).toFloat()
 
-        create_step1_next_button.layoutParams.width = displayMetrics.widthPixels
-        create_step1_next_button.layoutParams.height = (heightPixel * 0.07f).toInt()
-        create_step1_next_button.textSize = (width / 25).toFloat()
+        gotoStep2FromStep1Button.layoutParams.width = displayMetrics.widthPixels
+        gotoStep2FromStep1Button.layoutParams.height = (heightPixel * 0.07f).toInt()
+        gotoStep2FromStep1Button.textSize = (width / 25).toFloat()
     }
 
     private fun initEditTextListeners() {
         create_beename_text.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(edit: Editable) {
                 if (create_beename_text.length() > 10) {
-                    beename_textview.text = "2~10자 이내로 입력해주세요"
-                    beename_textview.setTextColor(
+                    createStep1BeeNameText.text = "2~10자 이내로 입력해주세요"
+                    createStep1BeeNameText.setTextColor(
                         ContextCompat.getColor(
                             this@CreateStep1Activity,
                             R.color.tooLongText
                         )
                     )
-                    create_step1_next_button.isEnabled = false
-                    create_step1_next_button.setTextColor(Color.parseColor("#aaaaaa"))
-                    create_step1_next_button.background =
+                    gotoStep2FromStep1Button.isEnabled = false
+                    gotoStep2FromStep1Button.setTextColor(Color.parseColor("#aaaaaa"))
+                    gotoStep2FromStep1Button.background =
                         applicationContext.getDrawable(R.color.deactive_button)
                 } else if (create_beename_text.length() == 1) {
-                    beename_textview.text = "글자 수가 너무 짧아요."
-                    beename_textview.setTextColor(
+                    createStep1BeeNameText.text = "글자 수가 너무 짧아요."
+                    createStep1BeeNameText.setTextColor(
                         ContextCompat.getColor(
                             this@CreateStep1Activity,
                             R.color.tooShortText
                         )
                     )
 
-                    create_step1_next_button.isEnabled = false
-                    create_step1_next_button.setTextColor(Color.parseColor("#aaaaaa"))
-                    create_step1_next_button.background =
+                    gotoStep2FromStep1Button.isEnabled = false
+                    gotoStep2FromStep1Button.setTextColor(Color.parseColor("#aaaaaa"))
+                    gotoStep2FromStep1Button.background =
                         applicationContext.getDrawable(R.color.deactive_button)
                 } else if (create_beename_text.length() == 0) {
-                    beename_textview.text = ""
-                    create_step1_next_button.isEnabled = false
-                    create_step1_next_button.setTextColor(Color.parseColor("#aaaaaa"))
-                    create_step1_next_button.background =
+                    createStep1BeeNameText.text = ""
+                    gotoStep2FromStep1Button.isEnabled = false
+                    gotoStep2FromStep1Button.setTextColor(Color.parseColor("#aaaaaa"))
+                    gotoStep2FromStep1Button.background =
                         applicationContext.getDrawable(R.color.deactive_button)
                 } else {
-                    beename_textview.text = ""
-                    create_step1_next_button.isEnabled = true
-                    create_step1_next_button.setTextColor(Color.parseColor("#222222"))
-                    create_step1_next_button.background =
+                    createStep1BeeNameText.text = ""
+                    gotoStep2FromStep1Button.isEnabled = true
+                    gotoStep2FromStep1Button.setTextColor(Color.parseColor("#222222"))
+                    gotoStep2FromStep1Button.background =
                         applicationContext.getDrawable(R.color.active_button)
                 }
             }
@@ -117,6 +132,8 @@ class CreateStep1Activity : AppCompatActivity(), View.OnClickListener {
         })
     }
 
+    // Change Acivity
+
     private fun gotoStep2() {
         GlobalApp.prefsBeeInfo.beeTitle = beeTitle
         startActivity(
@@ -124,12 +141,7 @@ class CreateStep1Activity : AppCompatActivity(), View.OnClickListener {
         )
     }
 
-    override fun onBackPressed() {
-        startActivity(
-            Intent(this, BeforeJoinActivity::class.java)
-                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        )
-    }
+    // Companion
 
     companion object {
         private const val TAG = "CreateStep1Activity"

@@ -12,7 +12,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
-import android.util.DisplayMetrics
 import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
@@ -61,16 +60,15 @@ import retrofit2.Converter
 import retrofit2.Response
 import java.io.File
 import java.io.IOException
-import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-// MARK:~ Sign Up
-
 class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
+
+    // Properties
 
     private val service = MorningBeesService.create()
     private var userAccessToken = ""
@@ -87,8 +85,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
     var isExistMission = false
 
     var missionUrlList = mutableListOf<MissionUrl?>()
-
-    var imageFile: File? = null
     var currentPhotoPath = ""
     private lateinit var bottomSheetDialog: BottomSheetDialog
 
@@ -101,7 +97,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
         )
     }
 
-    // MARK:~ Life Cycle
+    // Life Cycle for Activity
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -111,24 +107,68 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
 
         initButtonListeners()
         initScrollListener()
-        changeIconColor()
+        initIconColor()
         setTargetDate()
         requestMeApi()
     }
-
-    override fun onBackPressed() {
-        super.onBackPressed()
-        finish()
-    }
-
-    // MARK:~ Method Extension
 
     override fun onResume() {
         super.onResume()
         requestMainApi()
     }
 
-    // MARK:~ Button Click
+    // Callback Method
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        finish()
+    }
+
+    override fun onClick(v: View) {
+        when (v.id) {
+            R.id.goMissionCreateButton -> gotoMissionCreate()
+            R.id.changeTargetDateButton -> changeTargetDate()
+            R.id.goToSettingButton -> gotoSetting()
+            R.id.royalJellyCheckButton -> gotoRoyalJelly()
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == PICK_FROM_ALBUM && resultCode == Activity.RESULT_OK && data != null && data.data != null) {
+            data.data?.let { photoUri ->
+                currentPhotoPath = URIPathHelper().getPath(this, photoUri).toString()
+            }
+            gotoMissionParticipate(currentPhotoPath, PICK_FROM_ALBUM)
+        } else if (requestCode == PICK_FROM_CAMERA && resultCode == Activity.RESULT_OK) {
+            addPictureToGallery()
+            gotoMissionParticipate(currentPhotoPath, PICK_FROM_CAMERA)
+        } else if (requestCode == GO_TO_PARTICIPATE && resultCode == FINISH) {
+            bottomSheetDialog.dismiss()
+            missionUrlList = mutableListOf()
+            requestMainApi()
+        } else if (requestCode == GO_TO_PARTICIPATE && resultCode == RELOAD) {
+            bottomSheetDialog.show()
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == REQUEST_PERMISSION) {
+            for (value in grantResults) {
+                if (value != PackageManager.PERMISSION_GRANTED) {
+                    Log.d(TAG, "permission reject")
+                }
+            }
+        }
+    }
+
+    // Init Method
 
     private fun initButtonListeners() {
         goMissionCreateButton.setOnClickListener(this)
@@ -159,24 +199,28 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
         })
     }
 
-    override fun onClick(v: View) {
-        when (v.id) {
-            R.id.goMissionCreateButton -> gotoMissionCreate()
-            R.id.changeTargetDateButton -> changeTargetDate()
-            R.id.goToSettingButton -> gotoSetting()
-            R.id.royalJellyCheckButton -> gotoRoyalJelly()
+    private fun initIconColor() {
+        goToSettingButton.setColorFilter(Color.parseColor("#7E7E7E"))
+        mainNotificationButton.setColorFilter(Color.parseColor("#7E7E7E"))
+        changeTargetDateButton.setColorFilter(Color.parseColor("#7E7E7E"))
+    }
+
+    // Click Event for RecyclerView Item
+
+    override fun clickLoadMoreMission() {
+        gotoLoadMissionPhoto()
+    }
+
+    override fun clickMissionParticipate() {
+        if (isExistMission)
+            participateMissionDialog()
+        else {
+            showToast { "미션이 아직 등록되지 않았습니다." }
         }
     }
 
-    // MARK:~ Setting
 
-    private fun gotoSetting() {
-        startActivity(
-            Intent(this, SettingActivity::class.java)
-        )
-    }
-
-    // MARK:~ Main API Request
+    // Request API
 
     private fun requestMainApi() {
         service.main(
@@ -369,7 +413,65 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
             })
     }
 
-    // MARK:~ View Design
+    private fun requestMeApi() {
+        service.me(userAccessToken)
+            .enqueue(object : Callback<MeResponse> {
+                override fun onResponse(call: Call<MeResponse>, response: Response<MeResponse>) {
+                    when (response.code()) {
+                        200 -> {
+                            val meResponse = response.body()
+                            myNickname = meResponse!!.nickname
+                            GlobalApp.prefsBeeInfo.myNickname = myNickname
+                            beeId = meResponse.beeId
+                            GlobalApp.prefsBeeInfo.myEmail = meResponse.email
+                            GlobalApp.prefsBeeInfo.beeId = beeId
+                            requestMainApi()
+                        }
+
+                        400 -> {
+                            val converter: Converter<ResponseBody, ErrorResponse> =
+                                MorningBeesService.retrofit.responseBodyConverter<ErrorResponse>(
+                                    ErrorResponse::class.java,
+                                    ErrorResponse::class.java.annotations
+                                )
+
+                            val errorResponse = converter.convert(response.errorBody())
+
+                            when (errorResponse.code) {
+                                110 -> {
+                                    val oldAccessToken = GlobalApp.prefs.accessToken
+                                    GlobalApp.prefs.requestRenewalApi()
+                                    val renewalAccessToken = GlobalApp.prefs.accessToken
+
+                                    if (oldAccessToken == renewalAccessToken) {
+                                        showToast { "다시 로그인해주세요." }
+                                        gotoLogOut()
+                                    } else
+                                        requestMeApi()
+                                }
+
+                                else -> {
+                                    showToast { errorResponse.message }
+                                    finish()
+                                }
+                            }
+                        }
+
+                        500 -> {
+                            val jsonObject = JSONObject(response.errorBody()?.string())
+                            val message = jsonObject.getString("message")
+                            showToast { message }
+                        }
+                    }
+                }
+
+                override fun onFailure(call: Call<MeResponse>, t: Throwable) {
+                    Dlog().d(t.toString())
+                }
+            })
+    }
+
+    // View Design about Mission
 
     private fun setRecyclerView() {
         setMissionUrlType()
@@ -380,10 +482,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
     }
 
     private fun setMissionUrlType() {
-        Log.d(TAG, "isParticipateMission: $isParticipateMission")
         if (isParticipateMission) {
             for (i in 0 until missionUrlList.size) {
-                Log.d(TAG, "missionUrlList[$i]: ${missionUrlList[i]}")
 
                 if (missionUrlList[i]?.isMyImageUrl == true) {
                     val missionUrl = missionUrlList[i]
@@ -400,7 +500,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
                 )
             }
         } else {
-            Log.d(TAG, "todayBee: $todayBee myNickname: $myNickname")
             if (missionUrlList.size >= 1) {
                 missionUrlList.add(
                     0,
@@ -408,7 +507,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
                 )
             }
             if (targetDate == todayDate && todayBee != myNickname) {
-                Log.d(TAG, "todayBee: $todayBee myNickname: $myNickname 호출됨 ")
                 missionUrlList.add(
                     missionUrlList.size,
                     MissionUrl(MissionUrl.MISSION_PARTICIPATE_BUTTON_TYPE, null, null)
@@ -416,6 +514,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
             }
         }
     }
+
+    // View Design about Bee Info
 
     private fun setLayoutToBeeInfo(beeInfoResponse: JsonObject) {
         missionDifficultyImageWrapLayout.visibility = View.VISIBLE
@@ -493,6 +593,14 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
         }
     }
 
+    private fun setDifficulty(difficulty: Int?) {
+        when (difficulty) {
+            0 -> missionDifficultyDefinedImage.setImageDrawable(getDrawable(R.drawable.icon_low_level))
+            1 -> missionDifficultyDefinedImage.setImageDrawable(getDrawable(R.drawable.icon_middle_level))
+            2 -> missionDifficultyDefinedImage.setImageDrawable(getDrawable(R.drawable.icon_high_level))
+        }
+    }
+
     private fun setLayoutToMission(state: Int) {
         if (state == EXIST_MISSION) {
             if (myNickname == todayBee || isParticipateMission) { // or 이미 미션을 participate 한 경우
@@ -547,7 +655,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
     }
 
     private fun applyImageUrl(imageUrl: String?) {
-        val px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30f, applicationContext.resources.displayMetrics).toInt()
+        val px = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            30f,
+            applicationContext.resources.displayMetrics
+        ).toInt()
 
         Glide.with(this@MainActivity)
             .load(imageUrl)
@@ -557,26 +669,12 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
             .into(missionImage)
     }
 
-    private fun setDifficulty(difficulty: Int?) {
-        when (difficulty) {
-            0 -> missionDifficultyDefinedImage.setImageDrawable(getDrawable(R.drawable.icon_low_level))
-            1 -> missionDifficultyDefinedImage.setImageDrawable(getDrawable(R.drawable.icon_middle_level))
-            2 -> missionDifficultyDefinedImage.setImageDrawable(getDrawable(R.drawable.icon_high_level))
-        }
-    }
-
     private fun setTargetDate() {
         targetDateText.text = todayDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
         targetDate = todayDate
     }
 
-    private fun changeIconColor() {
-        goToSettingButton.setColorFilter(Color.parseColor("#7E7E7E"))
-        mainNotificationButton.setColorFilter(Color.parseColor("#7E7E7E"))
-        changeTargetDateButton.setColorFilter(Color.parseColor("#7E7E7E"))
-    }
-
-    // MARK:~ Change Date
+    // TargetDate with Calendar
 
     private fun changeTargetDate() {
         val dialogFragment = CalendarDialog()
@@ -593,67 +691,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
         })
     }
 
-    // MARK:~ Me Api Request
-
-    private fun requestMeApi() {
-        service.me(userAccessToken)
-            .enqueue(object : Callback<MeResponse> {
-                override fun onResponse(call: Call<MeResponse>, response: Response<MeResponse>) {
-                    when (response.code()) {
-                        200 -> {
-                            val meResponse = response.body()
-                            myNickname = meResponse!!.nickname
-                            GlobalApp.prefsBeeInfo.myNickname = myNickname
-                            beeId = meResponse.beeId
-                            GlobalApp.prefsBeeInfo.myEmail = meResponse.email
-                            GlobalApp.prefsBeeInfo.beeId = beeId
-                            requestMainApi()
-                        }
-
-                        400 -> {
-                            val converter: Converter<ResponseBody, ErrorResponse> =
-                                MorningBeesService.retrofit.responseBodyConverter<ErrorResponse>(
-                                    ErrorResponse::class.java,
-                                    ErrorResponse::class.java.annotations
-                                )
-
-                            val errorResponse = converter.convert(response.errorBody())
-
-                            when (errorResponse.code) {
-                                110 -> {
-                                    val oldAccessToken = GlobalApp.prefs.accessToken
-                                    GlobalApp.prefs.requestRenewalApi()
-                                    val renewalAccessToken = GlobalApp.prefs.accessToken
-
-                                    if (oldAccessToken == renewalAccessToken) {
-                                        showToast { "다시 로그인해주세요." }
-                                        gotoLogOut()
-                                    } else
-                                        requestMeApi()
-                                }
-
-                                else -> {
-                                    showToast { errorResponse.message }
-                                    finish()
-                                }
-                            }
-                        }
-
-                        500 -> {
-                            val jsonObject = JSONObject(response.errorBody()?.string())
-                            val message = jsonObject.getString("message")
-                            showToast { message }
-                        }
-                    }
-                }
-
-                override fun onFailure(call: Call<MeResponse>, t: Throwable) {
-                    Dlog().d(t.toString())
-                }
-            })
-    }
-
-    // MARK:~ Mission Participate
+    // Mission Participate
 
     private fun participateMissionDialog() {
         bottomSheetDialog = BottomSheetDialog(
@@ -671,23 +709,17 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
 
         chkPermission()
 
-        bottomSheetView.pc_get_picture_btn.setOnClickListener(object : View.OnClickListener {
+        bottomSheetView.getGalleryMissionParticipateDialogButton.setOnClickListener(object : View.OnClickListener {
             override fun onClick(p0: View?) {
                 gotoGallery()
             }
         })
 
-        bottomSheetView.pc_take_picture_btn.setOnClickListener(object : View.OnClickListener {
+        bottomSheetView.takePictureMissionParticipateDialogButton.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View) {
                 dispatchTakePictureIntent()
             }
         })
-    }
-
-    private fun gotoGallery() {
-        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        intent.type = "image/*"
-        startActivityForResult(intent, PICK_FROM_ALBUM)
     }
 
     private fun dispatchTakePictureIntent() {
@@ -697,7 +729,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
             return
         }
 
-        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also {takePictureIntent ->
+        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
             takePictureIntent.resolveActivity(packageManager)?.also {
                 val photoFile: File? = try {
                     createImageFile()
@@ -718,9 +750,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
         }
     }
 
-    private fun galleryAddPicture(){
+    private fun addPictureToGallery() {
         val file = File(currentPhotoPath)
-        var mediaScannerConnection : MediaScannerConnection? = null
+        var mediaScannerConnection: MediaScannerConnection? = null
 
         val mediaScannerClient = object : MediaScannerConnection.MediaScannerConnectionClient {
             override fun onMediaScannerConnected() {
@@ -752,27 +784,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == PICK_FROM_ALBUM && resultCode == Activity.RESULT_OK && data != null && data.data != null) {
-            data.data?.let {photoUri ->
-                currentPhotoPath = URIPathHelper().getPath(this, photoUri).toString()
-            }
-            gotoMissionParticipate(currentPhotoPath, PICK_FROM_ALBUM)
-        } else if (requestCode == PICK_FROM_CAMERA && resultCode == Activity.RESULT_OK) {
-            galleryAddPicture()
-            gotoMissionParticipate(currentPhotoPath, PICK_FROM_CAMERA)
-        } else if (requestCode == GO_TO_PARTICIPATE && resultCode == FINISH) {
-            bottomSheetDialog.dismiss()
-            missionUrlList = mutableListOf()
-            requestMainApi()
-        } else if (requestCode == GO_TO_PARTICIPATE && resultCode == RELOAD) {
-            bottomSheetDialog.show()
-        }
-    }
-
-    // MARK:~ Check Permission
+    // Check Permission for Camera & Gallery
 
     private fun chkPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -796,24 +808,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
         )
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == REQUEST_PERMISSION) {
-            for (value in grantResults) {
-                if (value != PackageManager.PERMISSION_GRANTED) {
-                    Log.d(TAG, "permission reject")
-                }
-            }
-        }
-    }
-
-    // MARK:~ Change Activity
-
-    // MARK:~ Log out
+    // Change Activity
 
     private fun gotoLogOut() {
         startActivity(
@@ -822,8 +817,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
         )
     }
-
-    // MARK:~ Mission Participate
 
     private fun gotoMissionParticipate(path: String?, state: Int) {
         startActivityForResult(
@@ -842,8 +835,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
             Intent(this, RoyalJellyActivity::class.java)
         )
     }
-
-    // MARK:~ Mission Create
 
     private fun gotoMissionCreate() {
         if (beeId == 0) {
@@ -871,17 +862,19 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
         )
     }
 
-    override fun clickLoadMoreMission() {
-        gotoLoadMissionPhoto()
+    private fun gotoSetting() {
+        startActivity(
+            Intent(this, SettingActivity::class.java)
+        )
     }
 
-    override fun clickMissionParticipate() {
-        if (isExistMission)
-            participateMissionDialog()
-        else {
-            showToast { "미션이 아직 등록되지 않았습니다." }
-        }
+    private fun gotoGallery() {
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        intent.type = "image/*"
+        startActivityForResult(intent, PICK_FROM_ALBUM)
     }
+
+    // Companion
 
     companion object {
         private const val REQUEST_PERMISSION = 1000

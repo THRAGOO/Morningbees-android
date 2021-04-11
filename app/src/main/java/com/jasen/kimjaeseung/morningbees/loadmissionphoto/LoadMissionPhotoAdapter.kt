@@ -17,10 +17,6 @@ class LoadMissionPhotoAdapter(
     private val missionList: List<Mission>
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    override fun getItemCount(): Int {
-        return missionList.size
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val itemImageView =
             LayoutInflater.from(parent.context).inflate(R.layout.item_mission_photo, parent, false)
@@ -32,6 +28,10 @@ class LoadMissionPhotoAdapter(
         itemImageView.itemMissionPhotoImage.layoutParams.height = (imageViewWidth / 3) * 4
 
         return LoadMissionPhotoViewHolder(itemImageView)
+    }
+
+    override fun getItemCount(): Int {
+        return missionList.size
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {

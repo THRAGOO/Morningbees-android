@@ -47,7 +47,7 @@ import retrofit2.Response
 
 class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
 
-    // MARK:~ Properties
+    // Properties
 
     private lateinit var loginPresenter: LoginPresenter
 
@@ -62,7 +62,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
     private var beeTitle = ""
     private var parameter = ""
 
-    // MARK:~ Life Cycle
+    // Life Cycle
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.signInStatusBarTheme)
@@ -108,50 +108,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
         loginBeeImage.animate().translationY(translationY)
     }
 
-    private fun setAutoLogin() {
-        Log.d(TAG, "setAutoLogin: ${GlobalApp.prefs.socialAccessToken}")
-        if (GlobalApp.prefs.socialAccessToken != "") {
-            requestSignInApi(
-                SignInRequest(
-                    GlobalApp.prefs.socialAccessToken,
-                    GlobalApp.prefs.provider
-                )
-            )
-        }
-    }
-
-    private fun getDynamicLink(){
-        Firebase.dynamicLinks
-            .getDynamicLink(intent)
-            .addOnSuccessListener(this) { pendingDynamicLinkData ->
-                val deepLink: Uri?
-                if (pendingDynamicLinkData != null) {
-                    deepLink = pendingDynamicLinkData.link
-                    parameter = deepLink?.getQueryParameter("beeId").orEmpty()
-                    beeTitle = deepLink?.getQueryParameter("beeTitle").orEmpty()
-                    beeId = Integer.parseInt(parameter)
-
-                    GlobalApp.prefsBeeInfo.beeId = beeId
-                    GlobalApp.prefsBeeInfo.beeTitle = beeTitle
-
-                    startActivity(Intent(this, InviteBeeActivity::class.java))
-                }
-            }
-            .addOnFailureListener(this) { e -> Log.w(TAG, "getDynamicLink:onFailure", e) }
-    }
-
-    // MARK:~ MVP Init
-
-    override fun initPresenter() {
-        loginPresenter = LoginPresenter()
-    }
-
-    // MARK:~ Button Listener
-
-    private fun initButtonListeners() {
-        login_google_sign_in_button.setOnClickListener(this)
-        login_naver_sign_in_button.setOnClickListener(this)
-    }
+    // Callback Method
 
     override fun onClick(v: View) {
         when (v.id) {
@@ -160,13 +117,52 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
         }
     }
 
-    // MARK:~ View Design
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        initAnimation()
+        Log.d(TAG, "onWindowFocusChanged")
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            RC_SIGN_IN -> {
+                val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+                try {
+                    // Google Sign In was successful
+                    val account = task.getResult(ApiException::class.java)!!
+                    Dlog().d(account.displayName!!)
+                    handleSignInResult(task)
+                } catch (e: ApiException) {
+                    Dlog().w("Google sign in failed: " + e)
+                }
+            }
+
+            RC_GET_TOKEN -> {
+                val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+                handleSignInResult(task)
+            }
+        }
+    }
+
+    // Init Method
+
+    override fun initPresenter() {
+        loginPresenter = LoginPresenter()
+    }
+
+    private fun initButtonListeners() {
+        login_google_sign_in_button.setOnClickListener(this)
+        login_naver_sign_in_button.setOnClickListener(this)
+    }
 
     private fun initAnimation() {
         val displayMetrics : DisplayMetrics
         val heightPixel : Int
         val widthPixel : Int
         val density : Float
+
+
 
         if (GlobalApp.prefsDeviceInfo.density == 0f || GlobalApp.prefsDeviceInfo.heightPixel == 0 || GlobalApp.prefsDeviceInfo.widthPixel == 0){
             displayMetrics = DisplayMetrics()
@@ -221,21 +217,16 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
         loginBeeImage.animate().translationY(-translationY).duration = 500
     }
 
-    // MARK:~ SNS Login Init
+    // Init Method for SNS Login
 
     override fun initNaverSignIn() {
         mOAuthLoginModule = OAuthLogin.getInstance()
         mOAuthLoginModule.init(
-            this, this.getString(R.string.naver_oauth_client_id)
+            this
+            , this.getString(R.string.naver_oauth_client_id)
             , this.getString(R.string.naver_oauth_client_secret)
             , this.getString(R.string.naver_oauth_client_name)
         )
-    }
-
-    override fun onWindowFocusChanged(hasFocus: Boolean) {
-        super.onWindowFocusChanged(hasFocus)
-        initAnimation()
-        Log.d(TAG, "onWindowFocusChanged")
     }
 
     override fun initGoogleSignIn() {
@@ -249,6 +240,8 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
 //        refreshIdToken()
     }
 
+    // SNS Login
+
     override fun refreshIdToken() {
         Dlog().d("google refresh id token")
         mGoogleSignInClient.silentSignIn()
@@ -256,8 +249,6 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
                 this
             ) { task -> handleSignInResult(task) }
     }
-
-    // MARK:~ Sign Out
 
     override fun signOut() {
         GlobalApp.prefs.socialAccessToken = ""
@@ -272,13 +263,6 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
 
         mOAuthLoginModule.logout(this)
         Dlog().d("Naver Sign Out")
-    }
-
-    // MARK:~ SNS Login
-
-    override fun googleSignIn() {
-        val signInIntent = mGoogleSignInClient.signInIntent
-        startActivityForResult(signInIntent, RC_SIGN_IN)
     }
 
     override fun naverSignIn() {
@@ -336,6 +320,11 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
         }
     }
 
+    override fun googleSignIn() {
+        val signInIntent = mGoogleSignInClient.signInIntent
+        startActivityForResult(signInIntent, RC_SIGN_IN)
+    }
+
     override fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
         try {
             val account = completedTask.getResult(ApiException::class.java)
@@ -355,29 +344,87 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when (requestCode) {
-            RC_SIGN_IN -> {
-                val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-                try {
-                    // Google Sign In was successful
-                    val account = task.getResult(ApiException::class.java)!!
-                    Dlog().d(account.displayName!!)
-                    handleSignInResult(task)
-                } catch (e: ApiException) {
-                    Dlog().w("Google sign in failed: " + e)
-                }
+    override fun requestSignInApi(signInRequest: SignInRequest) {
+        service.signIn(signInRequest).enqueue(object : Callback<SignInResponse> {
+            override fun onFailure(call: Call<SignInResponse>, t: Throwable) {
+                Dlog().d(t.toString())
             }
 
-            RC_GET_TOKEN -> {
-                val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-                handleSignInResult(task)
+            override fun onResponse(
+                call: Call<SignInResponse>,
+                response: Response<SignInResponse>
+            ) {
+                val i = response.code()
+                Dlog().d(response.code().toString())
+                when (i) {
+                    200 -> {
+                        val signInResponse: SignInResponse = response.body()!!
+                        when (signInResponse.type) {
+                            1 -> {
+                                GlobalApp.prefs.accessToken = signInResponse.accessToken
+                                GlobalApp.prefs.refreshToken = signInResponse.refreshToken
+
+                                requestMeApi()
+                            }
+
+                            0 -> {
+                                gotoSignUp(signInRequest)
+                            }
+                        }
+                    }
+
+                    400 -> {
+                        showToast { "다시 로그인해주세요." }
+                        signOut()
+                    }
+
+                    500 -> {
+                        val jsonObject = JSONObject(response.errorBody()!!.string())
+                        val message = jsonObject.getString("message")
+                        showToast { message }
+                    }
+                }
             }
+        })
+    }
+
+    private fun setAutoLogin() {
+        Log.d(TAG, "setAutoLogin: ${GlobalApp.prefs.socialAccessToken}")
+
+        if (GlobalApp.prefs.socialAccessToken != "") {
+            requestSignInApi(
+                SignInRequest(
+                    GlobalApp.prefs.socialAccessToken,
+                    GlobalApp.prefs.provider
+                )
+            )
         }
     }
 
-    // MARK:~ JoinBee API Request
+
+    // Get Dynamic Link
+
+    private fun getDynamicLink(){
+        Firebase.dynamicLinks
+            .getDynamicLink(intent)
+            .addOnSuccessListener(this) { pendingDynamicLinkData ->
+                val deepLink: Uri?
+                if (pendingDynamicLinkData != null) {
+                    deepLink = pendingDynamicLinkData.link
+                    parameter = deepLink?.getQueryParameter("beeId").orEmpty()
+                    beeTitle = deepLink?.getQueryParameter("beeTitle").orEmpty()
+                    beeId = Integer.parseInt(parameter)
+
+                    GlobalApp.prefsBeeInfo.beeId = beeId
+                    GlobalApp.prefsBeeInfo.beeTitle = beeTitle
+
+                    startActivity(Intent(this, InviteBeeActivity::class.java))
+                }
+            }
+            .addOnFailureListener(this) { e -> Log.w(TAG, "getDynamicLink:onFailure", e) }
+    }
+
+    // API Request
 
     private fun requestJoinBeeApi() {
         val joinBeeRequest =
@@ -433,53 +480,6 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
                 }
             })
     }
-
-    // MARK:~ SignIn Api Request
-
-    override fun requestSignInApi(signInRequest: SignInRequest) {
-        service.signIn(signInRequest).enqueue(object : Callback<SignInResponse> {
-            override fun onFailure(call: Call<SignInResponse>, t: Throwable) {
-                Dlog().d(t.toString())
-            }
-
-            override fun onResponse(
-                call: Call<SignInResponse>,
-                response: Response<SignInResponse>
-            ) {
-                val i = response.code()
-                Dlog().d(response.code().toString())
-                when (i) {
-                    200 -> {
-                        val signInResponse: SignInResponse = response.body()!!
-                        when (signInResponse.type) {
-                            1 -> {
-                                GlobalApp.prefs.accessToken = signInResponse.accessToken
-                                GlobalApp.prefs.refreshToken = signInResponse.refreshToken
-
-                                requestMeApi()
-                            }
-                            0 -> {
-                                gotoSignUp(signInRequest)
-                            }
-                        }
-                    }
-
-                    400 -> {
-                        showToast { "다시 로그인해주세요." }
-                        signOut()
-                    }
-
-                    500 -> {
-                        val jsonObject = JSONObject(response.errorBody()!!.string())
-                        val message = jsonObject.getString("message")
-                        showToast { message }
-                    }
-                }
-            }
-        })
-    }
-
-    // MARK:~ Me Api Request
 
     private fun requestMeApi() {
         var alreadyJoin: Boolean?
@@ -553,7 +553,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
             })
     }
 
-    // MARK:~ Move Activity
+    // Change Activity
 
     private fun gotoMainActivity() {
         startActivity(
@@ -563,7 +563,6 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
             ).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
         )
     }
-
 
     private fun gotoSignUp(signInRequest: SignInRequest) {
         startActivity(

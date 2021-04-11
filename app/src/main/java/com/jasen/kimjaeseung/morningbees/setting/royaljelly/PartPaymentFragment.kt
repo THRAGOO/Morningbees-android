@@ -14,7 +14,13 @@ import kotlinx.android.synthetic.main.fragment_part_payment.*
 
 class PartPaymentFragment(val partPaymentList: Paid) :
     BottomSheetDialogFragment() {
+
+    // Properties
+
     var penalty = 0
+
+    // Life Cycle
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -34,6 +40,8 @@ class PartPaymentFragment(val partPaymentList: Paid) :
         selectSeekBar.max = (partPaymentList.penalty) / 1000
         thumbSeekBar.max = selectSeekBar.max
     }
+
+    // Init Method
 
     private fun initButtonListener() {
         selectedPaymentButton.setOnClickListener {

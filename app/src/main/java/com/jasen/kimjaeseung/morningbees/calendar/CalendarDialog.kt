@@ -16,18 +16,16 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class CalendarDialog : DialogFragment() {
+
+    // Variable
+
     lateinit var calendarAdapter: CalendarRecyclerViewAdapter
     lateinit var mDialogFragment: OnMyDialogResult
     var hyphenTargetDate: String = ""
     var targetDate: String = ""
     var todayDate: String = ""
 
-    override fun onResume() {
-        super.onResume()
-        val width = resources.getDimensionPixelSize(R.dimen.calendar_width)
-        val height = resources.getDimensionPixelSize(R.dimen.calendar_height)
-        dialog?.window?.setLayout(width, height)
-    }
+    // Life Cycle for Fragment
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -57,12 +55,10 @@ class CalendarDialog : DialogFragment() {
 
                 when (e.action){
                     MotionEvent.ACTION_DOWN -> {
-                        Log.d(TAG, "action_down: position: $position")
                         child.itemCalendarDateText?.background = activity?.applicationContext?.getDrawable(R.drawable.background_item_calendar_grey)
                     }
 
                     MotionEvent.ACTION_UP -> {
-                        Log.d(TAG, "action_up: position: $position")
                         child.itemCalendarDateText?.background = activity?.applicationContext?.getDrawable(R.drawable.background_item_calendar_yellow)
                         val date = calendarAdapter.getDate(position)
                         finishFragment(date)
@@ -89,6 +85,20 @@ class CalendarDialog : DialogFragment() {
         todayDate = simpleDate
     }
 
+    override fun onResume() {
+        super.onResume()
+        val width = resources.getDimensionPixelSize(R.dimen.calendar_width)
+        val height = resources.getDimensionPixelSize(R.dimen.calendar_height)
+        dialog?.window?.setLayout(width, height)
+    }
+
+    // Interface
+    interface OnMyDialogResult {
+        fun finish(str: String, _str: String)
+    }
+
+    // Touch Event
+
     private fun finishFragment(position: Int) {
         if (position in 1..9) {
             hyphenTargetDate += "-0$position"
@@ -102,6 +112,12 @@ class CalendarDialog : DialogFragment() {
         dialog!!.dismiss()
     }
 
+    fun setDialogResult(dialogResult: OnMyDialogResult) {
+        mDialogFragment = dialogResult
+    }
+
+    // View Design
+
     fun refreshCurrentMonth(calendar: Calendar) {
         val sdf = SimpleDateFormat("MMMM yyyy", Locale.ENGLISH)
         currentMonthText.text = sdf.format(calendar.time)
@@ -109,13 +125,7 @@ class CalendarDialog : DialogFragment() {
         this.targetDate = calendar.time.toString("yyyyMM")
     }
 
-    fun setDialogResult(dialogResult: OnMyDialogResult) {
-        mDialogFragment = dialogResult
-    }
-
-    interface OnMyDialogResult {
-        fun finish(str: String, _str: String)
-    }
+    // Companion
 
     companion object {
         const val TAG = "CalendarActivity"

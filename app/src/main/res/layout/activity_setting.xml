@@ -42,7 +42,7 @@
         android:background="#f8f8f8">
 
         <ImageView
-            android:id="@+id/setting_bee_img"
+            android:id="@+id/settingBeeImage"
             android:layout_width="16dp"
             android:layout_height="18dp"
             android:layout_centerVertical="true"
@@ -54,7 +54,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_toEndOf="@id/setting_bee_img"
+            android:layout_toEndOf="@id/settingBeeImage"
             android:text="내 정보 "
             android:textColor="#aaaaaa"
             android:textSize="13dp" />
@@ -65,7 +65,7 @@
         android:layout_height="56dp">
 
         <TextView
-            android:id="@+id/my_nickname_text"
+            android:id="@+id/myNicknameText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
@@ -91,7 +91,7 @@
         android:background="#f8f8f8">
 
         <ImageView
-            android:id="@+id/bee_manage_img"
+            android:id="@+id/beeMangeImage"
             android:layout_width="16dp"
             android:layout_height="18dp"
             android:layout_centerVertical="true"
@@ -103,7 +103,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_toEndOf="@id/bee_manage_img"
+            android:layout_toEndOf="@id/beeMangeImage"
             android:text="모임 관리  "
             android:textColor="#aaaaaa"
             android:textSize="13dp" />
@@ -142,16 +142,6 @@
                     android:layout_height="wrap_content"
                     android:textColor="#777777"
                     android:textSize="13dp" />
-
-<!--                <ImageButton-->
-<!--                    android:id="@+id/gotoMissionTimeButton"-->
-<!--                    android:layout_width="6dp"-->
-<!--                    android:layout_height="10dp"-->
-<!--                    android:layout_centerVertical="true"-->
-<!--                    android:layout_marginStart="18dp"-->
-<!--                    android:layout_toEndOf="@id/missionTimeInSetting"-->
-<!--                    android:background="@drawable/icon_arrow_right_back"-->
-<!--                    android:scaleType="fitXY"/>-->
             </RelativeLayout>
 
         </RelativeLayout>
@@ -197,7 +187,7 @@
         </RelativeLayout>
 
         <RelativeLayout
-            android:id="@+id/total_bee_member_button"
+            android:id="@+id/totalBeeMemberButton"
             android:layout_width="match_parent"
             android:layout_height="56dp">
 
@@ -251,12 +241,12 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/wrap_bee_withdrawal_layout"
+        android:id="@+id/wrapBeeWithdrawalLayout"
         android:layout_width="match_parent"
         android:layout_height="56dp">
 
         <TextView
-            android:id="@+id/bee_withdrawal_text"
+            android:id="@+id/beeWithdrawalText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
@@ -267,7 +257,7 @@
             android:text="@string/withdrawal_bee"/>
 
         <ImageButton
-            android:id="@+id/bee_withdrawal_button"
+            android:id="@+id/beeWithdrawalButton"
             android:layout_width="6dp"
             android:layout_height="10dp"
             android:layout_alignParentEnd="true"

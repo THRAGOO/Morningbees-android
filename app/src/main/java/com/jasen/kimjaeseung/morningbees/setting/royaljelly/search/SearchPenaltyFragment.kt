@@ -23,7 +23,13 @@ import com.jasen.kimjaeseung.morningbees.setting.royaljelly.RoyalJellyActivity
 import kotlinx.android.synthetic.main.fragment_search_penalty_list.*
 
 class SearchPenaltyFragment : BottomSheetDialogFragment(), SearchPenaltyAdapter.OnItemSelectedInterface {
+
+    // Properties
+
     var beeList = mutableListOf<Penalty>()
+
+    // Life Cycle
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -42,40 +48,23 @@ class SearchPenaltyFragment : BottomSheetDialogFragment(), SearchPenaltyAdapter.
         initEditText()
     }
 
-    private fun initEditText(){
-        searchTextInputLayer.setEndIconDrawable(R.drawable.icon_delete_all)
-        searchKeywordEditText.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(p0: Editable?) {
-            }
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val dialog = super.onCreateDialog(savedInstanceState)
 
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
-
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                matchKeyword(p0)
-            }
-        })
-    }
-
-    private fun matchKeyword(keyWord : CharSequence?){
-        beeList = mutableListOf()
-        val printedList = (activity as RoyalJellyActivity).printedList
-        if(keyWord.toString().count() != 0 && keyWord != null){
-            for(i in 0 until printedList.size){
-                if (printedList[i].nickname.contains(keyWord, true)){
-                    val item = Penalty(printedList[i].nickname, printedList[i].penalty, printedList[i].userId)
-                    beeList.add(item)
-                }
-            }
+        if(dialog is BottomSheetDialog){
+            dialog.behavior.skipCollapsed = true
+            dialog.behavior.state = BottomSheetBehavior.STATE_EXPANDED
         }
-        initRecyclerView()
+        return dialog
     }
 
-    private fun initRecyclerView() {
-        searchPenaltyRecyclerView.adapter = SearchPenaltyAdapter(beeList, this)
-        searchPenaltyRecyclerView.layoutManager =
-            LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
+    override fun onPause() {
+        super.onPause()
+
+        hideKeyboard()
     }
+
+    // Callback Method
 
     override fun onItemSelected(v: View, position: Int) {
         val printedList = mutableListOf<Penalty>()
@@ -94,15 +83,46 @@ class SearchPenaltyFragment : BottomSheetDialogFragment(), SearchPenaltyAdapter.
         }
     }
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dialog = super.onCreateDialog(savedInstanceState)
+    // Init Method
 
-        if(dialog is BottomSheetDialog){
-            dialog.behavior.skipCollapsed = true
-            dialog.behavior.state = BottomSheetBehavior.STATE_EXPANDED
-        }
-        return dialog
+    private fun initEditText(){
+        searchTextInputLayer.setEndIconDrawable(R.drawable.icon_delete_all)
+        searchKeywordEditText.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(p0: Editable?) {
+            }
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                matchKeyword(p0)
+            }
+        })
     }
+
+    private fun initRecyclerView() {
+        searchPenaltyRecyclerView.adapter = SearchPenaltyAdapter(beeList, this)
+        searchPenaltyRecyclerView.layoutManager =
+            LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
+    }
+
+    // Search Keyword
+
+    private fun matchKeyword(keyWord : CharSequence?){
+        beeList = mutableListOf()
+        val printedList = (activity as RoyalJellyActivity).printedList
+        if(keyWord.toString().count() != 0 && keyWord != null){
+            for(i in 0 until printedList.size){
+                if (printedList[i].nickname.contains(keyWord, true)){
+                    val item = Penalty(printedList[i].nickname, printedList[i].penalty, printedList[i].userId)
+                    beeList.add(item)
+                }
+            }
+        }
+        initRecyclerView()
+    }
+
+    // View Design
 
     private fun showKeyboard(){
         if(searchKeywordEditText.requestFocus()){
@@ -115,12 +135,6 @@ class SearchPenaltyFragment : BottomSheetDialogFragment(), SearchPenaltyAdapter.
 
     private fun hideKeyboard(){
         (requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0)
-    }
-
-    override fun onPause() {
-        super.onPause()
-
-        hideKeyboard()
     }
 
     companion object {

@@ -6,7 +6,7 @@
     android:background="@color/white">
 
     <ImageButton
-        android:id="@+id/go_back_step2_button"
+        android:id="@+id/gotoStep2FromStep3Button"
         android:layout_width="12dp"
         android:layout_height="20dp"
         android:layout_marginStart="24dp"
@@ -20,7 +20,7 @@
         android:id="@+id/wrapCreateBeeStep3Text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/go_back_step2_button"
+        android:layout_below="@id/gotoStep2FromStep3Button"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
         android:orientation="vertical">
@@ -93,7 +93,7 @@
                 android:layout_weight="1">
 
                 <ImageButton
-                    android:id="@+id/jelly_2"
+                    android:id="@+id/jelly2Button"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:layout_gravity="center_vertical"
@@ -103,10 +103,10 @@
                     android:src="@drawable/jelly_button_selector" />
 
                 <TextView
-                    android:id="@+id/jelly_2_text"
+                    android:id="@+id/jelly2Text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/jelly_2"
+                    android:layout_below="@id/jelly2Button"
                     android:layout_centerInParent="true"
                     android:text="2,000"
                     android:textSize="12dp" />
@@ -118,7 +118,7 @@
                 android:layout_weight="1">
 
                 <ImageButton
-                    android:id="@+id/jelly_3"
+                    android:id="@+id/jelly3Button"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:layout_gravity="center_vertical"
@@ -128,10 +128,10 @@
                     android:src="@drawable/jelly_button_selector" />
 
                 <TextView
-                    android:id="@+id/jelly_3_text"
+                    android:id="@+id/jelly3Text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/jelly_3"
+                    android:layout_below="@id/jelly3Button"
                     android:layout_centerInParent="true"
                     android:text="3,000"
                     android:textStyle="bold"
@@ -145,7 +145,7 @@
                 android:layout_weight="1">
 
                 <ImageButton
-                    android:id="@+id/jelly_4"
+                    android:id="@+id/jelly4Button"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:layout_gravity="center"
@@ -155,10 +155,10 @@
                     android:src="@drawable/jelly_button_selector" />
 
                 <TextView
-                    android:id="@+id/jelly_4_text"
+                    android:id="@+id/jelly4Text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/jelly_4"
+                    android:layout_below="@id/jelly4Button"
                     android:layout_centerInParent="true"
                     android:text="4,000"
                     android:textStyle="bold"
@@ -172,7 +172,7 @@
                 android:layout_weight="1">
 
                 <ImageButton
-                    android:id="@+id/jelly_5"
+                    android:id="@+id/jelly5Button"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:layout_gravity="center"
@@ -182,10 +182,10 @@
                     android:src="@drawable/jelly_button_selector" />
 
                 <TextView
-                    android:id="@+id/jelly_5_text"
+                    android:id="@+id/jelly5Text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/jelly_5"
+                    android:layout_below="@id/jelly5Button"
                     android:layout_centerInParent="true"
                     android:text="5,000"
                     android:textStyle="bold"
@@ -199,7 +199,7 @@
                 android:layout_weight="1">
 
                 <ImageButton
-                    android:id="@+id/jelly_6"
+                    android:id="@+id/jelly6Button"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:layout_gravity="center"
@@ -209,10 +209,10 @@
                     android:src="@drawable/jelly_button_selector" />
 
                 <TextView
-                    android:id="@+id/jelly_6_text"
+                    android:id="@+id/jelly6Text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/jelly_6"
+                    android:layout_below="@id/jelly6Button"
                     android:layout_centerInParent="true"
                     android:text="6,000"
                     android:textStyle="bold"
@@ -226,7 +226,7 @@
                 android:layout_weight="1">
 
                 <ImageButton
-                    android:id="@+id/jelly_7"
+                    android:id="@+id/jelly7Button"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:layout_gravity="center"
@@ -236,10 +236,10 @@
                     android:src="@drawable/jelly_button_selector" />
 
                 <TextView
-                    android:id="@+id/jelly_7_text"
+                    android:id="@+id/jelly7Text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/jelly_7"
+                    android:layout_below="@id/jelly7Button"
                     android:layout_centerInParent="true"
                     android:text="7,000"
                     android:textStyle="bold"
@@ -253,7 +253,7 @@
                 android:layout_weight="1">
 
                 <ImageButton
-                    android:id="@+id/jelly_8"
+                    android:id="@+id/jelly8Buton"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:layout_gravity="center"
@@ -263,10 +263,10 @@
                     android:src="@drawable/jelly_button_selector" />
 
                 <TextView
-                    android:id="@+id/jelly_8_text"
+                    android:id="@+id/jelly8Text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/jelly_8"
+                    android:layout_below="@id/jelly8Buton"
                     android:layout_centerInParent="true"
                     android:text="8,000"
                     android:textStyle="bold"
@@ -280,7 +280,7 @@
                 android:layout_weight="1">
 
                 <ImageButton
-                    android:id="@+id/jelly_9"
+                    android:id="@+id/jelly9Button"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:layout_gravity="center"
@@ -290,10 +290,10 @@
                     android:src="@drawable/jelly_button_selector" />
 
                 <TextView
-                    android:id="@+id/jelly_9_text"
+                    android:id="@+id/jelly9Text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/jelly_9"
+                    android:layout_below="@id/jelly9Button"
                     android:layout_centerInParent="true"
                     android:text="9,000"
                     android:textStyle="bold"
@@ -307,7 +307,7 @@
                 android:layout_weight="1">
 
                 <ImageButton
-                    android:id="@+id/jelly_10"
+                    android:id="@+id/jelly10Button"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:layout_marginStart="5dp"
@@ -316,10 +316,10 @@
                     android:src="@drawable/jelly_button_selector" />
 
                 <TextView
-                    android:id="@+id/jelly_10_text"
+                    android:id="@+id/jelly10Text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/jelly_10"
+                    android:layout_below="@id/jelly10Button"
                     android:layout_centerInParent="true"
                     android:text="10,000"
                     android:layout_marginEnd="-10dp"
@@ -331,7 +331,7 @@
     </RelativeLayout>
 
     <Button
-        android:id="@+id/create_step3_next_button"
+        android:id="@+id/gotoMainFromStep3Button"
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:layout_alignParentBottom="true"

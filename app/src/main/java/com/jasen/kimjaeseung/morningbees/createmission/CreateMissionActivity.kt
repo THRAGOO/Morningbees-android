@@ -47,6 +47,9 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class CreateMissionActivity : AppCompatActivity(), View.OnClickListener {
+
+    // Properties
+
     val service = MorningBeesService.create()
     var difficulty: Int = DIFFICULTY_NONE
     var description: String = ""
@@ -60,6 +63,8 @@ class CreateMissionActivity : AppCompatActivity(), View.OnClickListener {
     private val permissionCheckCamera by lazy {
         ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
     }
+
+    // Life Cycle
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,6 +85,8 @@ class CreateMissionActivity : AppCompatActivity(), View.OnClickListener {
         missionLoadWrapLayout.visibility = View.INVISIBLE
     }
 
+    // Callback Method
+
     override fun onClick(v: View) {
         when (v.id) {
             R.id.missionCreateCancelButton -> gotoMain()
@@ -93,6 +100,66 @@ class CreateMissionActivity : AppCompatActivity(), View.OnClickListener {
             R.id.easyButton -> setMissionDifficulty(DIFFICULTY_EASY)
         }
     }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == REQUEST_PERMISSION) {
+            for (value in grantResults) {
+                if (value != PackageManager.PERMISSION_GRANTED) {
+                    Log.d(TAG, "permission reject")
+                }
+            }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, intent)
+        if (requestCode == PICK_FROM_ALBUM) {
+            data?.data?.let { photoUri ->
+                currentPhotoPath = URIPathHelper().getPath(this, photoUri).toString()
+
+                val selectedImage = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    val source = ImageDecoder.createSource(contentResolver, photoUri)
+                    ImageDecoder.decodeBitmap(source)
+                } else {
+                    contentResolver.openInputStream(photoUri)?.use { inputStream ->
+                        BitmapFactory.decodeStream(inputStream)
+                    }
+                }
+//                setPic()
+                if (selectedImage != null){
+                    mBitmap = selectedImage
+                    loadMissionView.setImageBitmap(
+                        Bitmap.createScaledBitmap(
+                            selectedImage,
+                            120,
+                            120,
+                            false
+                        )
+                    )
+                    loadMissionView.clipToOutline = true
+                }
+            }
+        } else if (requestCode == PICK_FROM_CAMERA) {
+            galleryAddPicture()
+            setPic()
+        }
+
+        isActivateButton()
+
+        Log.d(TAG, "on mBitmap: $mBitmap")
+        if (mBitmap == null) {
+            changeWrapView(CLICK_IMAGEVIEW)
+        } else {
+            changeWrapView(LOAD_IMAGEVIEW)
+        }
+    }
+
+    // Init Method
 
     private fun initButtonListeners() {
         missionCreateCancelButton.setOnClickListener(this)
@@ -127,6 +194,8 @@ class CreateMissionActivity : AppCompatActivity(), View.OnClickListener {
         })
     }
 
+    // View Design
+
     private fun isActivateButton() {
         Log.d(TAG, "description: $description")
         Log.d(TAG, "bitmap: $mBitmap")
@@ -140,6 +209,95 @@ class CreateMissionActivity : AppCompatActivity(), View.OnClickListener {
             missionCreateRegisterButton.isEnabled = true
         }
     }
+
+    private fun setMissionDifficulty(mDifficulty: Int) {
+        when (mDifficulty) {
+            DIFFICULTY_NONE -> {
+                hardSelectedButton.visibility = View.GONE
+                hardUnSelectedButton.visibility = View.VISIBLE
+
+                normalSelectedButton.visibility = View.GONE
+                normalUnSelectedButton.visibility = View.VISIBLE
+
+                easySelectedButton.visibility = View.GONE
+                easyUnSelectedButton.visibility = View.VISIBLE
+            }
+
+            DIFFICULTY_HARD -> {
+                hardSelectedButton.visibility = View.VISIBLE
+                hardUnSelectedButton.visibility = View.GONE
+
+                normalSelectedButton.visibility = View.GONE
+                normalUnSelectedButton.visibility = View.VISIBLE
+
+                easySelectedButton.visibility = View.GONE
+                easyUnSelectedButton.visibility = View.VISIBLE
+
+            }
+            DIFFICULTY_NORMAL -> {
+                hardSelectedButton.visibility = View.GONE
+                hardUnSelectedButton.visibility = View.VISIBLE
+
+                normalSelectedButton.visibility = View.VISIBLE
+                normalUnSelectedButton.visibility = View.GONE
+
+                easySelectedButton.visibility = View.GONE
+                easyUnSelectedButton.visibility = View.VISIBLE
+
+            }
+
+            DIFFICULTY_EASY -> {
+                hardSelectedButton.visibility = View.GONE
+                hardUnSelectedButton.visibility = View.VISIBLE
+
+                normalSelectedButton.visibility = View.GONE
+                normalUnSelectedButton.visibility = View.VISIBLE
+
+                easySelectedButton.visibility = View.VISIBLE
+                easyUnSelectedButton.visibility = View.GONE
+            }
+        }
+        difficulty = mDifficulty
+        isActivateButton()
+    }
+
+    private fun setPic() {
+        val targetW = loadMissionView.width
+        val targetH = loadMissionView.height
+
+        val bmOptions = BitmapFactory.Options().apply {
+            inJustDecodeBounds = true
+            val photoW = outWidth
+            val photoH = outHeight
+
+            val scaleFactor = Math.min(photoW / targetW, photoH / targetH)
+
+            inJustDecodeBounds = false
+            inSampleSize = scaleFactor
+        }
+
+        BitmapFactory.decodeFile(currentPhotoPath, bmOptions)?.also { bitmap ->
+            mBitmap = bitmap
+            loadMissionView.setImageBitmap(Bitmap.createScaledBitmap(bitmap, 120, 120, false))
+        }
+        loadMissionView.clipToOutline = true
+    }
+
+    private fun changeWrapView(status: Int) { // wrap view change
+        if (status == CLICK_IMAGEVIEW) {
+            missionImageUploadWrapLayout.visibility = View.VISIBLE
+            missionLoadWrapLayout.visibility = View.INVISIBLE
+            image = null
+            mBitmap = null
+        }
+        if (status == LOAD_IMAGEVIEW) {
+            missionLoadWrapLayout.visibility = View.VISIBLE
+            missionImageUploadWrapLayout.visibility = View.INVISIBLE
+        }
+        isActivateButton()
+    }
+
+    // API Request
 
     private fun requestMissionCreateApi() {
         when {
@@ -222,39 +380,7 @@ class CreateMissionActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    private fun goFinish() {
-        finish()
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == REQUEST_PERMISSION) {
-            for (value in grantResults) {
-                if (value != PackageManager.PERMISSION_GRANTED) {
-                    Log.d(TAG, "permission reject")
-                }
-            }
-        }
-    }
-
-    private fun gotoLogOut() {
-        startActivity(
-            Intent(this, LoginActivity::class.java)
-                .putExtra("RequestLogOut", "")
-                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-        )
-    }
-
-    private fun gotoGallery() {
-        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-            .putExtra(MediaStore.EXTRA_OUTPUT, uriSavedImage)
-        intent.type = "image/*"
-        startActivityForResult(intent, PICK_FROM_ALBUM)
-    }
+    // Create Mission with Camera & Gallery
 
     private fun dispatchTakePictureIntent() {
         val state: String = Environment.getExternalStorageState()
@@ -317,83 +443,25 @@ class CreateMissionActivity : AppCompatActivity(), View.OnClickListener {
         mediaScannerConnection.connect()
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, intent)
-        if (requestCode == PICK_FROM_ALBUM) {
-            data?.data?.let { photoUri ->
-                currentPhotoPath = URIPathHelper().getPath(this, photoUri).toString()
+    // Change Activity
 
-                val selectedImage = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                    val source = ImageDecoder.createSource(contentResolver, photoUri)
-                    ImageDecoder.decodeBitmap(source)
-                } else {
-                    contentResolver.openInputStream(photoUri)?.use { inputStream ->
-                        BitmapFactory.decodeStream(inputStream)
-                    }
-                }
-//                setPic()
-                if (selectedImage != null){
-                    mBitmap = selectedImage
-                    loadMissionView.setImageBitmap(
-                        Bitmap.createScaledBitmap(
-                            selectedImage,
-                            120,
-                            120,
-                            false
-                        )
-                    )
-                    loadMissionView.clipToOutline = true
-                }
-            }
-        } else if (requestCode == PICK_FROM_CAMERA) {
-            galleryAddPicture()
-            setPic()
-        }
-
-        isActivateButton()
-
-        Log.d(TAG, "on mBitmap: $mBitmap")
-        if (mBitmap == null) {
-            changeWrapView(CLICK_IMAGEVIEW)
-        } else {
-            changeWrapView(LOAD_IMAGEVIEW)
-        }
+    private fun goFinish() {
+        finish()
     }
 
-    private fun setPic() {
-        val targetW = loadMissionView.width
-        val targetH = loadMissionView.height
-
-        val bmOptions = BitmapFactory.Options().apply {
-            inJustDecodeBounds = true
-            val photoW = outWidth
-            val photoH = outHeight
-
-            val scaleFactor = Math.min(photoW / targetW, photoH / targetH)
-
-            inJustDecodeBounds = false
-            inSampleSize = scaleFactor
-        }
-
-        BitmapFactory.decodeFile(currentPhotoPath, bmOptions)?.also { bitmap ->
-            mBitmap = bitmap
-            loadMissionView.setImageBitmap(Bitmap.createScaledBitmap(bitmap, 120, 120, false))
-        }
-        loadMissionView.clipToOutline = true
+    private fun gotoLogOut() {
+        startActivity(
+            Intent(this, LoginActivity::class.java)
+                .putExtra("RequestLogOut", "")
+                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        )
     }
 
-    private fun changeWrapView(status: Int) { // wrap view change
-        if (status == CLICK_IMAGEVIEW) {
-            missionImageUploadWrapLayout.visibility = View.VISIBLE
-            missionLoadWrapLayout.visibility = View.INVISIBLE
-            image = null
-            mBitmap = null
-        }
-        if (status == LOAD_IMAGEVIEW) {
-            missionLoadWrapLayout.visibility = View.VISIBLE
-            missionImageUploadWrapLayout.visibility = View.INVISIBLE
-        }
-        isActivateButton()
+    private fun gotoGallery() {
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            .putExtra(MediaStore.EXTRA_OUTPUT, uriSavedImage)
+        intent.type = "image/*"
+        startActivityForResult(intent, PICK_FROM_ALBUM)
     }
 
     private fun gotoMain() {
@@ -405,56 +473,7 @@ class CreateMissionActivity : AppCompatActivity(), View.OnClickListener {
         )
     }
 
-    private fun setMissionDifficulty(mDifficulty: Int) {
-        when (mDifficulty) {
-            DIFFICULTY_NONE -> {
-                hardSelectedButton.visibility = View.GONE
-                hardUnSelectedButton.visibility = View.VISIBLE
-
-                normalSelectedButton.visibility = View.GONE
-                normalUnSelectedButton.visibility = View.VISIBLE
-
-                easySelectedButton.visibility = View.GONE
-                easyUnSelectedButton.visibility = View.VISIBLE
-            }
-
-            DIFFICULTY_HARD -> {
-                hardSelectedButton.visibility = View.VISIBLE
-                hardUnSelectedButton.visibility = View.GONE
-
-                normalSelectedButton.visibility = View.GONE
-                normalUnSelectedButton.visibility = View.VISIBLE
-
-                easySelectedButton.visibility = View.GONE
-                easyUnSelectedButton.visibility = View.VISIBLE
-
-            }
-            DIFFICULTY_NORMAL -> {
-                hardSelectedButton.visibility = View.GONE
-                hardUnSelectedButton.visibility = View.VISIBLE
-
-                normalSelectedButton.visibility = View.VISIBLE
-                normalUnSelectedButton.visibility = View.GONE
-
-                easySelectedButton.visibility = View.GONE
-                easyUnSelectedButton.visibility = View.VISIBLE
-
-            }
-
-            DIFFICULTY_EASY -> {
-                hardSelectedButton.visibility = View.GONE
-                hardUnSelectedButton.visibility = View.VISIBLE
-
-                normalSelectedButton.visibility = View.GONE
-                normalUnSelectedButton.visibility = View.VISIBLE
-
-                easySelectedButton.visibility = View.VISIBLE
-                easyUnSelectedButton.visibility = View.GONE
-            }
-        }
-        difficulty = mDifficulty
-        isActivateButton()
-    }
+    // Check Permission for Camera & Gallery
 
     private fun chkPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

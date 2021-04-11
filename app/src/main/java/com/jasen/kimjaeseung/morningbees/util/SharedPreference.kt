@@ -1,6 +1,8 @@
 package com.jasen.kimjaeseung.morningbees.util
 
 import android.content.Context
+import androidx.preference.PreferenceManager
+//import android.preference.PreferenceManager
 import com.jasen.kimjaeseung.morningbees.model.renewal.RenewalResponse
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import org.json.JSONObject
@@ -9,15 +11,16 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class SharedPreference(context: Context) {
+//    private val pref = context.getSharedPreferences(fileName, Context.MODE_PRIVATE)
+    private val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+    private val service = MorningBeesService.create()
+
     private val fileName = "prefs"
     private val mAccessToken = "AccessToken"
     private val mRefreshToken = "RefreshToken"
     private val mUserId = "UserId"
     private val mProvider = "Provider"
     private val mSocialAccessToken = "SocialAccessToken"
-
-    private val prefs = context.getSharedPreferences(fileName, 0)
-    private val service = MorningBeesService.create()
 
     var accessToken: String
         get() = prefs.getString(mAccessToken, "").toString()

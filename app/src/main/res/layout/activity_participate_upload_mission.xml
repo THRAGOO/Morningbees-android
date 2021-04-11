@@ -10,7 +10,7 @@
         android:layout_height="wrap_content">
 
         <Button
-            android:id="@+id/cancel_participate_upload_btn"
+            android:id="@+id/cancelMissionUploadButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
@@ -18,7 +18,6 @@
             android:textSize="17dp"
             android:text="취소 "
             android:textStyle="bold"
-
             android:textColor="#cccccc" />
 
         <TextView
@@ -30,7 +29,7 @@
             android:textStyle="bold" />
 
         <Button
-            android:id="@+id/share_participate_upload_btn"
+            android:id="@+id/uploadMissionParticipateButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
@@ -67,7 +66,7 @@
             android:layout_below="@id/pc_upload_img">
 
             <ImageView
-                android:id="@+id/pc_reload_img"
+                android:id="@+id/reloadMissionParticipateImage"
                 android:layout_width="17dp"
                 android:layout_height="18dp"
                 android:layout_centerVertical="true"
@@ -77,11 +76,11 @@
                 android:alpha="0.3"/>
 
             <Button
-                android:id="@+id/pc_reload_img_btn"
+                android:id="@+id/reloadMissionParticipateButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_toEndOf="@id/pc_reload_img"
+                android:layout_toEndOf="@id/reloadMissionParticipateImage"
                 android:background="#00ff0000"
                 android:text="다시 올리기"
                 android:textColor="#AAAAAA"

@@ -8,7 +8,7 @@
     app:layout_behavior="@string/bottom_sheet_behavior">
 
     <TextView
-        android:id="@+id/pc_mission_txt"
+        android:id="@+id/missionParticipateDialogText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
@@ -23,12 +23,12 @@
         android:id="@+id/missionImageUploadWrapLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/pc_mission_txt"
+        android:layout_below="@id/missionParticipateDialogText"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="41dp">
 
         <Button
-            android:id="@+id/pc_take_picture_btn"
+            android:id="@+id/takePictureMissionParticipateDialogButton"
             android:layout_width="120dp"
             android:layout_height="120dp"
             android:layout_marginEnd="24dp"
@@ -42,11 +42,11 @@
             android:textSize="13dp" />
 
         <Button
-            android:id="@+id/pc_get_picture_btn"
+            android:id="@+id/getGalleryMissionParticipateDialogButton"
             android:layout_width="120dp"
             android:layout_height="120dp"
             android:layout_marginStart="22dp"
-            android:layout_toEndOf="@id/pc_take_picture_btn"
+            android:layout_toEndOf="@id/takePictureMissionParticipateDialogButton"
             android:background="@drawable/gallery_picture_button"
             android:gravity="bottom|center_horizontal"
             android:paddingBottom="20dp"
@@ -56,6 +56,4 @@
             android:textSize="13dp"
             android:textStyle="bold"/>
     </RelativeLayout>
-
-
 </RelativeLayout>

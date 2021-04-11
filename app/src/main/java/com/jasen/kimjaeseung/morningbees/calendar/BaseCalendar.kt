@@ -21,11 +21,13 @@ class BaseCalendar {
     }
 
     //Init calendar
+
     fun initBaseCalendar(refreshCallback: (Calendar) -> Unit) {
         makeMonthDate(refreshCallback)
     }
 
     //change to prev month
+
     fun changeToPrevMonth(refreshCallback: (Calendar) -> Unit) {
         if (calendar.get(Calendar.MONTH) == 0) {
             calendar.set(Calendar.YEAR, calendar.get(Calendar.YEAR) - 1)
@@ -37,6 +39,7 @@ class BaseCalendar {
     }
 
     //change to next month
+
     fun changeToNextMonth(refreshCallback: (Calendar) -> Unit) {
         if (calendar.get(Calendar.MONTH) == Calendar.DECEMBER) {
             calendar.set(Calendar.YEAR, calendar.get(Calendar.YEAR) + 1)
@@ -48,6 +51,7 @@ class BaseCalendar {
     }
 
     //make month date
+
     private fun makeMonthDate(refreshCallback: (Calendar) -> Unit) {
         data.clear()
         calendar.set(Calendar.DATE, 1)
@@ -64,6 +68,7 @@ class BaseCalendar {
     }
 
     //generate data for the last month displayed before the first day of the current calendar
+
     private fun makePreMonthTail(calendar: Calendar) {
         calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH) - 1)
         val maxDate = calendar.getActualMaximum(Calendar.DATE)
@@ -73,11 +78,13 @@ class BaseCalendar {
     }
 
     //generate data for the current calendar
+
     private fun makeCurrentMonth(calendar: Calendar) {
         for (i in 1..calendar.getActualMaximum(Calendar.DATE)) data.add(i)
     }
 
     //generate data for the next month displayed before the last day of the current calendar
+
     private fun makeNextMonthHead() {
         var date = 1
         for (i in 1..nextMonthHeadOffset) data.add(date++)

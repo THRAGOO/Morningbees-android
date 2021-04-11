@@ -31,11 +31,15 @@ import retrofit2.Response
 
 class RoyalJellyActivity : View.OnClickListener, FragmentActivity(),
     DialogInterface.OnDismissListener {
+
+    // Properties
     private val service = MorningBeesService.create()
 
     var printedList = mutableListOf<Penalty>()
     var initPrintedList = mutableListOf<Penalty>()
     var searchState = 0
+
+    // Life Cycle
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,27 +48,31 @@ class RoyalJellyActivity : View.OnClickListener, FragmentActivity(),
         initButtonListener()
     }
 
+    // Init Method
+
     fun initLayout() {
         totalRoyalJelly.text = GlobalApp.prefsBeeInfo.paidPenalty.getPriceAnnotation()
-    }
-
-    override fun onDismiss(dialog: DialogInterface) {
-        if (searchState == TOTAL_STATUS) {
-            val totalFragment =
-                supportFragmentManager.findFragmentById(R.id.fragmentContainer) as TotalFragment
-            totalFragment.totalList = printedList
-            totalFragment.setRecyclerView()
-        } else {
-            val unPaidFragment =
-                supportFragmentManager.findFragmentById(R.id.fragmentContainer) as UnPaidFragment
-            unPaidFragment.penaltiesList = printedList
-        }
     }
 
     private fun initButtonListener() {
         unPaidRoyallJellyButton.setOnClickListener(this)
         totalRoyalJellyButton.setOnClickListener(this)
         goToSettingFromRoyalJelly.setOnClickListener(this)
+    }
+
+    // Callback Method
+
+    override fun onDismiss(dialog: DialogInterface) {
+        if (searchState == TOTAL_STATUS) {
+            val totalFragment =
+                supportFragmentManager.findFragmentById(R.id.fragmentContainer) as TotalFragment
+            totalFragment.totalList = printedList
+            totalFragment.initRecyclerView()
+        } else {
+            val unPaidFragment =
+                supportFragmentManager.findFragmentById(R.id.fragmentContainer) as UnPaidFragment
+            unPaidFragment.penaltiesList = printedList
+        }
     }
 
     override fun onClick(v: View) {
@@ -76,7 +84,6 @@ class RoyalJellyActivity : View.OnClickListener, FragmentActivity(),
             // button in UnPaidFragment
             R.id.fullPaymentInMultipleChoiceButton -> setPaidApi(FULL_PAYMENT_STATE)
             R.id.fullPaymentInSingleChoiceButton -> setPaidApi(FULL_PAYMENT_STATE)
-//            R.id.partPayoutInSingleChoiceButton -> setPartPaymentDialog()
             R.id.searchBeeMemberButton -> setSearchDialog()
 
             // button in TotalFragment
@@ -86,6 +93,8 @@ class RoyalJellyActivity : View.OnClickListener, FragmentActivity(),
             R.id.selectedPaymentButton -> setPaidApi(PART_PAYMENT_STATE)
         }
     }
+
+    // View Design
 
     private fun setSearchDialog() {
         val searchPenaltyFragment = SearchPenaltyFragment()
@@ -135,6 +144,8 @@ class RoyalJellyActivity : View.OnClickListener, FragmentActivity(),
             }
         }
     }
+
+    // API Request
 
     fun setPaidApi(state: Int) {
         if (state == PART_PAYMENT_STATE) {
@@ -230,6 +241,8 @@ class RoyalJellyActivity : View.OnClickListener, FragmentActivity(),
         }
         return list
     }
+
+    // Change Activity
 
     fun setPartPaymentDialog(list: Paid) {
         PartPaymentFragment(list).run {

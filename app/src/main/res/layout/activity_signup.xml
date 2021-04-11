@@ -73,34 +73,29 @@
             android:layout_height="wrap_content">
 
             <EditText
-                android:id="@+id/signup_nickname_text"
+                android:id="@+id/nicknameSignUpText"
                 android:theme="@style/EditTheme"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
                 android:layout_marginStart="24dp"
                 android:layout_marginEnd="24dp"
                 android:hint="2~10자 이내로 입력해 주세요."
                 android:letterSpacing="-0.03"
-
                 android:paddingTop="7dp"
                 android:paddingBottom="22dp"
                 android:textColor="#444444"
-
                 android:backgroundTint="#dddddd"
                 android:textColorHint="#cccccc"
                 android:textSize="15dp"/>
 
             <Button
-                android:id="@+id/signup_nickname_check_button"
+                android:id="@+id/nicknameCheckSignUpButton"
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_width="70dp"
                 android:layout_height="36dp"
-
                 android:textSize="13dp"
                 android:textColor="#444444"
                 android:letterSpacing="-0.04"
-
                 android:paddingTop="7dp"
                 android:paddingBottom="7dp"
                 android:layout_alignParentEnd="true"
@@ -108,6 +103,7 @@
                 android:background="@drawable/background_border_button_layout"
                 android:text="@string/signup_nickname_check_button_text" />
         </RelativeLayout>
+
         <TextView
             android:id="@+id/signUpNickNameText"
             android:layout_width="wrap_content"
@@ -118,7 +114,7 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/signup_start_button"
+        android:id="@+id/gotoCreateBeeFromSignUpButton"
         android:layout_width="match_parent"
         android:layout_height="56dp"
 

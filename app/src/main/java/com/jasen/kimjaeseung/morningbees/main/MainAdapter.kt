@@ -100,7 +100,7 @@ class MainAdapter(
     }
 
     inner class ImageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val participateMissionItem = itemView.item_mission_participate_image
+        val participateMissionItem = itemView.itemMissionParticipateImage
     }
 
     inner class LoadMoreButtonViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

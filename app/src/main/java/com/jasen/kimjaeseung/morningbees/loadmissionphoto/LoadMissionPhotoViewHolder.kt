@@ -14,6 +14,8 @@ import kotlinx.android.synthetic.main.item_mission_photo.view.*
 import java.text.SimpleDateFormat
 
 class LoadMissionPhotoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
+    // Properties
     private val nicknameMissionPhoto = itemView.itemNicknameMissionPhoto
     private val imageMissionPhoto = itemView.itemMissionPhotoImage
     private val afterTimeMissionPhoto = itemView.itemAfterTimeMissionPhoto

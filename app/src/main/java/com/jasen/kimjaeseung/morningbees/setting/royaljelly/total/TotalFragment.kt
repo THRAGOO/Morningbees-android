@@ -15,9 +15,7 @@ import com.jasen.kimjaeseung.morningbees.model.penalty.PenaltyHistory
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import com.jasen.kimjaeseung.morningbees.setting.royaljelly.RoyalJellyActivity
 import com.jasen.kimjaeseung.morningbees.util.Dlog
-import com.jasen.kimjaeseung.morningbees.util.getPriceAnnotation
 import kotlinx.android.synthetic.main.fragment_royaljelly_total.*
-import kotlinx.android.synthetic.main.fragment_royaljelly_unpaid.*
 import okhttp3.ResponseBody
 import org.json.JSONObject
 import retrofit2.Call
@@ -26,9 +24,14 @@ import retrofit2.Converter
 import retrofit2.Response
 
 class TotalFragment : Fragment() {
+
+    // Properties
+
     private val service = MorningBeesService.create()
     var totalList = mutableListOf<Penalty>()
     var penaltyHistoryList = mutableListOf<PenaltyHistory>()
+
+    // Life Cycle
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -44,15 +47,19 @@ class TotalFragment : Fragment() {
         initButtonListener()
     }
 
+    // Init Method
+
     private fun initButtonListener(){
         searchBeeMemberInTotalButton.setOnClickListener(activity as RoyalJellyActivity)
     }
 
-    fun setRecyclerView(){
+    fun initRecyclerView(){
         totalRoyalJellyRecyclerView.adapter = TotalAdapter(totalList)
         totalRoyalJellyRecyclerView.layoutManager =
             LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
     }
+
+    // API Request
 
     private fun requestBeePenaltyApi(status: Int) {
         service.beePenalty(GlobalApp.prefs.accessToken, GlobalApp.prefsBeeInfo.beeId, status)
@@ -105,7 +112,7 @@ class TotalFragment : Fragment() {
                                     }
                                 }
                             }
-                            setRecyclerView()
+                            initRecyclerView()
                             (activity as RoyalJellyActivity).initPrintedList = totalList
                         }
 

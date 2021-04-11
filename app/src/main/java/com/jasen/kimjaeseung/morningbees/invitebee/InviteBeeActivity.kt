@@ -1,16 +1,12 @@
 package com.jasen.kimjaeseung.morningbees.invitebee
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.Log
-import android.util.TypedValue
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import com.google.firebase.dynamiclinks.ktx.dynamicLinks
-import com.google.firebase.ktx.Firebase
 import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.app.GlobalApp
 import com.jasen.kimjaeseung.morningbees.beforejoin.BeforeJoinActivity
@@ -22,10 +18,8 @@ import com.jasen.kimjaeseung.morningbees.model.me.MeResponse
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import com.jasen.kimjaeseung.morningbees.util.Dlog
 import com.jasen.kimjaeseung.morningbees.util.showToast
-import kotlinx.android.synthetic.main.activity_beforejoin.*
 
 import kotlinx.android.synthetic.main.activity_invite_bee.*
-import kotlinx.android.synthetic.main.activity_login.*
 import okhttp3.ResponseBody
 import org.json.JSONObject
 import retrofit2.Call
@@ -34,40 +28,56 @@ import retrofit2.Converter
 import retrofit2.Response
 
 class InviteBeeActivity : AppCompatActivity(), View.OnClickListener{
+
+    // Properties
+
     private val service = MorningBeesService.create()
     private var accessToken = ""
     private var userId = 0
     private var beeId = 0
     private var beeTitle = ""
-//    private var parameter = ""
+
+    // Life Cycle
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_invite_bee)
-//        getDynamicLink()
         initButtonListener()
         accessToken = GlobalApp.prefs.accessToken
         beeId = GlobalApp.prefsBeeInfo.beeId
         beeTitle = GlobalApp.prefsBeeInfo.beeTitle
         beeNameText.text = ("${beeTitle}에 참여하여")
-        initImageView()
         initTextView()
     }
 
+    // Callback Method
+
     override fun onClick(v: View) {
         when(v.id){
-            R.id.accept_invitebee_button -> getAccessToken()
-            R.id.close_inviteView_button -> clickCloseInviteButton()
+            R.id.acceptInviteBeeButton -> getAccessToken()
+            R.id.denyInviteBeeButton -> clickCloseInviteButton()
+        }
+    }
+
+    // Init Method
+
+    private fun getAccessToken(){
+        Log.d(TAG, "accessToken: ${GlobalApp.prefs.accessToken}")
+        Log.d(TAG, "accessToken: ${accessToken}")
+        if(GlobalApp.prefs.accessToken == ""){
+            startActivity(
+                Intent(this, LoginActivity::class.java)
+                    .putExtra("RequestJoin", "")
+                    .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            )
+        } else {
+            requestMeApi()
         }
     }
 
     private fun initButtonListener(){
-        accept_invitebee_button.setOnClickListener(this)
-        close_inviteView_button.setOnClickListener(this)
-    }
-
-    private fun initImageView(){
-
+        acceptInviteBeeButton.setOnClickListener(this)
+        denyInviteBeeButton.setOnClickListener(this)
     }
 
     private fun initTextView(){
@@ -82,38 +92,20 @@ class InviteBeeActivity : AppCompatActivity(), View.OnClickListener{
         val widthPixel = displayMetrics.widthPixels
         val heightDp = heightPixel / displayMetrics.density
 
-        invite_textview1.textSize = (width / 17).toFloat()
+        inviteBeeText1.textSize = (width / 17).toFloat()
         beeNameText.textSize = (width / 28).toFloat()
-        invite_textview2.textSize = (width / 28).toFloat()
+        inviteBeeText2.textSize = (width / 28).toFloat()
 
-        val resizeHeight = illust_inviteImageView.layoutParams.height
-        illust_inviteImageView.layoutParams.width = (((illust_inviteImageView.layoutParams.width * heightDp * 0.35f) / resizeHeight) * displayMetrics.density).toInt()
-        illust_inviteImageView.layoutParams.height = illust_inviteImageView.layoutParams.width
+        val resizeHeight = inviteBeeImage.layoutParams.height
+        inviteBeeImage.layoutParams.width = (((inviteBeeImage.layoutParams.width * heightDp * 0.35f) / resizeHeight) * displayMetrics.density).toInt()
+        inviteBeeImage.layoutParams.height = inviteBeeImage.layoutParams.width
 
-        accept_invitebee_button.layoutParams.width = (widthPixel * 0.6f).toInt()
-        accept_invitebee_button.layoutParams.height = (heightPixel * 0.06f).toInt()
-        accept_invitebee_button.textSize = (width / 30).toFloat()
+        acceptInviteBeeButton.layoutParams.width = (widthPixel * 0.6f).toInt()
+        acceptInviteBeeButton.layoutParams.height = (heightPixel * 0.06f).toInt()
+        acceptInviteBeeButton.textSize = (width / 30).toFloat()
     }
 
-//    private fun getDynamicLink(){
-//        Firebase.dynamicLinks
-//            .getDynamicLink(intent)
-//            .addOnSuccessListener(this) { pendingDynamicLinkData ->
-//                val deepLink: Uri?
-//                if (pendingDynamicLinkData != null) {
-//                    deepLink = pendingDynamicLinkData.link
-//                    parameter = deepLink?.getQueryParameter("beeId").orEmpty()
-//                    beeTitle = deepLink?.getQueryParameter("beeTitle").orEmpty()
-//                    beeId = Integer.parseInt(parameter)
-//
-//                    GlobalApp.prefsBeeInfo.beeId = beeId
-//                    GlobalApp.prefsBeeInfo.beeTitle = beeTitle
-//
-//                    beeNameText.text = ("${beeTitle}에 참여하여")
-//                }
-//            }
-//            .addOnFailureListener(this) { e -> Log.w(TAG, "getDynamicLink:onFailure", e) }
-//    }
+    // API Request
 
     private fun requestMeApi() {
         service.me(accessToken)
@@ -127,7 +119,7 @@ class InviteBeeActivity : AppCompatActivity(), View.OnClickListener{
                         200 -> {
                             val meResponse : MeResponse? = response.body()
                             userId = meResponse!!.userId
-                            joinBeeServer()
+                            requestJoinBeApi()
                         }
 
                         400 -> {
@@ -165,22 +157,7 @@ class InviteBeeActivity : AppCompatActivity(), View.OnClickListener{
             })
     }
 
-    private fun gotoLogOut(){
-        startActivity(
-            Intent(this, LoginActivity::class.java)
-                .putExtra("RequestLogOut", "")
-                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)        )
-    }
-
-    private fun gotoSignIn(){
-        startActivity(
-            Intent(this, LoginActivity::class.java)
-                .putExtra("RequestSignIn", REQUEST_SIGN_IN)
-                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-        )
-    }
-
-    private fun joinBeeServer(){
+    private fun requestJoinBeApi(){
         val joinBeeRequest = JoinBeeRequest(beeId, userId, beeTitle)
         service.joinBee(GlobalApp.prefs.accessToken, joinBeeRequest)
             .enqueue(object: Callback<Void> {
@@ -240,6 +217,23 @@ class InviteBeeActivity : AppCompatActivity(), View.OnClickListener{
             })
     }
 
+    // Change Activity
+
+    private fun gotoLogOut(){
+        startActivity(
+            Intent(this, LoginActivity::class.java)
+                .putExtra("RequestLogOut", "")
+                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)        )
+    }
+
+    private fun gotoSignIn(){
+        startActivity(
+            Intent(this, LoginActivity::class.java)
+                .putExtra("RequestSignIn", REQUEST_SIGN_IN)
+                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        )
+    }
+
     private fun gotoMain(){
         startActivity(Intent(this, MainActivity::class.java)
             .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP))
@@ -249,20 +243,6 @@ class InviteBeeActivity : AppCompatActivity(), View.OnClickListener{
     private fun gotoBeforeJoin(){
         startActivity(Intent(this, BeforeJoinActivity::class.java)
             .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP))
-    }
-
-    private fun getAccessToken(){
-        Log.d(TAG, "accessToken: ${GlobalApp.prefs.accessToken}")
-        Log.d(TAG, "accessToken: ${accessToken}")
-        if(GlobalApp.prefs.accessToken == ""){
-            startActivity(
-                Intent(this, LoginActivity::class.java)
-                    .putExtra("RequestJoin", "")
-                    .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            )
-        } else {
-            requestMeApi()
-        }
     }
 
     private fun clickCloseInviteButton(){

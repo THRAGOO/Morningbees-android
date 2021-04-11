@@ -34,12 +34,17 @@ import retrofit2.Converter
 import retrofit2.Response
 
 class BeeMemberForManagerActivity : AppCompatActivity(), View.OnClickListener {
+
+    // Properties
+
     private var beeMemberList = mutableListOf<BeeMember>()
     private val service = MorningBeesService.create()
     private lateinit var accessToken: String
     private var beeId = 0
     var managerNickname = ""
     private var beeTitle = ""
+
+    // Life Cycle
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,6 +59,17 @@ class BeeMemberForManagerActivity : AppCompatActivity(), View.OnClickListener {
         initButtonListener()
         requestBeeMemberApi()
     }
+
+    // Callback Method
+
+    override fun onClick(v: View) {
+        when (v.id) {
+            R.id.toSettingBeeMemberActivityButtonForManager -> finish()
+            R.id.copyInviteLinkButtonForManager -> createDynamicLink()
+        }
+    }
+
+    // API Request
 
     private fun requestBeeMemberApi() {
         service.beeMember(accessToken, beeId).enqueue(object : Callback<BeeMemberResponse> {
@@ -120,6 +136,7 @@ class BeeMemberForManagerActivity : AppCompatActivity(), View.OnClickListener {
         })
     }
 
+    // View Design
     private fun sortBeeMemberList(){
         Log.d(TAG, "sortBeeMemberList")
         for(i in 0 until beeMemberList.size){
@@ -130,6 +147,8 @@ class BeeMemberForManagerActivity : AppCompatActivity(), View.OnClickListener {
             }
         }
     }
+
+    // Init Method
 
     private fun initRecyclerView() {
         val beeMemberSwipeHelperCallback = BeeMemberSwipeHelperCallback()
@@ -154,19 +173,10 @@ class BeeMemberForManagerActivity : AppCompatActivity(), View.OnClickListener {
         copyInviteLinkButtonForManager.setOnClickListener(this)
     }
 
-    override fun onClick(v: View) {
-        when (v.id) {
-            R.id.toSettingBeeMemberActivityButtonForManager -> finish()
-            R.id.copyInviteLinkButtonForManager -> createDynamicLink()
-        }
-    }
-
-    // MARK:~ Dynamic Link
+    // Create Dynamic Link
 
     private fun createDynamicLink() {
         val shortLinkTask = Firebase.dynamicLinks.shortLinkAsync {
-            //link = Uri.parse("https://www.app.thragoo.com?beeId=$beeId?beeTitle=$beeTitle")
-//            link = Uri.parse("https://www.thragoo.com").buildUpon()
             link = Uri.parse("https://www.thragoo.com").buildUpon()
                 .appendQueryParameter("beeId", beeId.toString())
                 .appendQueryParameter("beeTitle", beeTitle)
@@ -196,6 +206,8 @@ class BeeMemberForManagerActivity : AppCompatActivity(), View.OnClickListener {
         intent.putExtra(Intent.EXTRA_TEXT, "모닝비즈로부터 초대장이 왔습니다! 링크를 통해 확인해 주세요 :) $shortLink")
         startActivity(Intent.createChooser(intent, "Share Link"))
     }
+
+    // Change Activity
 
     private fun gotoLogOut() {
         startActivity(

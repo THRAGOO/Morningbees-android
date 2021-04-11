@@ -17,7 +17,6 @@ import com.jasen.kimjaeseung.morningbees.model.error.ErrorResponse
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import com.jasen.kimjaeseung.morningbees.util.Dlog
 import com.jasen.kimjaeseung.morningbees.util.showToast
-import kotlinx.android.synthetic.main.activity_create_step2.*
 import kotlinx.android.synthetic.main.activity_create_step3.*
 import okhttp3.ResponseBody
 import org.json.JSONObject
@@ -28,6 +27,9 @@ import retrofit2.Response
 
 
 class CreateStep3Activity : AppCompatActivity(), View.OnClickListener {
+
+    // Properties
+
     private var jellyCount: Int = 0
     private var beeTitle = ""
     var startTime = 0
@@ -36,6 +38,8 @@ class CreateStep3Activity : AppCompatActivity(), View.OnClickListener {
     private lateinit var refreshToken: String
 
     private val service = MorningBeesService.create()
+
+    // Life Cycle
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,6 +55,8 @@ class CreateStep3Activity : AppCompatActivity(), View.OnClickListener {
         initTextView()
     }
 
+    // Callback Method
+
     override fun onBackPressed() {
         super.onBackPressed()
         startActivity(
@@ -58,6 +64,287 @@ class CreateStep3Activity : AppCompatActivity(), View.OnClickListener {
                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         )
     }
+
+    override fun onClick(v: View) {
+        when (v.id) {
+            R.id.gotoMainFromStep3Button -> requestCreateBeeApi()
+            R.id.gotoStep2FromStep3Button -> onBackPressed()
+
+            R.id.jelly2Button -> {
+                jellyCount = 2
+                jelly2Button.isSelected = !jelly2Button.isSelected
+                initButtonVisible()
+
+                if (jelly2Button.isSelected) {
+                    jelly2Button.setImageDrawable(getDrawable(R.drawable.jelly_button_selected))
+                    gotoMainFromStep3Button.isEnabled = true
+                    gotoMainFromStep3Button.setTextColor(Color.parseColor("#222222"))
+                    gotoMainFromStep3Button.background =
+                        applicationContext.getDrawable(R.color.active_button)
+                    jelly2Text.setTypeface(Typeface.DEFAULT, Typeface.BOLD)
+                } else {
+                    jelly2Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                    gotoMainFromStep3Button.isEnabled = false
+                    gotoMainFromStep3Button.setTextColor(Color.parseColor("#aaaaaa"))
+                    gotoMainFromStep3Button.background =
+                        applicationContext.getDrawable(R.color.deactive_button)
+                    jelly2Text.setTypeface(Typeface.DEFAULT, Typeface.NORMAL)
+                }
+
+                jelly3Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly4Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly5Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly6Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly7Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly8Buton.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly9Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly10Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+            }
+
+            R.id.jelly3Button -> {
+                jellyCount = 3
+                jelly3Button.isSelected = !jelly3Button.isSelected
+                initButtonVisible()
+
+                if (jelly3Button.isSelected) {
+                    jelly3Button.setImageDrawable(getDrawable(R.drawable.jelly_button_selected))
+                    gotoMainFromStep3Button.isEnabled = true
+                    gotoMainFromStep3Button.setTextColor(Color.parseColor("#222222"))
+                    gotoMainFromStep3Button.background =
+                        applicationContext.getDrawable(R.color.active_button)
+                    jelly3Text.visibility = View.VISIBLE
+                } else {
+                    jelly3Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                    gotoMainFromStep3Button.isEnabled = false
+                    gotoMainFromStep3Button.setTextColor(Color.parseColor("#aaaaaa"))
+                    gotoMainFromStep3Button.background =
+                        applicationContext.getDrawable(R.color.deactive_button)
+                    jelly3Text.visibility = View.INVISIBLE
+                }
+
+                jelly2Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly4Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly5Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly6Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly7Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly8Buton.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly9Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly10Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+            }
+            R.id.jelly4Button -> {
+                jellyCount = 4
+                jelly4Button.isSelected = !jelly4Button.isSelected
+                initButtonVisible()
+
+                if (jelly4Button.isSelected) {
+                    jelly4Button.setImageDrawable(getDrawable(R.drawable.jelly_button_selected))
+                    gotoMainFromStep3Button.isEnabled = true
+                    gotoMainFromStep3Button.setTextColor(Color.parseColor("#222222"))
+                    gotoMainFromStep3Button.background =
+                        applicationContext.getDrawable(R.color.active_button)
+                    jelly4Text.visibility = View.VISIBLE
+                } else {
+                    jelly4Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                    gotoMainFromStep3Button.isEnabled = false
+                    gotoMainFromStep3Button.setTextColor(Color.parseColor("#aaaaaa"))
+                    gotoMainFromStep3Button.background =
+                        applicationContext.getDrawable(R.color.deactive_button)
+                    jelly4Text.visibility = View.INVISIBLE
+                }
+
+                jelly2Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly3Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly5Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly6Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly7Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly8Buton.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly9Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly10Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+            }
+            R.id.jelly5Button -> {
+                jellyCount = 5
+                jelly5Button.isSelected = !jelly5Button.isSelected
+                initButtonVisible()
+
+                if (jelly5Button.isSelected) {
+                    jelly5Button.setImageDrawable(getDrawable(R.drawable.jelly_button_selected))
+                    gotoMainFromStep3Button.isEnabled = true
+                    gotoMainFromStep3Button.setTextColor(Color.parseColor("#222222"))
+                    gotoMainFromStep3Button.background =
+                        applicationContext.getDrawable(R.color.active_button)
+                    jelly5Text.visibility = View.VISIBLE
+                } else {
+                    jelly5Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                    gotoMainFromStep3Button.isEnabled = false
+                    gotoMainFromStep3Button.setTextColor(Color.parseColor("#aaaaaa"))
+                    gotoMainFromStep3Button.background =
+                        applicationContext.getDrawable(R.color.deactive_button)
+                    jelly5Text.visibility = View.INVISIBLE
+                }
+
+                jelly2Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly3Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly4Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly6Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly7Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly8Buton.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly9Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly10Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+            }
+            R.id.jelly6Button -> {
+                jellyCount = 6
+                jelly6Button.isSelected = !jelly6Button.isSelected
+                initButtonVisible()
+
+                if (jelly6Button.isSelected) {
+                    jelly6Button.setImageDrawable(getDrawable(R.drawable.jelly_button_selected))
+                    gotoMainFromStep3Button.isEnabled = true
+                    gotoMainFromStep3Button.setTextColor(Color.parseColor("#222222"))
+                    gotoMainFromStep3Button.background =
+                        applicationContext.getDrawable(R.color.active_button)
+                    jelly6Text.visibility = View.VISIBLE
+                } else {
+                    jelly6Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                    gotoMainFromStep3Button.isEnabled = false
+                    gotoMainFromStep3Button.setTextColor(Color.parseColor("#aaaaaa"))
+                    gotoMainFromStep3Button.background =
+                        applicationContext.getDrawable(R.color.deactive_button)
+                    jelly6Text.visibility = View.INVISIBLE
+                }
+
+                jelly2Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly3Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly4Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly5Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly7Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly8Buton.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly9Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly10Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+            }
+            R.id.jelly7Button -> {
+                jellyCount = 7
+                jelly7Button.isSelected = !jelly7Button.isSelected
+                initButtonVisible()
+
+                if (jelly7Button.isSelected) {
+                    jelly7Button.setImageDrawable(getDrawable(R.drawable.jelly_button_selected))
+                    gotoMainFromStep3Button.isEnabled = true
+                    gotoMainFromStep3Button.setTextColor(Color.parseColor("#222222"))
+                    gotoMainFromStep3Button.background =
+                        applicationContext.getDrawable(R.color.active_button)
+                    jelly7Text.visibility = View.VISIBLE
+                } else {
+                    jelly7Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                    gotoMainFromStep3Button.isEnabled = false
+                    gotoMainFromStep3Button.setTextColor(Color.parseColor("#aaaaaa"))
+                    gotoMainFromStep3Button.background =
+                        applicationContext.getDrawable(R.color.deactive_button)
+                    jelly7Text.visibility = View.INVISIBLE
+                }
+
+                jelly2Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly3Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly4Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly5Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly6Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly8Buton.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly9Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly10Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+            }
+            R.id.jelly8Buton -> {
+                jellyCount = 8
+                jelly8Buton.isSelected = !jelly8Buton.isSelected
+                initButtonVisible()
+
+                if (jelly8Buton.isSelected) {
+                    jelly8Buton.setImageDrawable(getDrawable(R.drawable.jelly_button_selected))
+                    gotoMainFromStep3Button.isEnabled = true
+                    gotoMainFromStep3Button.setTextColor(Color.parseColor("#222222"))
+                    gotoMainFromStep3Button.background =
+                        applicationContext.getDrawable(R.color.active_button)
+                    jelly8Text.visibility = View.VISIBLE
+                } else {
+                    jelly8Buton.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                    gotoMainFromStep3Button.isEnabled = false
+                    gotoMainFromStep3Button.setTextColor(Color.parseColor("#aaaaaa"))
+                    gotoMainFromStep3Button.background =
+                        applicationContext.getDrawable(R.color.deactive_button)
+                    jelly8Text.visibility = View.INVISIBLE
+                }
+
+                jelly2Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly3Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly4Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly5Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly6Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly7Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly9Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly10Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+            }
+            R.id.jelly9Button -> {
+                jellyCount = 9
+                jelly9Button.isSelected = !jelly9Button.isSelected
+                initButtonVisible()
+
+                if (jelly9Button.isSelected) {
+                    jelly9Button.setImageDrawable(getDrawable(R.drawable.jelly_button_selected))
+                    gotoMainFromStep3Button.isEnabled = true
+                    gotoMainFromStep3Button.setTextColor(Color.parseColor("#222222"))
+                    gotoMainFromStep3Button.background =
+                        applicationContext.getDrawable(R.color.active_button)
+                    jelly9Text.visibility = View.VISIBLE
+                } else {
+                    jelly9Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                    gotoMainFromStep3Button.isEnabled = false
+                    gotoMainFromStep3Button.setTextColor(Color.parseColor("#aaaaaa"))
+                    gotoMainFromStep3Button.background =
+                        applicationContext.getDrawable(R.color.deactive_button)
+                    jelly9Text.visibility = View.INVISIBLE
+                }
+
+                jelly2Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly3Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly4Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly5Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly6Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly7Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly8Buton.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly10Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+            }
+            R.id.jelly10Button -> {
+                jellyCount = 10
+                jelly10Button.isSelected = !jelly10Button.isSelected
+                initButtonVisible()
+
+                if (jelly10Button.isSelected) {
+                    jelly10Button.setImageDrawable(getDrawable(R.drawable.jelly_button_selected))
+                    gotoMainFromStep3Button.isEnabled = true
+                    gotoMainFromStep3Button.setTextColor(Color.parseColor("#222222"))
+                    gotoMainFromStep3Button.background =
+                        applicationContext.getDrawable(R.color.active_button)
+                    jelly10Text.setTypeface(Typeface.DEFAULT, Typeface.BOLD)
+                } else {
+                    jelly10Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                    gotoMainFromStep3Button.isEnabled = false
+                    gotoMainFromStep3Button.setTextColor(Color.parseColor("#aaaaaa"))
+                    gotoMainFromStep3Button.background =
+                        applicationContext.getDrawable(R.color.deactive_button)
+                    jelly10Text.setTypeface(Typeface.DEFAULT, Typeface.NORMAL)
+                }
+
+                jelly2Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly3Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly4Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly5Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly6Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly7Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly8Buton.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+                jelly9Button.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
+            }
+        }
+    }
+
+    // Init Method
 
     private fun initTextView(){
         val displayMetrics = DisplayMetrics()
@@ -74,325 +361,48 @@ class CreateStep3Activity : AppCompatActivity(), View.OnClickListener {
         createStep3Description.textSize = (width / 30).toFloat()
         createStep3Text3.textSize = (width / 30).toFloat()
 
-        jelly_2_text.textSize = (width / 30).toFloat()
-        jelly_3_text.textSize = (width / 30).toFloat()
-        jelly_4_text.textSize = (width / 30).toFloat()
-        jelly_5_text.textSize = (width / 30).toFloat()
-        jelly_6_text.textSize = (width / 30).toFloat()
-        jelly_7_text.textSize = (width / 30).toFloat()
-        jelly_8_text.textSize = (width / 30).toFloat()
-        jelly_9_text.textSize = (width / 30).toFloat()
-        jelly_10_text.textSize = (width / 30).toFloat()
+        jelly2Text.textSize = (width / 30).toFloat()
+        jelly3Text.textSize = (width / 30).toFloat()
+        jelly4Text.textSize = (width / 30).toFloat()
+        jelly5Text.textSize = (width / 30).toFloat()
+        jelly6Text.textSize = (width / 30).toFloat()
+        jelly7Text.textSize = (width / 30).toFloat()
+        jelly8Text.textSize = (width / 30).toFloat()
+        jelly9Text.textSize = (width / 30).toFloat()
+        jelly10Text.textSize = (width / 30).toFloat()
 
-        create_step3_next_button.layoutParams.width = displayMetrics.widthPixels
-        create_step3_next_button.layoutParams.height = (heightPixel * 0.07f).toInt()
-        create_step3_next_button.textSize = (width / 25).toFloat()
-    }
-
-    override fun onClick(v: View) {
-        when (v.id) {
-            R.id.create_step3_next_button -> requestCreateBeeApi()
-            R.id.go_back_step2_button -> onBackPressed()
-
-            R.id.jelly_2 -> {
-                jellyCount = 2
-                jelly_2.isSelected = !jelly_2.isSelected
-                initButtonVisible()
-
-                if (jelly_2.isSelected) {
-                    jelly_2.setImageDrawable(getDrawable(R.drawable.jelly_button_selected))
-                    create_step3_next_button.isEnabled = true
-                    create_step3_next_button.setTextColor(Color.parseColor("#222222"))
-                    create_step3_next_button.background =
-                        applicationContext.getDrawable(R.color.active_button)
-                    jelly_2_text.setTypeface(Typeface.DEFAULT, Typeface.BOLD)
-                } else {
-                    jelly_2.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                    create_step3_next_button.isEnabled = false
-                    create_step3_next_button.setTextColor(Color.parseColor("#aaaaaa"))
-                    create_step3_next_button.background =
-                        applicationContext.getDrawable(R.color.deactive_button)
-                    jelly_2_text.setTypeface(Typeface.DEFAULT, Typeface.NORMAL)
-                }
-
-                jelly_3.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_4.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_5.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_6.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_7.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_8.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_9.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_10.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-            }
-
-            R.id.jelly_3 -> {
-                jellyCount = 3
-                jelly_3.isSelected = !jelly_3.isSelected
-                initButtonVisible()
-
-                if (jelly_3.isSelected) {
-                    jelly_3.setImageDrawable(getDrawable(R.drawable.jelly_button_selected))
-                    create_step3_next_button.isEnabled = true
-                    create_step3_next_button.setTextColor(Color.parseColor("#222222"))
-                    create_step3_next_button.background =
-                        applicationContext.getDrawable(R.color.active_button)
-                    jelly_3_text.visibility = View.VISIBLE
-                } else {
-                    jelly_3.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                    create_step3_next_button.isEnabled = false
-                    create_step3_next_button.setTextColor(Color.parseColor("#aaaaaa"))
-                    create_step3_next_button.background =
-                        applicationContext.getDrawable(R.color.deactive_button)
-                    jelly_3_text.visibility = View.INVISIBLE
-                }
-
-                jelly_2.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_4.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_5.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_6.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_7.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_8.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_9.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_10.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-            }
-            R.id.jelly_4 -> {
-                jellyCount = 4
-                jelly_4.isSelected = !jelly_4.isSelected
-                initButtonVisible()
-
-                if (jelly_4.isSelected) {
-                    jelly_4.setImageDrawable(getDrawable(R.drawable.jelly_button_selected))
-                    create_step3_next_button.isEnabled = true
-                    create_step3_next_button.setTextColor(Color.parseColor("#222222"))
-                    create_step3_next_button.background =
-                        applicationContext.getDrawable(R.color.active_button)
-                    jelly_4_text.visibility = View.VISIBLE
-                } else {
-                    jelly_4.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                    create_step3_next_button.isEnabled = false
-                    create_step3_next_button.setTextColor(Color.parseColor("#aaaaaa"))
-                    create_step3_next_button.background =
-                        applicationContext.getDrawable(R.color.deactive_button)
-                    jelly_4_text.visibility = View.INVISIBLE
-                }
-
-                jelly_2.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_3.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_5.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_6.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_7.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_8.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_9.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_10.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-            }
-            R.id.jelly_5 -> {
-                jellyCount = 5
-                jelly_5.isSelected = !jelly_5.isSelected
-                initButtonVisible()
-
-                if (jelly_5.isSelected) {
-                    jelly_5.setImageDrawable(getDrawable(R.drawable.jelly_button_selected))
-                    create_step3_next_button.isEnabled = true
-                    create_step3_next_button.setTextColor(Color.parseColor("#222222"))
-                    create_step3_next_button.background =
-                        applicationContext.getDrawable(R.color.active_button)
-                    jelly_5_text.visibility = View.VISIBLE
-                } else {
-                    jelly_5.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                    create_step3_next_button.isEnabled = false
-                    create_step3_next_button.setTextColor(Color.parseColor("#aaaaaa"))
-                    create_step3_next_button.background =
-                        applicationContext.getDrawable(R.color.deactive_button)
-                    jelly_5_text.visibility = View.INVISIBLE
-                }
-
-                jelly_2.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_3.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_4.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_6.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_7.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_8.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_9.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_10.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-            }
-            R.id.jelly_6 -> {
-                jellyCount = 6
-                jelly_6.isSelected = !jelly_6.isSelected
-                initButtonVisible()
-
-                if (jelly_6.isSelected) {
-                    jelly_6.setImageDrawable(getDrawable(R.drawable.jelly_button_selected))
-                    create_step3_next_button.isEnabled = true
-                    create_step3_next_button.setTextColor(Color.parseColor("#222222"))
-                    create_step3_next_button.background =
-                        applicationContext.getDrawable(R.color.active_button)
-                    jelly_6_text.visibility = View.VISIBLE
-                } else {
-                    jelly_6.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                    create_step3_next_button.isEnabled = false
-                    create_step3_next_button.setTextColor(Color.parseColor("#aaaaaa"))
-                    create_step3_next_button.background =
-                        applicationContext.getDrawable(R.color.deactive_button)
-                    jelly_6_text.visibility = View.INVISIBLE
-                }
-
-                jelly_2.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_3.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_4.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_5.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_7.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_8.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_9.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_10.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-            }
-            R.id.jelly_7 -> {
-                jellyCount = 7
-                jelly_7.isSelected = !jelly_7.isSelected
-                initButtonVisible()
-
-                if (jelly_7.isSelected) {
-                    jelly_7.setImageDrawable(getDrawable(R.drawable.jelly_button_selected))
-                    create_step3_next_button.isEnabled = true
-                    create_step3_next_button.setTextColor(Color.parseColor("#222222"))
-                    create_step3_next_button.background =
-                        applicationContext.getDrawable(R.color.active_button)
-                    jelly_7_text.visibility = View.VISIBLE
-                } else {
-                    jelly_7.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                    create_step3_next_button.isEnabled = false
-                    create_step3_next_button.setTextColor(Color.parseColor("#aaaaaa"))
-                    create_step3_next_button.background =
-                        applicationContext.getDrawable(R.color.deactive_button)
-                    jelly_7_text.visibility = View.INVISIBLE
-                }
-
-                jelly_2.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_3.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_4.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_5.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_6.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_8.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_9.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_10.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-            }
-            R.id.jelly_8 -> {
-                jellyCount = 8
-                jelly_8.isSelected = !jelly_8.isSelected
-                initButtonVisible()
-
-                if (jelly_8.isSelected) {
-                    jelly_8.setImageDrawable(getDrawable(R.drawable.jelly_button_selected))
-                    create_step3_next_button.isEnabled = true
-                    create_step3_next_button.setTextColor(Color.parseColor("#222222"))
-                    create_step3_next_button.background =
-                        applicationContext.getDrawable(R.color.active_button)
-                    jelly_8_text.visibility = View.VISIBLE
-                } else {
-                    jelly_8.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                    create_step3_next_button.isEnabled = false
-                    create_step3_next_button.setTextColor(Color.parseColor("#aaaaaa"))
-                    create_step3_next_button.background =
-                        applicationContext.getDrawable(R.color.deactive_button)
-                    jelly_8_text.visibility = View.INVISIBLE
-                }
-
-                jelly_2.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_3.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_4.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_5.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_6.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_7.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_9.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_10.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-            }
-            R.id.jelly_9 -> {
-                jellyCount = 9
-                jelly_9.isSelected = !jelly_9.isSelected
-                initButtonVisible()
-
-                if (jelly_9.isSelected) {
-                    jelly_9.setImageDrawable(getDrawable(R.drawable.jelly_button_selected))
-                    create_step3_next_button.isEnabled = true
-                    create_step3_next_button.setTextColor(Color.parseColor("#222222"))
-                    create_step3_next_button.background =
-                        applicationContext.getDrawable(R.color.active_button)
-                    jelly_9_text.visibility = View.VISIBLE
-                } else {
-                    jelly_9.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                    create_step3_next_button.isEnabled = false
-                    create_step3_next_button.setTextColor(Color.parseColor("#aaaaaa"))
-                    create_step3_next_button.background =
-                        applicationContext.getDrawable(R.color.deactive_button)
-                    jelly_9_text.visibility = View.INVISIBLE
-                }
-
-                jelly_2.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_3.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_4.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_5.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_6.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_7.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_8.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_10.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-            }
-            R.id.jelly_10 -> {
-                jellyCount = 10
-                jelly_10.isSelected = !jelly_10.isSelected
-                initButtonVisible()
-
-                if (jelly_10.isSelected) {
-                    jelly_10.setImageDrawable(getDrawable(R.drawable.jelly_button_selected))
-                    create_step3_next_button.isEnabled = true
-                    create_step3_next_button.setTextColor(Color.parseColor("#222222"))
-                    create_step3_next_button.background =
-                        applicationContext.getDrawable(R.color.active_button)
-                    jelly_10_text.setTypeface(Typeface.DEFAULT, Typeface.BOLD)
-                } else {
-                    jelly_10.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                    create_step3_next_button.isEnabled = false
-                    create_step3_next_button.setTextColor(Color.parseColor("#aaaaaa"))
-                    create_step3_next_button.background =
-                        applicationContext.getDrawable(R.color.deactive_button)
-                    jelly_10_text.setTypeface(Typeface.DEFAULT, Typeface.NORMAL)
-                }
-
-                jelly_2.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_3.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_4.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_5.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_6.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_7.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_8.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-                jelly_9.setImageDrawable(getDrawable(R.drawable.jelly_button_notselected))
-            }
-        }
+        gotoMainFromStep3Button.layoutParams.width = displayMetrics.widthPixels
+        gotoMainFromStep3Button.layoutParams.height = (heightPixel * 0.07f).toInt()
+        gotoMainFromStep3Button.textSize = (width / 25).toFloat()
     }
 
     private fun initButtonVisible() {
-        jelly_2_text.setTypeface(Typeface.DEFAULT, Typeface.NORMAL)
-        jelly_3_text.visibility = View.INVISIBLE
-        jelly_4_text.visibility = View.INVISIBLE
-        jelly_5_text.visibility = View.INVISIBLE
-        jelly_6_text.visibility = View.INVISIBLE
-        jelly_7_text.visibility = View.INVISIBLE
-        jelly_8_text.visibility = View.INVISIBLE
-        jelly_9_text.visibility = View.INVISIBLE
-        jelly_10_text.setTypeface(Typeface.DEFAULT, Typeface.NORMAL)
+        jelly2Text.setTypeface(Typeface.DEFAULT, Typeface.NORMAL)
+        jelly3Text.visibility = View.INVISIBLE
+        jelly4Text.visibility = View.INVISIBLE
+        jelly5Text.visibility = View.INVISIBLE
+        jelly6Text.visibility = View.INVISIBLE
+        jelly7Text.visibility = View.INVISIBLE
+        jelly8Text.visibility = View.INVISIBLE
+        jelly9Text.visibility = View.INVISIBLE
+        jelly10Text.setTypeface(Typeface.DEFAULT, Typeface.NORMAL)
     }
 
     private fun initButtonListeners() {
-        create_step3_next_button.setOnClickListener(this)
-        go_back_step2_button.setOnClickListener(this)
-        jelly_2.setOnClickListener(this)
-        jelly_3.setOnClickListener(this)
-        jelly_4.setOnClickListener(this)
-        jelly_5.setOnClickListener(this)
-        jelly_6.setOnClickListener(this)
-        jelly_7.setOnClickListener(this)
-        jelly_8.setOnClickListener(this)
-        jelly_9.setOnClickListener(this)
-        jelly_10.setOnClickListener(this)
+        gotoMainFromStep3Button.setOnClickListener(this)
+        gotoStep2FromStep3Button.setOnClickListener(this)
+        jelly2Button.setOnClickListener(this)
+        jelly3Button.setOnClickListener(this)
+        jelly4Button.setOnClickListener(this)
+        jelly5Button.setOnClickListener(this)
+        jelly6Button.setOnClickListener(this)
+        jelly7Button.setOnClickListener(this)
+        jelly8Buton.setOnClickListener(this)
+        jelly9Button.setOnClickListener(this)
+        jelly10Button.setOnClickListener(this)
     }
+
+    // API Request
 
     private fun requestCreateBeeApi() {
         val pay: Int = (jellyCount * 1000)
@@ -448,6 +458,8 @@ class CreateStep3Activity : AppCompatActivity(), View.OnClickListener {
                 }
             })
     }
+
+    // Change Activity
 
     private fun gotoMain() {
         startActivity(Intent(this, MainActivity::class.java)

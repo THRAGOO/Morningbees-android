@@ -27,18 +27,25 @@ import retrofit2.Converter
 import retrofit2.Response
 
 class LoadMissionPhotoActivity : AppCompatActivity(), View.OnClickListener {
+
+    // Properties
+
     val service = MorningBeesService.create()
     var targetDate = ""
     var missionList = mutableListOf<Mission>()
+
+    // Life Cycle
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_load_mission_photo)
         targetDate = intent.getStringExtra("targetDate")!!
 
         initButtonListener()
-//        initImageView()
         requestMissionAPI()
     }
+
+    // Callback Method
 
     override fun onClick(v: View) {
         when (v.id) {
@@ -46,18 +53,19 @@ class LoadMissionPhotoActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    private fun initImageView(){
-        val displayMetrics = DisplayMetrics()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            display!!.getRealMetrics(displayMetrics)
-        } else {
-            windowManager.defaultDisplay.getMetrics(displayMetrics)
-        }
+    // Init Method
 
-        Log.d("activity", "displayMetrics.widthPixels ${displayMetrics.widthPixels}")
-        itemMissionPhotoImage.layoutParams.width = displayMetrics.widthPixels
-        itemMissionPhotoImage.layoutParams.height = displayMetrics.widthPixels / 3 * 4
+    private fun initButtonListener() {
+        gotoMainFromMissionPhotoButton.setOnClickListener(this)
     }
+
+    private fun initRecyclerView() {
+        missionPhotoRecyclerView.adapter = LoadMissionPhotoAdapter(missionList)
+        missionPhotoRecyclerView.layoutManager =
+            LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+    }
+
+    // API Request
 
     private fun requestMissionAPI() {
         service.missionInfo(
@@ -127,15 +135,7 @@ class LoadMissionPhotoActivity : AppCompatActivity(), View.OnClickListener {
             })
     }
 
-    private fun initButtonListener() {
-        gotoMainFromMissionPhotoButton.setOnClickListener(this)
-    }
-
-    private fun initRecyclerView() {
-        missionPhotoRecyclerView.adapter = LoadMissionPhotoAdapter(missionList)
-        missionPhotoRecyclerView.layoutManager =
-            LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-    }
+    // Change Activity
 
     private fun gotoLogOut() {
         startActivity(

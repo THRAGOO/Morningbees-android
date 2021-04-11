@@ -25,11 +25,16 @@ import retrofit2.Converter
 import retrofit2.Response
 
 class SettingActivity : AppCompatActivity(), View.OnClickListener {
+
+    // Properties
+
     private lateinit var accessToken: String
     private val service = MorningBeesService.create()
     var beeId: Int = -1
     private var beeTitle = ""
     private var pay = 0
+
+    // Life Cycle
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +47,30 @@ class SettingActivity : AppCompatActivity(), View.OnClickListener {
 
         requestBeeInfoApi()
     }
+
+    // Callback Method
+
+    override fun onClick(v: View) {
+        when (v.id) {
+            R.id.go_main_btn -> finish()
+            R.id.goToRoyalJellyButton -> gotoRoyalJelly()
+            R.id.logout_button -> gotoLogOut()
+            R.id.wrapBeeWithdrawalLayout -> requestBeeWithdrawalApi()
+            R.id.totalBeeMemberButton -> gotoTotalBeeMember()
+        }
+    }
+
+    // Init Method
+
+    private fun initButtonListener() {
+        go_main_btn.setOnClickListener(this)
+        goToRoyalJellyButton.setOnClickListener(this)
+        totalBeeMemberButton.setOnClickListener(this)
+        logout_button.setOnClickListener(this)
+        wrapBeeWithdrawalLayout.setOnClickListener(this)
+    }
+
+    // API Request
 
     private fun requestBeeInfoApi() {
         service.beeInfo(accessToken, beeId).enqueue(object : Callback<BeeInfoResponse> {
@@ -94,20 +123,6 @@ class SettingActivity : AppCompatActivity(), View.OnClickListener {
                 }
             }
         })
-    }
-
-    private fun setLayoutToSetting(beeInfoResponse: BeeInfoResponse) {
-        my_nickname_text.text = beeInfoResponse.nickname
-        myEmailText.text = GlobalApp.prefsBeeInfo.myEmail
-        missionTimeInSetting.text =
-            "${beeInfoResponse.startTime[0]}시-${beeInfoResponse.endTime[0]}시"
-        pay = beeInfoResponse.pay
-        royalJellyInSetting.text = "${pay.getPriceAnnotation()}원"
-        if (beeInfoResponse.manager) {
-            wrap_bee_withdrawal_layout.visibility = View.INVISIBLE
-        } else {
-            wrap_bee_withdrawal_layout.visibility = View.VISIBLE
-        }
     }
 
     private fun requestBeeWithdrawalApi() {
@@ -163,6 +178,24 @@ class SettingActivity : AppCompatActivity(), View.OnClickListener {
 
     }
 
+    // View Design
+
+    private fun setLayoutToSetting(beeInfoResponse: BeeInfoResponse) {
+        myNicknameText.text = beeInfoResponse.nickname
+        myEmailText.text = GlobalApp.prefsBeeInfo.myEmail
+        missionTimeInSetting.text =
+            "${beeInfoResponse.startTime[0]}시-${beeInfoResponse.endTime[0]}시"
+        pay = beeInfoResponse.pay
+        royalJellyInSetting.text = "${pay.getPriceAnnotation()}원"
+        if (beeInfoResponse.manager) {
+            wrapBeeWithdrawalLayout.visibility = View.INVISIBLE
+        } else {
+            wrapBeeWithdrawalLayout.visibility = View.VISIBLE
+        }
+    }
+
+    // Change Activity
+
     private fun gotoTotalBeeMember() {
         if (GlobalApp.prefsBeeInfo.myNickname == GlobalApp.prefsBeeInfo.beeManagerNickname) {
             startActivity(
@@ -193,24 +226,6 @@ class SettingActivity : AppCompatActivity(), View.OnClickListener {
         startActivity(
             Intent(this, RoyalJellyActivity::class.java)
         )
-    }
-
-    override fun onClick(v: View) {
-        when (v.id) {
-            R.id.go_main_btn -> finish()
-            R.id.goToRoyalJellyButton -> gotoRoyalJelly()
-            R.id.logout_button -> gotoLogOut()
-            R.id.wrap_bee_withdrawal_layout -> requestBeeWithdrawalApi()
-            R.id.total_bee_member_button -> gotoTotalBeeMember()
-        }
-    }
-
-    private fun initButtonListener() {
-        go_main_btn.setOnClickListener(this)
-        goToRoyalJellyButton.setOnClickListener(this)
-        total_bee_member_button.setOnClickListener(this)
-        logout_button.setOnClickListener(this)
-        wrap_bee_withdrawal_layout.setOnClickListener(this)
     }
 
     companion object {

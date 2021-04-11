@@ -19,10 +19,15 @@ import kotlinx.android.synthetic.main.activity_signup.*
 import java.util.regex.Pattern
 
 class SignUpActivity : BaseActivity(), SignUpContract.View, View.OnClickListener {
+
+    // Properties
+
     private lateinit var signUpPresenter: SignUpPresenter
 
     private var socialAccessToken: String = ""
     private var provider: String = ""
+
+    // Life Cycle
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "onCreate callback")
@@ -47,25 +52,29 @@ class SignUpActivity : BaseActivity(), SignUpContract.View, View.OnClickListener
         signUpPresenter.dropView()
     }
 
+    // Init Method
+
     override fun initPresenter() {
         signUpPresenter = SignUpPresenter(this)
     }
 
     private fun initButtonListeners() {
-        signup_nickname_check_button.setOnClickListener(this)
-        signup_start_button.setOnClickListener(this)
+        nicknameCheckSignUpButton.setOnClickListener(this)
+        gotoCreateBeeFromSignUpButton.setOnClickListener(this)
     }
+
+    // Callback Method
 
     override fun onClick(v: View) {
         when (v.id) {
-            R.id.signup_nickname_check_button -> nicknameCheck()
-            R.id.signup_start_button -> signUpStart()
+            R.id.nicknameCheckSignUpButton -> nicknameCheck()
+            R.id.gotoCreateBeeFromSignUpButton -> signUpStart()
         }
     }
 
     private fun nicknameCheck() {
-        signup_nickname_check_button.setOnClickListener {
-            val usrNickname = signup_nickname_text.text.toString()
+        nicknameCheckSignUpButton.setOnClickListener {
+            val usrNickname = nicknameSignUpText.text.toString()
 
             closeKeyboard()
             val filteredNickname = nicknameFilter(usrNickname)
@@ -77,13 +86,13 @@ class SignUpActivity : BaseActivity(), SignUpContract.View, View.OnClickListener
 
     override fun nicknameValidCheck(i: Int) {
         if (i == 1) {
-            signup_start_button.isEnabled = true
-            signup_start_button.background = applicationContext.getDrawable(R.color.active_button)
-            signup_start_button.setTextColor(Color.parseColor("#222222"))
+            gotoCreateBeeFromSignUpButton.isEnabled = true
+            gotoCreateBeeFromSignUpButton.background = applicationContext.getDrawable(R.color.active_button)
+            gotoCreateBeeFromSignUpButton.setTextColor(Color.parseColor("#222222"))
         } else {
-            signup_start_button.isEnabled = false
-            signup_start_button.background = applicationContext.getDrawable(R.color.deactive_button)
-            signup_start_button.setTextColor(Color.parseColor("#aaaaaa"))
+            gotoCreateBeeFromSignUpButton.isEnabled = false
+            gotoCreateBeeFromSignUpButton.background = applicationContext.getDrawable(R.color.deactive_button)
+            gotoCreateBeeFromSignUpButton.setTextColor(Color.parseColor("#aaaaaa"))
         }
     }
 

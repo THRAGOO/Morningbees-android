@@ -21,7 +21,7 @@
             android:layout_marginBottom="25dp">
 
             <ImageButton
-                android:id="@+id/go_back_step1_button"
+                android:id="@+id/gotoStep1FromStep2Button"
                 android:layout_width="12dp"
                 android:layout_height="20dp"
                 android:layout_alignParentStart="true"
@@ -37,7 +37,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/createBeeText1"
+                android:id="@+id/createBeeStep2Text1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:lineHeight="33sp"
@@ -47,7 +47,7 @@
                 android:textStyle="bold"/>
 
             <TextView
-                android:id="@+id/createBeeText2"
+                android:id="@+id/createBeeStep2Text2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:lineHeight="33sp"
@@ -81,7 +81,7 @@
             android:orientation="horizontal">
 
             <ImageButton
-                android:id="@+id/clock_6_button"
+                android:id="@+id/clock6Button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -92,7 +92,7 @@
                 android:layout_marginEnd="8dp"/>
 
             <ImageButton
-                android:id="@+id/clock_7_button"
+                android:id="@+id/clock7Button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -103,7 +103,7 @@
                 android:layout_marginEnd="8dp"/>
 
             <ImageButton
-                android:id="@+id/clock_8_button"
+                android:id="@+id/clock8Button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -114,7 +114,7 @@
                 android:layout_marginEnd="8dp"/>
 
             <ImageButton
-                android:id="@+id/clock_9_button"
+                android:id="@+id/clock9Button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -125,7 +125,7 @@
                 android:layout_marginEnd="8dp"/>
 
             <ImageButton
-                android:id="@+id/clock_10_button"
+                android:id="@+id/clock10Button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -211,7 +211,7 @@
     </RelativeLayout>
 
     <Button
-        android:id="@+id/create_step2_next_button"
+        android:id="@+id/gotoStep3FromStep2Button"
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:layout_alignParentBottom="true"

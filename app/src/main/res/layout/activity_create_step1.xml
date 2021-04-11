@@ -19,7 +19,7 @@
             android:layout_marginBottom="25dp">
 
             <ImageButton
-                android:id="@+id/go_back_start_button"
+                android:id="@+id/gotoSignInFromCreateStep1Button"
                 android:layout_width="12dp"
                 android:layout_height="20dp"
                 android:layout_alignParentStart="true"
@@ -88,7 +88,7 @@
             </RelativeLayout>
 
             <TextView
-                android:id="@+id/beename_textview"
+                android:id="@+id/createStep1BeeNameText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="#aaaaaa"
@@ -99,7 +99,7 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/create_step1_next_button"
+        android:id="@+id/gotoStep2FromStep1Button"
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:layout_alignParentBottom="true"

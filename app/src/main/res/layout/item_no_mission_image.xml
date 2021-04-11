@@ -11,7 +11,7 @@
         android:layout_gravity="center"/>
 
     <ImageView
-        android:id="@+id/item_mission_participate_image"
+        android:id="@+id/itemMissionParticipateImage"
         android:background="@drawable/not_upload_mission_img_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

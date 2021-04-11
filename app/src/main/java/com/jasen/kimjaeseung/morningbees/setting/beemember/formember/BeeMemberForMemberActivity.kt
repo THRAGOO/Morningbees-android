@@ -25,11 +25,16 @@ import retrofit2.Converter
 import retrofit2.Response
 
 class BeeMemberForMemberActivity : AppCompatActivity(), View.OnClickListener {
+
+    // Properties
+
     private var beeMemberList = mutableListOf<BeeMember>()
     private val service = MorningBeesService.create()
     private lateinit var accessToken: String
     private var beeId = 0
     private var managerNickname = ""
+
+    // Life Cycle
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +48,33 @@ class BeeMemberForMemberActivity : AppCompatActivity(), View.OnClickListener {
         initButtonListener()
         requestBeeMemberApi()
     }
+
+    // Callback Method
+
+    override fun onClick(v: View) {
+        when (v.id) {
+            R.id.toSettingBeeMemberActivityButtonForMember -> finish()
+        }
+    }
+
+    // Init Method
+
+    private fun initRecyclerView() {
+        beeMemberRecyclerForMember.apply {
+            layoutManager = LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false)
+            adapter =
+                BeeMemberForMemberAdapter(
+                    beeMemberList,
+                    this@BeeMemberForMemberActivity
+                )
+        }
+    }
+
+    private fun initButtonListener() {
+        toSettingBeeMemberActivityButtonForMember.setOnClickListener(this)
+    }
+
+    // API Request
 
     private fun requestBeeMemberApi() {
         service.beeMember(accessToken, beeId).enqueue(object : Callback<BeeMemberResponse> {
@@ -109,38 +141,20 @@ class BeeMemberForMemberActivity : AppCompatActivity(), View.OnClickListener {
         })
     }
 
-    private fun sortBeeMemberList(){
+    // View Design
+
+    private fun sortBeeMemberList() {
         Log.d(TAG, "sortBeeMemberList")
-        for(i in 0 until beeMemberList.size){
-            if(beeMemberList[i].nickname == GlobalApp.prefsBeeInfo.beeManagerNickname){
+        for (i in 0 until beeMemberList.size) {
+            if (beeMemberList[i].nickname == GlobalApp.prefsBeeInfo.beeManagerNickname) {
 
                 beeMemberList.addAll(0, listOf(beeMemberList[i]))
-                beeMemberList.removeAt(i+1)
+                beeMemberList.removeAt(i + 1)
             }
         }
     }
 
-
-    private fun initRecyclerView() {
-        beeMemberRecyclerForMember.apply {
-            layoutManager = LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false)
-            adapter =
-                BeeMemberForMemberAdapter(
-                    beeMemberList,
-                    this@BeeMemberForMemberActivity
-                )
-        }
-    }
-
-    private fun initButtonListener() {
-        toSettingBeeMemberActivityButtonForMember.setOnClickListener(this)
-    }
-
-    override fun onClick(v: View) {
-        when (v.id) {
-            R.id.toSettingBeeMemberActivityButtonForMember -> finish()
-        }
-    }
+    // Change Activity
 
     private fun gotoLogOut() {
         startActivity(
