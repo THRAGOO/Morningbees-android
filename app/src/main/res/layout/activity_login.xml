@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -49,25 +50,26 @@
             android:layout_gravity="bottom"
             android:background="#ffffff"
             android:orientation="vertical">
-            <ImageView
+
+            <com.jasen.kimjaeseung.morningbees.view.custom.SignInSnsButton
                 android:id="@+id/login_naver_sign_in_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:adjustViewBounds="true"
-                android:src="@drawable/icon_button_naver" />
+                app:backgroundSnsButton="@drawable/background_sns_naver_button"
+                app:signInSnsSymbol="@drawable/symbol_naver"
+                app:signInSnsText="Naver로 로그인"
+                app:signInSnsTextColor="@color/signInNaverTextColor"/>
 
-            <ImageView
+            <com.jasen.kimjaeseung.morningbees.view.custom.SignInSnsButton
                 android:id="@+id/login_google_sign_in_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
+                app:backgroundSnsButton="@drawable/background_sns_google_button"
+                app:signInSnsSymbol="@drawable/symbol_google"
+                app:signInSnsText="Google로 로그인"
+                app:signInSnsTextColor="@color/signInGoogleTextColor"
                 android:layout_marginTop="12dp"
-                android:layout_marginRight="16dp"
-                android:adjustViewBounds="true"
-                android:paddingBottom="47dp"
-                android:src="@drawable/icon_button_google" />
+                android:paddingBottom="47dp"/>
         </LinearLayout>
     </FrameLayout>
 

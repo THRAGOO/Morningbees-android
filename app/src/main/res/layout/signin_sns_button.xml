@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="45dp"
+    android:background="@drawable/background_sns_naver_button"
+    android:id="@+id/backgroundSnsButton"
+    android:gravity="center"
+    android:layout_marginStart="17dp"
+    android:layout_marginEnd="17dp">
+
+    <ImageView
+        android:id="@+id/signInSnsSymbol"
+        android:layout_width="18dp"
+        android:layout_height="16dp"
+        android:background="@drawable/symbol_naver"
+        android:layout_gravity="center"/>
+
+    <TextView
+        android:id="@+id/signInSnsText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Naver로 로그인"
+        android:textSize="14dp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:layout_marginStart="21dp"/>
+</LinearLayout>

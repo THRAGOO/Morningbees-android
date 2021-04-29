@@ -39,4 +39,7 @@
 
     <color name="tooShortText">#eb3636</color>
     <color name="tooLongText">#aaaaaa</color>
+
+    <color name="signInNaverTextColor">#ffffff</color>
+    <color name="signInGoogleTextColor">#777777</color>
 </resources>

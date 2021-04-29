@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="signInSNSButton">
+        <attr name="signInSnsSymbol" format="reference|integer"/>
+        <attr name="backgroundSnsButton" format="reference|integer"/>
+        <attr name="signInSnsText" format="reference|string"/>
+        <attr name="signInSnsTextColor" format="reference|integer"/>
+    </declare-styleable>
+</resources>
