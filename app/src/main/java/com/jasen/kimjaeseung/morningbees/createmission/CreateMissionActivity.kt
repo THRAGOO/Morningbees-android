@@ -16,7 +16,6 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
-import android.view.ViewTreeObserver
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -25,6 +24,7 @@ import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.app.GlobalApp
 import com.jasen.kimjaeseung.morningbees.login.LoginActivity
 import com.jasen.kimjaeseung.morningbees.main.MainActivity
+import com.jasen.kimjaeseung.morningbees.mediascanner.MediaScanner
 import com.jasen.kimjaeseung.morningbees.model.error.ErrorResponse
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import com.jasen.kimjaeseung.morningbees.util.Dlog
@@ -43,6 +43,7 @@ import retrofit2.Converter
 import retrofit2.Response
 import java.io.File
 import java.io.IOException
+import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -118,7 +119,7 @@ class CreateMissionActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, intent)
-        if (requestCode == PICK_FROM_ALBUM) {
+        if (requestCode == REQUEST_IMAGE_CAPTURE_FROM_ALBUM) {
             data?.data?.let { photoUri ->
                 currentPhotoPath = URIPathHelper().getPath(this, photoUri).toString()
 
@@ -144,9 +145,16 @@ class CreateMissionActivity : AppCompatActivity(), View.OnClickListener {
                     loadMissionView.clipToOutline = true
                 }
             }
-        } else if (requestCode == PICK_FROM_CAMERA) {
-            galleryAddPicture()
-            setPic()
+        } else if (requestCode == REQUEST_IMAGE_CAPTURE_FROM_CAMERA) {
+//            galleryAddPicture()
+            val mediaScanner = MediaScanner.newInstance(this)
+            try {
+                mediaScanner.mediaScanning(currentPhotoPath)
+                setPic()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Log.d(TAG, "Media Scan Error: $e")
+            }
         }
 
         isActivateButton()
@@ -404,15 +412,17 @@ class CreateMissionActivity : AppCompatActivity(), View.OnClickListener {
                         it
                     )
                     takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
-                    startActivityForResult(takePictureIntent, PICK_FROM_CAMERA)
+                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE_FROM_CAMERA)
                 }
             }
         }
     }
 
-    private fun createImageFile(): File? {
+    @Throws(IOException::class)
+    private fun createImageFile(): File {
         val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
         val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        Log.d(TAG, "storageDir: ${storageDir?.absolutePath}")
 
         return File.createTempFile(
             "JPEG_${timeStamp}_",
@@ -421,26 +431,6 @@ class CreateMissionActivity : AppCompatActivity(), View.OnClickListener {
         ).apply {
             currentPhotoPath = absolutePath
         }
-    }
-
-    private fun galleryAddPicture() {
-        val file = File(currentPhotoPath)
-        var mediaScannerConnection: MediaScannerConnection? = null
-
-        val mediaScannerClient = object : MediaScannerConnection.MediaScannerConnectionClient {
-            override fun onMediaScannerConnected() {
-                mediaScannerConnection?.scanFile(file.path, null)
-                Log.d(TAG, "media scan success")
-            }
-
-            override fun onScanCompleted(path: String?, uri: Uri?) {
-                Log.d(TAG, "media scan completed")
-                mediaScannerConnection?.disconnect()
-            }
-        }
-
-        mediaScannerConnection = MediaScannerConnection(this, mediaScannerClient)
-        mediaScannerConnection.connect()
     }
 
     // Change Activity
@@ -461,7 +451,7 @@ class CreateMissionActivity : AppCompatActivity(), View.OnClickListener {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
             .putExtra(MediaStore.EXTRA_OUTPUT, uriSavedImage)
         intent.type = "image/*"
-        startActivityForResult(intent, PICK_FROM_ALBUM)
+        startActivityForResult(intent, REQUEST_IMAGE_CAPTURE_FROM_ALBUM)
     }
 
     private fun gotoMain() {
@@ -499,8 +489,8 @@ class CreateMissionActivity : AppCompatActivity(), View.OnClickListener {
 
     companion object {
         private const val REQUEST_PERMISSION = 1000
-        private const val PICK_FROM_ALBUM = 1001
-        private const val PICK_FROM_CAMERA = 1002
+        private const val REQUEST_IMAGE_CAPTURE_FROM_ALBUM = 1001
+        private const val REQUEST_IMAGE_CAPTURE_FROM_CAMERA = 1002
         private const val LOAD_IMAGEVIEW = 10
         private const val CLICK_IMAGEVIEW = 11
 

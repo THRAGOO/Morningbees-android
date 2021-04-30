@@ -37,6 +37,7 @@ import com.jasen.kimjaeseung.morningbees.calendar.CalendarDialog
 import com.jasen.kimjaeseung.morningbees.createmission.CreateMissionActivity
 import com.jasen.kimjaeseung.morningbees.loadmissionphoto.LoadMissionPhotoActivity
 import com.jasen.kimjaeseung.morningbees.login.LoginActivity
+import com.jasen.kimjaeseung.morningbees.mediascanner.MediaScanner
 import com.jasen.kimjaeseung.morningbees.model.error.ErrorResponse
 import com.jasen.kimjaeseung.morningbees.model.main.MainResponse
 import com.jasen.kimjaeseung.morningbees.model.me.MeResponse
@@ -60,6 +61,7 @@ import retrofit2.Converter
 import retrofit2.Response
 import java.io.File
 import java.io.IOException
+import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -142,8 +144,14 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
             }
             gotoMissionParticipate(currentPhotoPath, PICK_FROM_ALBUM)
         } else if (requestCode == PICK_FROM_CAMERA && resultCode == Activity.RESULT_OK) {
-            addPictureToGallery()
-            gotoMissionParticipate(currentPhotoPath, PICK_FROM_CAMERA)
+            val mediaScanner = MediaScanner.newInstance(this)
+            try {
+                mediaScanner.mediaScanning(currentPhotoPath)
+                gotoMissionParticipate(currentPhotoPath, PICK_FROM_CAMERA)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Log.d(TAG, "Media Scan Error: $e")
+            }
         } else if (requestCode == GO_TO_PARTICIPATE && resultCode == FINISH) {
             bottomSheetDialog.dismiss()
             missionUrlList = mutableListOf()
@@ -748,27 +756,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
                 }
             }
         }
-    }
-
-    private fun addPictureToGallery() {
-        val file = File(currentPhotoPath)
-        var mediaScannerConnection: MediaScannerConnection? = null
-
-        val mediaScannerClient = object : MediaScannerConnection.MediaScannerConnectionClient {
-            override fun onMediaScannerConnected() {
-                mediaScannerConnection?.scanFile(file.path, null)
-                Log.d(TAG, "media scan success")
-            }
-
-            override fun onScanCompleted(path: String?, uri: Uri?) {
-                Log.d(TAG, "media scan completed")
-                mediaScannerConnection?.disconnect()
-            }
-        }
-
-        mediaScannerConnection = MediaScannerConnection(this, mediaScannerClient)
-        mediaScannerConnection.connect()
-
     }
 
     private fun createImageFile(): File? {
