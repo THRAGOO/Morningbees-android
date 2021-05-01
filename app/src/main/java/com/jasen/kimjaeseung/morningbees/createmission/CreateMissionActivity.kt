@@ -131,26 +131,17 @@ class CreateMissionActivity : AppCompatActivity(), View.OnClickListener {
                         BitmapFactory.decodeStream(inputStream)
                     }
                 }
-//                setPic()
+
                 if (selectedImage != null){
-                    mBitmap = selectedImage
-                    loadMissionView.setImageBitmap(
-                        Bitmap.createScaledBitmap(
-                            selectedImage,
-                            120,
-                            120,
-                            false
-                        )
-                    )
+                    setPic(currentPhotoPath)
                     loadMissionView.clipToOutline = true
                 }
             }
         } else if (requestCode == REQUEST_IMAGE_CAPTURE_FROM_CAMERA) {
-//            galleryAddPicture()
             val mediaScanner = MediaScanner.newInstance(this)
             try {
                 mediaScanner.mediaScanning(currentPhotoPath)
-                setPic()
+                setPic(currentPhotoPath)
             } catch (e: Exception) {
                 e.printStackTrace()
                 Log.d(TAG, "Media Scan Error: $e")
@@ -159,7 +150,6 @@ class CreateMissionActivity : AppCompatActivity(), View.OnClickListener {
 
         isActivateButton()
 
-        Log.d(TAG, "on mBitmap: $mBitmap")
         if (mBitmap == null) {
             changeWrapView(CLICK_IMAGEVIEW)
         } else {
@@ -196,7 +186,6 @@ class CreateMissionActivity : AppCompatActivity(), View.OnClickListener {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                // 입력이 끝났을 때 -> 다음 넘어가도 됨
                 description = missionDescription.text.toString()
             }
         })
@@ -269,12 +258,13 @@ class CreateMissionActivity : AppCompatActivity(), View.OnClickListener {
         isActivateButton()
     }
 
-    private fun setPic() {
+    private fun setPic(currentPhotoPath: String) {
         val targetW = loadMissionView.width
         val targetH = loadMissionView.height
 
         val bmOptions = BitmapFactory.Options().apply {
             inJustDecodeBounds = true
+
             val photoW = outWidth
             val photoH = outHeight
 
@@ -288,6 +278,7 @@ class CreateMissionActivity : AppCompatActivity(), View.OnClickListener {
             mBitmap = bitmap
             loadMissionView.setImageBitmap(Bitmap.createScaledBitmap(bitmap, 120, 120, false))
         }
+
         loadMissionView.clipToOutline = true
     }
 
@@ -422,7 +413,6 @@ class CreateMissionActivity : AppCompatActivity(), View.OnClickListener {
     private fun createImageFile(): File {
         val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
         val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-        Log.d(TAG, "storageDir: ${storageDir?.absolutePath}")
 
         return File.createTempFile(
             "JPEG_${timeStamp}_",
