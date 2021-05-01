@@ -6,7 +6,6 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.*
-import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -22,14 +21,14 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.app.GlobalApp
-import com.jasen.kimjaeseung.morningbees.login.LoginActivity
-import com.jasen.kimjaeseung.morningbees.main.MainActivity
-import com.jasen.kimjaeseung.morningbees.mediascanner.MediaScanner
+import com.jasen.kimjaeseung.morningbees.ui.signin.LoginActivity
+import com.jasen.kimjaeseung.morningbees.ui.main.MainActivity
+import com.jasen.kimjaeseung.morningbees.utils.mediascanner.MediaScanner
 import com.jasen.kimjaeseung.morningbees.model.error.ErrorResponse
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
-import com.jasen.kimjaeseung.morningbees.util.Dlog
-import com.jasen.kimjaeseung.morningbees.util.URIPathHelper
-import com.jasen.kimjaeseung.morningbees.util.showToast
+import com.jasen.kimjaeseung.morningbees.utils.Dlog
+import com.jasen.kimjaeseung.morningbees.utils.URIPathHelper
+import com.jasen.kimjaeseung.morningbees.utils.showToast
 import kotlinx.android.synthetic.main.activity_create_mission.*
 
 import okhttp3.MediaType.Companion.toMediaTypeOrNull

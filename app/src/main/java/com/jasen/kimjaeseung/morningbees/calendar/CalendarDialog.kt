@@ -3,13 +3,12 @@ package com.jasen.kimjaeseung.morningbees.calendar
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.jasen.kimjaeseung.morningbees.R
-import com.jasen.kimjaeseung.morningbees.util.toString
+import com.jasen.kimjaeseung.morningbees.utils.toString
 import kotlinx.android.synthetic.main.item_calendar.view.*
 import kotlinx.android.synthetic.main.popup_calendar.*
 import java.text.SimpleDateFormat

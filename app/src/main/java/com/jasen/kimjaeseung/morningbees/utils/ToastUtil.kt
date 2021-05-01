@@ -1,4 +1,4 @@
-package com.jasen.kimjaeseung.morningbees.util
+package com.jasen.kimjaeseung.morningbees.utils
 
 import android.content.Context
 import android.widget.Toast

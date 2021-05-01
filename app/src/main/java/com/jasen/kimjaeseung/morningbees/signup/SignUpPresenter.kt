@@ -11,7 +11,7 @@ import com.jasen.kimjaeseung.morningbees.model.namevalidationcheck.NameValidatai
 import com.jasen.kimjaeseung.morningbees.model.signup.SignUpRequest
 import com.jasen.kimjaeseung.morningbees.model.signup.SignUpResponse
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
-import com.jasen.kimjaeseung.morningbees.util.Dlog
+import com.jasen.kimjaeseung.morningbees.utils.Dlog
 import okhttp3.ResponseBody
 import org.json.JSONObject
 import retrofit2.Call

@@ -1,4 +1,4 @@
-package com.jasen.kimjaeseung.morningbees.main
+package com.jasen.kimjaeseung.morningbees.ui.main
 
 import android.view.LayoutInflater
 import android.view.View

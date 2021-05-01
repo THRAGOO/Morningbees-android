@@ -1,4 +1,4 @@
-package com.jasen.kimjaeseung.morningbees.util
+package com.jasen.kimjaeseung.morningbees.utils
 
 import android.util.Log
 import com.jasen.kimjaeseung.morningbees.app.GlobalApp

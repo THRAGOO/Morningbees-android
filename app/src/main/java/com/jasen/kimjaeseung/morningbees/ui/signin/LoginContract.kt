@@ -1,4 +1,4 @@
-package com.jasen.kimjaeseung.morningbees.login
+package com.jasen.kimjaeseung.morningbees.ui.signin
 
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.tasks.Task

@@ -1,4 +1,4 @@
-package com.jasen.kimjaeseung.morningbees.mediascanner
+package com.jasen.kimjaeseung.morningbees.utils.mediascanner
 
 import android.content.Context
 import android.media.MediaScannerConnection

@@ -8,14 +8,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.app.GlobalApp
-import com.jasen.kimjaeseung.morningbees.login.LoginActivity
+import com.jasen.kimjaeseung.morningbees.ui.signin.LoginActivity
 import com.jasen.kimjaeseung.morningbees.model.beemember.BeeMember
 import com.jasen.kimjaeseung.morningbees.model.beemember.BeeMemberResponse
 import com.jasen.kimjaeseung.morningbees.model.error.ErrorResponse
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
-import com.jasen.kimjaeseung.morningbees.setting.beemember.formanager.BeeMemberForManagerActivity
-import com.jasen.kimjaeseung.morningbees.util.Dlog
-import com.jasen.kimjaeseung.morningbees.util.showToast
+import com.jasen.kimjaeseung.morningbees.utils.Dlog
+import com.jasen.kimjaeseung.morningbees.utils.showToast
 import kotlinx.android.synthetic.main.activity_setting_bee_member_for_member.*
 import okhttp3.ResponseBody
 import org.json.JSONObject

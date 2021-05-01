@@ -11,8 +11,8 @@ import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.app.GlobalApp
 import com.jasen.kimjaeseung.morningbees.model.error.ErrorResponse
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
-import com.jasen.kimjaeseung.morningbees.util.Dlog
-import com.jasen.kimjaeseung.morningbees.util.showToast
+import com.jasen.kimjaeseung.morningbees.utils.Dlog
+import com.jasen.kimjaeseung.morningbees.utils.showToast
 import kotlinx.android.synthetic.main.activity_participate_upload_mission.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody

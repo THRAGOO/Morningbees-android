@@ -1,4 +1,4 @@
-package com.jasen.kimjaeseung.morningbees.main
+package com.jasen.kimjaeseung.morningbees.ui.main
 
 interface OnItemClick {
     fun clickMissionParticipate()

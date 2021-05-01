@@ -8,7 +8,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
 import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.app.GlobalApp
-import com.jasen.kimjaeseung.morningbees.login.LoginActivity
+import com.jasen.kimjaeseung.morningbees.ui.signin.LoginActivity
 import com.jasen.kimjaeseung.morningbees.model.error.ErrorResponse
 import com.jasen.kimjaeseung.morningbees.model.paid.Paid
 import com.jasen.kimjaeseung.morningbees.model.paid.PaidRequest
@@ -17,9 +17,9 @@ import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import com.jasen.kimjaeseung.morningbees.setting.royaljelly.search.SearchPenaltyFragment
 import com.jasen.kimjaeseung.morningbees.setting.royaljelly.total.TotalFragment
 import com.jasen.kimjaeseung.morningbees.setting.royaljelly.unpaid.UnPaidFragment
-import com.jasen.kimjaeseung.morningbees.util.Dlog
-import com.jasen.kimjaeseung.morningbees.util.getPriceAnnotation
-import com.jasen.kimjaeseung.morningbees.util.showToast
+import com.jasen.kimjaeseung.morningbees.utils.Dlog
+import com.jasen.kimjaeseung.morningbees.utils.getPriceAnnotation
+import com.jasen.kimjaeseung.morningbees.utils.showToast
 import kotlinx.android.synthetic.main.activity_royaljelly.*
 import okhttp3.ResponseBody
 import org.json.JSONException

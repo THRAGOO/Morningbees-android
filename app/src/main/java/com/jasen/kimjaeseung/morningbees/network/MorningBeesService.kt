@@ -16,62 +16,57 @@ import com.jasen.kimjaeseung.morningbees.model.signin.SignInResponse
 import com.jasen.kimjaeseung.morningbees.model.signup.SignUpRequest
 import com.jasen.kimjaeseung.morningbees.model.signup.SignUpResponse
 import okhttp3.MultipartBody
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.converter.scalars.ScalarsConverterFactory
 import retrofit2.http.*
 
 interface MorningBeesService {
     @GET("/api/auth/valid_nickname")
-    fun nameValidationCheck(
+    suspend fun nameValidationCheck(
         @Query("nickname") nickname: String?
     ): Call<NameValidataionCheckResponse>
 
     @Headers("Content-Type:application/json")
     @POST("/api/auth/sign_in")
-    fun signIn(
+    suspend fun signIn(
         @Body signInRequest: SignInRequest
     ): Call<SignInResponse>
 
     @POST("/api/auth/sign_up")
-    fun signUp(
+    suspend fun signUp(
         @Body signUpRequest: SignUpRequest
     ): Call<SignUpResponse>
 
     @POST("/api/bees")
-    fun createBee(
+    suspend fun createBee(
         @Header("X-BEES-ACCESS-TOKEN") accessToken: String,
         @Body createBeeRequest: CreateBeeRequest
     ): Call<Void>
 
     @POST("/api/auth/renewal")
-    fun renewal(
+    suspend fun renewal(
         @Header("X-BEES-ACCESS-TOKEN") accessToken: String,
         @Header("X-BEES-REFRESH-TOKEN") refreshToken: String
     ): Call<RenewalResponse>
 
     @GET("/api/auth/me")
-    fun me(
+    suspend fun me(
         @Header("X-BEES-ACCESS-TOKEN") accessToken: String
     ): Call<MeResponse>
 
     @POST("/api/bees/join")
-    fun joinBee(
+    suspend fun joinBee(
         @Header("X-BEES-ACCESS-TOKEN") accessToken: String,
         @Body joinBeeRequest: JoinBeeRequest
     ): Call<Void>
 
     @Headers("Content-Type:application/json")
     @DELETE("/api/bees/withdrawal")
-    fun beeWithdrawal(
+    suspend fun beeWithdrawal(
         @Header("X-BEES-ACCESS-TOKEN") accessToken: String
     ): Call<Void>
 
     @GET("/api/missions")
-    fun missionInfo(
+    suspend fun missionInfo(
         @Header("X-BEES-ACCESS-TOKEN") accessToken: String,
         @Query("targetDate") targetDate : String,
         @Query("beeId") beeId: Int
@@ -79,7 +74,7 @@ interface MorningBeesService {
 
     @Multipart
     @POST("/api/missions")
-    fun missionCreate(
+    suspend fun missionCreate(
         @Header("X-BEES-ACCESS-TOKEN") accessToken: String,
         @Part image: MultipartBody.Part,
         @Part("beeId") beeId: Int,
@@ -90,56 +85,39 @@ interface MorningBeesService {
     ): Call<Void>
 
     @GET("/api/main")
-    fun main(
+    suspend fun main(
         @Header("X-BEES-ACCESS-TOKEN") accessToken: String,
         @Query("targetDate") targetDate: String,
         @Query("beeId") beeId: Int
     ): Call<MainResponse>
 
     @GET("/api/bees/{id}")
-    fun beeInfo(
+    suspend fun beeInfo(
         @Header("X-BEES-ACCESS-TOKEN") accessToken: String,
         @Path(value = "id", encoded = true) beeId: Int
     ): Call<BeeInfoResponse>
 
     @GET("/api/bees/{id}/members")
-    fun beeMember(
+    suspend fun beeMember(
         @Header("X-BEES-ACCESS-TOKEN") accessToken: String,
         @Path(value = "id", encoded = true) beeId: Int
     ): Call<BeeMemberResponse>
 
     @GET("/api/bee_penalties/{beeId}")
-    fun beePenalty(
+    suspend fun beePenalty(
         @Header("X-BEES-ACCESS-TOKEN") accessToken: String,
         @Path(value = "beeId", encoded = true) beeId: Int,
         @Query("status") status: Int
     ): Call<BeePenaltyResponse>
 
     @POST("/api/bee_penalties/paid/{beeId}")
-    fun paid(
+    suspend fun paid(
         @Header("X-BEES-ACCESS-TOKEN") accessToken: String,
         @Path(value = "beeId", encoded = true) beeId: Int,
         @Body paidRequest : PaidRequest
     ): Call<Void>
 
     companion object {
-        private val interceptor = HttpLoggingInterceptor()
-            .apply { level = HttpLoggingInterceptor.Level.BODY }
-            .apply {
-            }
 
-        private val client =
-            OkHttpClient.Builder().addInterceptor(interceptor).build()
-        val retrofit = Retrofit.Builder()
-            .addConverterFactory(ScalarsConverterFactory.create())
-            .addConverterFactory(GsonConverterFactory.create())
-            .client(client)
-            .baseUrl("https://api-morningbees.thragoo.com")
-            .build()
-
-
-        fun create(): MorningBeesService {
-            return retrofit.create(MorningBeesService::class.java)
-        }
     }
 }

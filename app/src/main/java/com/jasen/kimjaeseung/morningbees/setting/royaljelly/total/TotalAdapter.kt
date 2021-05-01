@@ -6,9 +6,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.model.penalty.Penalty
-import com.jasen.kimjaeseung.morningbees.util.getPriceAnnotation
+import com.jasen.kimjaeseung.morningbees.utils.getPriceAnnotation
 import kotlinx.android.synthetic.main.item_royaljelly_total.view.*
-import java.text.DecimalFormat
 
 class TotalAdapter(
     private val totalList: MutableList<Penalty>

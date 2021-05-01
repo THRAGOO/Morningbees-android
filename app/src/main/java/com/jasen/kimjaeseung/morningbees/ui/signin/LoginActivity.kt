@@ -1,4 +1,4 @@
-package com.jasen.kimjaeseung.morningbees.login
+package com.jasen.kimjaeseung.morningbees.ui.signin
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -22,7 +22,7 @@ import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.app.GlobalApp
 import com.jasen.kimjaeseung.morningbees.beforejoin.BeforeJoinActivity
 import com.jasen.kimjaeseung.morningbees.invitebee.InviteBeeActivity
-import com.jasen.kimjaeseung.morningbees.main.MainActivity
+import com.jasen.kimjaeseung.morningbees.ui.main.MainActivity
 import com.jasen.kimjaeseung.morningbees.model.error.ErrorResponse
 import com.jasen.kimjaeseung.morningbees.model.joinbee.JoinBeeRequest
 import com.jasen.kimjaeseung.morningbees.model.me.MeResponse
@@ -31,12 +31,11 @@ import com.jasen.kimjaeseung.morningbees.model.signin.SignInResponse
 import com.jasen.kimjaeseung.morningbees.mvp.BaseActivity
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import com.jasen.kimjaeseung.morningbees.signup.SignUpActivity
-import com.jasen.kimjaeseung.morningbees.util.Dlog
-import com.jasen.kimjaeseung.morningbees.util.showToast
+import com.jasen.kimjaeseung.morningbees.utils.Dlog
+import com.jasen.kimjaeseung.morningbees.utils.showToast
 import com.nhn.android.naverlogin.OAuthLogin
 import com.nhn.android.naverlogin.OAuthLoginHandler
 import com.nhn.android.naverlogin.data.OAuthLoginState
-import kotlinx.android.synthetic.main.activity_invite_bee.*
 import kotlinx.android.synthetic.main.activity_login.*
 import okhttp3.ResponseBody
 import org.json.JSONObject
@@ -45,7 +44,8 @@ import retrofit2.Callback
 import retrofit2.Converter
 import retrofit2.Response
 
-class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
+class LoginActivity : BaseActivity(), View.OnClickListener,
+    LoginContract.View {
 
     // Properties
 
@@ -148,7 +148,8 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
     // Init Method
 
     override fun initPresenter() {
-        loginPresenter = LoginPresenter()
+        loginPresenter =
+            LoginPresenter()
     }
 
     private fun initButtonListeners() {
@@ -322,7 +323,9 @@ class LoginActivity : BaseActivity(), View.OnClickListener, LoginContract.View {
 
     override fun googleSignIn() {
         val signInIntent = mGoogleSignInClient.signInIntent
-        startActivityForResult(signInIntent, RC_SIGN_IN)
+        startActivityForResult(signInIntent,
+            RC_SIGN_IN
+        )
     }
 
     override fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {

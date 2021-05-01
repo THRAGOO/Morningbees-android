@@ -51,7 +51,7 @@
             android:background="#ffffff"
             android:orientation="vertical">
 
-            <com.jasen.kimjaeseung.morningbees.view.custom.SignInSnsButton
+            <com.jasen.kimjaeseung.morningbees.ui.signin.custom.SignInSnsButton
                 android:id="@+id/login_naver_sign_in_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -60,7 +60,7 @@
                 app:signInSnsText="Naver로 로그인"
                 app:signInSnsTextColor="@color/signInNaverTextColor"/>
 
-            <com.jasen.kimjaeseung.morningbees.view.custom.SignInSnsButton
+            <com.jasen.kimjaeseung.morningbees.ui.signin.custom.SignInSnsButton
                 android:id="@+id/login_google_sign_in_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

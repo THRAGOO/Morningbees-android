@@ -21,12 +21,12 @@
         android:theme="@style/AppTheme"
         android:requestLegacyExternalStorage="true">
         <activity
-            android:name=".main.MainActivity"
+            android:name=".ui.main.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/mainStatusBarTheme">
         </activity>
         <activity
-            android:name=".login.LoginActivity"
+            android:name=".ui.signin.LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/SplashTheme">
             <intent-filter>

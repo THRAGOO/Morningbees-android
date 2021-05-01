@@ -10,11 +10,11 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.beforejoin.BeforeJoinActivity
-import com.jasen.kimjaeseung.morningbees.login.LoginActivity
-import com.jasen.kimjaeseung.morningbees.main.MainActivity
+import com.jasen.kimjaeseung.morningbees.ui.signin.LoginActivity
+import com.jasen.kimjaeseung.morningbees.ui.main.MainActivity
 import com.jasen.kimjaeseung.morningbees.model.signup.SignUpRequest
 import com.jasen.kimjaeseung.morningbees.mvp.BaseActivity
-import com.jasen.kimjaeseung.morningbees.util.showToast
+import com.jasen.kimjaeseung.morningbees.utils.showToast
 import kotlinx.android.synthetic.main.activity_signup.*
 import java.util.regex.Pattern
 

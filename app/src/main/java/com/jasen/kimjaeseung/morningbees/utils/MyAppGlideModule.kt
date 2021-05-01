@@ -1,4 +1,4 @@
-package com.jasen.kimjaeseung.morningbees.util
+package com.jasen.kimjaeseung.morningbees.utils
 import android.content.Context
 import com.bumptech.glide.Glide
 import com.bumptech.glide.Registry

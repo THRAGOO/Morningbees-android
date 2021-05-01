@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.app.GlobalApp
 import com.jasen.kimjaeseung.morningbees.createbee.CreateStep1Activity
-import com.jasen.kimjaeseung.morningbees.login.LoginActivity
+import com.jasen.kimjaeseung.morningbees.ui.signin.LoginActivity
 import kotlinx.android.synthetic.main.activity_beforejoin.*
 
 class BeforeJoinActivity : AppCompatActivity(), View.OnClickListener {

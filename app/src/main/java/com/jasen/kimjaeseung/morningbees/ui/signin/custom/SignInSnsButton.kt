@@ -1,23 +1,11 @@
-package com.jasen.kimjaeseung.morningbees.view.custom
+package com.jasen.kimjaeseung.morningbees.ui.signin.custom
 
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.view.View
 import android.widget.LinearLayout
 import com.jasen.kimjaeseung.morningbees.R
 import kotlinx.android.synthetic.main.signin_sns_button.view.*
-
-//class SignInSnsButton @JvmOverloads constructor(
-//    context: Context, attrs : AttributeSet? = null, defStyleAttr: Int = 0
-//) : LinearLayout(context, attrs, defStyleAttr) {
-//    init {
-////        val inflater: LayoutInflater = getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-////        val view = inflater.inflate(R.layout.signin_sns_button, this, false)
-////        addView(view)
-//        context.theme.obtainStyledAttributes(attrs, R.styleable.SignI)
-//    }
-//}
 
 class SignInSnsButton @JvmOverloads constructor (
     context: Context, attrs: AttributeSet, defStyleAttr: Int = 0

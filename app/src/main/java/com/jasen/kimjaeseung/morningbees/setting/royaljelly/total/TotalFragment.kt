@@ -14,7 +14,7 @@ import com.jasen.kimjaeseung.morningbees.model.penalty.Penalty
 import com.jasen.kimjaeseung.morningbees.model.penalty.PenaltyHistory
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import com.jasen.kimjaeseung.morningbees.setting.royaljelly.RoyalJellyActivity
-import com.jasen.kimjaeseung.morningbees.util.Dlog
+import com.jasen.kimjaeseung.morningbees.utils.Dlog
 import kotlinx.android.synthetic.main.fragment_royaljelly_total.*
 import okhttp3.ResponseBody
 import org.json.JSONObject

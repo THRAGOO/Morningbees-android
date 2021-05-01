@@ -4,9 +4,9 @@ import android.app.Application
 import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
-import com.jasen.kimjaeseung.morningbees.util.BeeInfoManager
-import com.jasen.kimjaeseung.morningbees.util.DeviceInfoManager
-import com.jasen.kimjaeseung.morningbees.util.SharedPreference
+import com.jasen.kimjaeseung.morningbees.utils.BeeInfoManager
+import com.jasen.kimjaeseung.morningbees.utils.DeviceInfoManager
+import com.jasen.kimjaeseung.morningbees.utils.SharedPreference
 
 class GlobalApp : Application() {
     var DEBUG = true   //for log in debug mode

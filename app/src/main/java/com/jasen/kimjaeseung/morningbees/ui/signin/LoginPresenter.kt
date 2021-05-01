@@ -1,4 +1,4 @@
-package com.jasen.kimjaeseung.morningbees.login
+package com.jasen.kimjaeseung.morningbees.ui.signin
 
 class LoginPresenter : LoginContract.Presenter {
     private var loginView: LoginContract.View? = null

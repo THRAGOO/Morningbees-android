@@ -1,4 +1,4 @@
-package com.jasen.kimjaeseung.morningbees.main
+package com.jasen.kimjaeseung.morningbees.ui.main
 
 import android.Manifest
 import android.animation.ValueAnimator
@@ -6,7 +6,6 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
-import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -36,20 +35,21 @@ import com.jasen.kimjaeseung.morningbees.app.GlobalApp
 import com.jasen.kimjaeseung.morningbees.calendar.CalendarDialog
 import com.jasen.kimjaeseung.morningbees.createmission.CreateMissionActivity
 import com.jasen.kimjaeseung.morningbees.loadmissionphoto.LoadMissionPhotoActivity
-import com.jasen.kimjaeseung.morningbees.login.LoginActivity
-import com.jasen.kimjaeseung.morningbees.mediascanner.MediaScanner
+import com.jasen.kimjaeseung.morningbees.ui.signin.LoginActivity
+import com.jasen.kimjaeseung.morningbees.utils.mediascanner.MediaScanner
 import com.jasen.kimjaeseung.morningbees.model.error.ErrorResponse
 import com.jasen.kimjaeseung.morningbees.model.main.MainResponse
 import com.jasen.kimjaeseung.morningbees.model.me.MeResponse
 import com.jasen.kimjaeseung.morningbees.model.missionurl.MissionUrl
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
+import com.jasen.kimjaeseung.morningbees.network.NetworkModule
 import com.jasen.kimjaeseung.morningbees.participatemission.ParticipateMissionActivity
 import com.jasen.kimjaeseung.morningbees.setting.SettingActivity
 import com.jasen.kimjaeseung.morningbees.setting.royaljelly.RoyalJellyActivity
-import com.jasen.kimjaeseung.morningbees.util.Dlog
-import com.jasen.kimjaeseung.morningbees.util.URIPathHelper
-import com.jasen.kimjaeseung.morningbees.util.getPriceAnnotation
-import com.jasen.kimjaeseung.morningbees.util.showToast
+import com.jasen.kimjaeseung.morningbees.utils.Dlog
+import com.jasen.kimjaeseung.morningbees.utils.URIPathHelper
+import com.jasen.kimjaeseung.morningbees.utils.getPriceAnnotation
+import com.jasen.kimjaeseung.morningbees.utils.showToast
 import jp.wasabeef.glide.transformations.BlurTransformation
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_participate_mission.view.*
@@ -68,11 +68,12 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
+class MainActivity : AppCompatActivity(), View.OnClickListener,
+    OnItemClick {
 
     // Properties
 
-    private val service = MorningBeesService.create()
+    private val service = NetworkModule.morningBeesService
     private var userAccessToken = ""
     private var beeId = 0
 
@@ -142,12 +143,16 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
             data.data?.let { photoUri ->
                 currentPhotoPath = URIPathHelper().getPath(this, photoUri).toString()
             }
-            gotoMissionParticipate(currentPhotoPath, PICK_FROM_ALBUM)
+            gotoMissionParticipate(currentPhotoPath,
+                PICK_FROM_ALBUM
+            )
         } else if (requestCode == PICK_FROM_CAMERA && resultCode == Activity.RESULT_OK) {
             val mediaScanner = MediaScanner.newInstance(this)
             try {
                 mediaScanner.mediaScanning(currentPhotoPath)
-                gotoMissionParticipate(currentPhotoPath, PICK_FROM_CAMERA)
+                gotoMissionParticipate(currentPhotoPath,
+                    PICK_FROM_CAMERA
+                )
             } catch (e: Exception) {
                 e.printStackTrace()
                 Log.d(TAG, "Media Scan Error: $e")
@@ -483,7 +488,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
 
     private fun setRecyclerView() {
         setMissionUrlType()
-        missionParticipateRecyclerView.adapter = MainAdapter(missionUrlList, this)
+        missionParticipateRecyclerView.adapter =
+            MainAdapter(
+                missionUrlList,
+                this
+            )
         missionParticipateRecyclerView.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, true)
         missionParticipateRecyclerView.scrollToPosition(missionUrlList.size - 1)
@@ -752,7 +761,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
                         it
                     )
                     takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
-                    startActivityForResult(takePictureIntent, PICK_FROM_CAMERA)
+                    startActivityForResult(takePictureIntent,
+                        PICK_FROM_CAMERA
+                    )
                 }
             }
         }
@@ -813,7 +824,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
                 .putExtra(
                     "targetDate",
                     targetDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-                ), GO_TO_PARTICIPATE
+                ),
+            GO_TO_PARTICIPATE
         )
     }
 
@@ -834,7 +846,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
                         targetDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
                     )
                     .putExtra("difficulty", difficulty)
-                , GO_TO_PARTICIPATE
+                ,
+                GO_TO_PARTICIPATE
             )
         }
     }
@@ -858,7 +871,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, OnItemClick {
     private fun gotoGallery() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         intent.type = "image/*"
-        startActivityForResult(intent, PICK_FROM_ALBUM)
+        startActivityForResult(intent,
+            PICK_FROM_ALBUM
+        )
     }
 
     // Companion
