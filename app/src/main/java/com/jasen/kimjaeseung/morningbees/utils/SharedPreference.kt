@@ -3,7 +3,7 @@ package com.jasen.kimjaeseung.morningbees.utils
 import android.content.Context
 import androidx.preference.PreferenceManager
 //import android.preference.PreferenceManager
-import com.jasen.kimjaeseung.morningbees.model.renewal.RenewalResponse
+import com.jasen.kimjaeseung.morningbees.model.RenewalResponse
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import org.json.JSONObject
 import retrofit2.Call

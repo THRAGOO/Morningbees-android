@@ -8,7 +8,7 @@ import android.widget.SeekBar
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.app.GlobalApp
-import com.jasen.kimjaeseung.morningbees.model.paid.Paid
+import com.jasen.kimjaeseung.morningbees.model.Paid
 import com.jasen.kimjaeseung.morningbees.utils.getPriceAnnotation
 import kotlinx.android.synthetic.main.fragment_part_payment.*
 

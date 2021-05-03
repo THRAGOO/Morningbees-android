@@ -9,7 +9,7 @@ import android.view.ViewTreeObserver
 import androidx.appcompat.app.AppCompatActivity
 import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.app.GlobalApp
-import com.jasen.kimjaeseung.morningbees.model.error.ErrorResponse
+import com.jasen.kimjaeseung.morningbees.model.ErrorResponse
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import com.jasen.kimjaeseung.morningbees.utils.Dlog
 import com.jasen.kimjaeseung.morningbees.utils.showToast

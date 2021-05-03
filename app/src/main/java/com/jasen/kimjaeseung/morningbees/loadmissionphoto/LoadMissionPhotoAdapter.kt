@@ -1,16 +1,11 @@
 package com.jasen.kimjaeseung.morningbees.loadmissionphoto
 
-import android.os.Build
-import android.util.DisplayMetrics
-import android.util.Log
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.RelativeLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.app.GlobalApp
-import com.jasen.kimjaeseung.morningbees.model.missioninfo.Mission
+import com.jasen.kimjaeseung.morningbees.model.Mission
 import kotlinx.android.synthetic.main.item_mission_photo.view.*
 
 class LoadMissionPhotoAdapter(

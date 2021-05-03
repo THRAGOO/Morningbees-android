@@ -10,7 +10,7 @@ import com.bumptech.glide.load.MultiTransformation
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.jasen.kimjaeseung.morningbees.R
-import com.jasen.kimjaeseung.morningbees.model.missionurl.MissionUrl
+import com.jasen.kimjaeseung.morningbees.model.MissionUrl
 import kotlinx.android.synthetic.main.item_load_more_mission_button.view.*
 import kotlinx.android.synthetic.main.item_mission_participate_button.view.*
 import kotlinx.android.synthetic.main.item_mission_participate_image.view.*

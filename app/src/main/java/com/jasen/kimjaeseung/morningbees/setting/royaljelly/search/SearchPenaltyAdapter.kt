@@ -6,8 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.jasen.kimjaeseung.morningbees.R
-import com.jasen.kimjaeseung.morningbees.model.beemember.BeeMember
-import com.jasen.kimjaeseung.morningbees.model.penalty.Penalty
+import com.jasen.kimjaeseung.morningbees.model.Penalty
 import kotlinx.android.synthetic.main.item_search_penalty_list.view.*
 
 class SearchPenaltyAdapter(

@@ -12,8 +12,8 @@ import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.app.GlobalApp
 import com.jasen.kimjaeseung.morningbees.ui.signin.LoginActivity
 import com.jasen.kimjaeseung.morningbees.ui.main.MainActivity
-import com.jasen.kimjaeseung.morningbees.model.createbee.CreateBeeRequest
-import com.jasen.kimjaeseung.morningbees.model.error.ErrorResponse
+import com.jasen.kimjaeseung.morningbees.model.CreateBeeRequest
+import com.jasen.kimjaeseung.morningbees.model.ErrorResponse
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import com.jasen.kimjaeseung.morningbees.utils.Dlog
 import com.jasen.kimjaeseung.morningbees.utils.showToast
@@ -406,7 +406,14 @@ class CreateStep3Activity : AppCompatActivity(), View.OnClickListener {
 
     private fun requestCreateBeeApi() {
         val pay: Int = (jellyCount * 1000)
-        val createBeeRequest = CreateBeeRequest(beeTitle, startTime, endTime, pay, " ")
+        val createBeeRequest =
+            CreateBeeRequest(
+                beeTitle,
+                startTime,
+                endTime,
+                pay,
+                " "
+            )
         service.createBee(accessToken, createBeeRequest)
             .enqueue(object : Callback<Void> {
                 override fun onFailure(call: Call<Void>, t: Throwable) {

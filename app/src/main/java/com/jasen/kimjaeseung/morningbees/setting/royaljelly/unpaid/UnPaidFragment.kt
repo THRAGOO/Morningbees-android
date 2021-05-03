@@ -9,11 +9,11 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.app.GlobalApp
-import com.jasen.kimjaeseung.morningbees.model.beepenalty.BeePenaltyResponse
-import com.jasen.kimjaeseung.morningbees.model.error.ErrorResponse
-import com.jasen.kimjaeseung.morningbees.model.paid.Paid
-import com.jasen.kimjaeseung.morningbees.model.penalty.Penalty
-import com.jasen.kimjaeseung.morningbees.model.penalty.PenaltyHistory
+import com.jasen.kimjaeseung.morningbees.model.BeePenaltyResponse
+import com.jasen.kimjaeseung.morningbees.model.ErrorResponse
+import com.jasen.kimjaeseung.morningbees.model.Paid
+import com.jasen.kimjaeseung.morningbees.model.Penalty
+import com.jasen.kimjaeseung.morningbees.model.PenaltyHistory
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import com.jasen.kimjaeseung.morningbees.setting.royaljelly.RoyalJellyActivity
 import com.jasen.kimjaeseung.morningbees.utils.Dlog
@@ -65,7 +65,10 @@ class UnPaidFragment : Fragment(), UnPaidAdapter.OnItemSelectedInterface {
     override fun onItemSelected(v: View, position: Int) {
         v.isSelected = !v.isSelected
         selectedList[position] = v.isSelected
-        partPaymentList = Paid(penaltiesList[position].penalty, penaltiesList[position].userId)
+        partPaymentList = Paid(
+            penaltiesList[position].penalty,
+            penaltiesList[position].userId
+        )
         changeButton()
     }
 
@@ -167,7 +170,13 @@ class UnPaidFragment : Fragment(), UnPaidAdapter.OnItemSelectedInterface {
 
                                         if (penalty != 0) {
                                             Log.d(TAG, "nickname: $nickname penalty: $penalty")
-                                            penaltiesList.add(Penalty(nickname, penalty, userId))
+                                            penaltiesList.add(
+                                                Penalty(
+                                                    nickname,
+                                                    penalty,
+                                                    userId
+                                                )
+                                            )
                                         }
                                     }
                                 }

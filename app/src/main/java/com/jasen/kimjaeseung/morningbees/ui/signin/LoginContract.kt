@@ -2,7 +2,7 @@ package com.jasen.kimjaeseung.morningbees.ui.signin
 
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.tasks.Task
-import com.jasen.kimjaeseung.morningbees.model.signin.SignInRequest
+import com.jasen.kimjaeseung.morningbees.model.SignInRequest
 import com.jasen.kimjaeseung.morningbees.mvp.BasePresenter
 import com.jasen.kimjaeseung.morningbees.mvp.BaseView
 

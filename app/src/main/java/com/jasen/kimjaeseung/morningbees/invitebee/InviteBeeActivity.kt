@@ -12,9 +12,9 @@ import com.jasen.kimjaeseung.morningbees.app.GlobalApp
 import com.jasen.kimjaeseung.morningbees.beforejoin.BeforeJoinActivity
 import com.jasen.kimjaeseung.morningbees.ui.signin.LoginActivity
 import com.jasen.kimjaeseung.morningbees.ui.main.MainActivity
-import com.jasen.kimjaeseung.morningbees.model.error.ErrorResponse
-import com.jasen.kimjaeseung.morningbees.model.joinbee.JoinBeeRequest
-import com.jasen.kimjaeseung.morningbees.model.me.MeResponse
+import com.jasen.kimjaeseung.morningbees.model.ErrorResponse
+import com.jasen.kimjaeseung.morningbees.model.JoinBeeRequest
+import com.jasen.kimjaeseung.morningbees.model.MeResponse
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import com.jasen.kimjaeseung.morningbees.utils.Dlog
 import com.jasen.kimjaeseung.morningbees.utils.showToast
@@ -158,7 +158,12 @@ class InviteBeeActivity : AppCompatActivity(), View.OnClickListener{
     }
 
     private fun requestJoinBeApi(){
-        val joinBeeRequest = JoinBeeRequest(beeId, userId, beeTitle)
+        val joinBeeRequest =
+            JoinBeeRequest(
+                beeId,
+                userId,
+                beeTitle
+            )
         service.joinBee(GlobalApp.prefs.accessToken, joinBeeRequest)
             .enqueue(object: Callback<Void> {
                 override fun onFailure(call: Call<Void>, t: Throwable) {

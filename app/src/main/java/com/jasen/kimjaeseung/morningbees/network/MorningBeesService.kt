@@ -1,20 +1,20 @@
 package com.jasen.kimjaeseung.morningbees.network
 
-import com.jasen.kimjaeseung.morningbees.model.beeinfo.BeeInfoResponse
-import com.jasen.kimjaeseung.morningbees.model.beemember.BeeMemberResponse
-import com.jasen.kimjaeseung.morningbees.model.beepenalty.BeePenaltyResponse
-import com.jasen.kimjaeseung.morningbees.model.createbee.CreateBeeRequest
-import com.jasen.kimjaeseung.morningbees.model.joinbee.JoinBeeRequest
-import com.jasen.kimjaeseung.morningbees.model.main.MainResponse
-import com.jasen.kimjaeseung.morningbees.model.me.MeResponse
-import com.jasen.kimjaeseung.morningbees.model.missioninfo.Mission
-import com.jasen.kimjaeseung.morningbees.model.namevalidationcheck.NameValidataionCheckResponse
+import com.jasen.kimjaeseung.morningbees.model.BeeInfoResponse
+import com.jasen.kimjaeseung.morningbees.model.BeeMemberResponse
+import com.jasen.kimjaeseung.morningbees.model.BeePenaltyResponse
+import com.jasen.kimjaeseung.morningbees.model.CreateBeeRequest
+import com.jasen.kimjaeseung.morningbees.model.JoinBeeRequest
+import com.jasen.kimjaeseung.morningbees.model.MainResponse
+import com.jasen.kimjaeseung.morningbees.model.MeResponse
+import com.jasen.kimjaeseung.morningbees.model.Mission
+import com.jasen.kimjaeseung.morningbees.model.ValidNicknameResponse
 import com.jasen.kimjaeseung.morningbees.model.paid.PaidRequest
-import com.jasen.kimjaeseung.morningbees.model.renewal.RenewalResponse
-import com.jasen.kimjaeseung.morningbees.model.signin.SignInRequest
-import com.jasen.kimjaeseung.morningbees.model.signin.SignInResponse
-import com.jasen.kimjaeseung.morningbees.model.signup.SignUpRequest
-import com.jasen.kimjaeseung.morningbees.model.signup.SignUpResponse
+import com.jasen.kimjaeseung.morningbees.model.RenewalResponse
+import com.jasen.kimjaeseung.morningbees.model.SignInRequest
+import com.jasen.kimjaeseung.morningbees.model.SignInResponse
+import com.jasen.kimjaeseung.morningbees.model.SignUpRequest
+import com.jasen.kimjaeseung.morningbees.model.SignUpResponse
 import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.http.*
@@ -23,7 +23,7 @@ interface MorningBeesService {
     @GET("/api/auth/valid_nickname")
     suspend fun nameValidationCheck(
         @Query("nickname") nickname: String?
-    ): Call<NameValidataionCheckResponse>
+    ): Call<ValidNicknameResponse>
 
     @Headers("Content-Type:application/json")
     @POST("/api/auth/sign_in")

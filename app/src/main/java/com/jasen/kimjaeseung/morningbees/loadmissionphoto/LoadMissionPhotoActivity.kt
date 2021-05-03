@@ -8,8 +8,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.app.GlobalApp
 import com.jasen.kimjaeseung.morningbees.ui.signin.LoginActivity
-import com.jasen.kimjaeseung.morningbees.model.error.ErrorResponse
-import com.jasen.kimjaeseung.morningbees.model.missioninfo.Mission
+import com.jasen.kimjaeseung.morningbees.model.ErrorResponse
+import com.jasen.kimjaeseung.morningbees.model.Mission
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import com.jasen.kimjaeseung.morningbees.utils.Dlog
 import com.jasen.kimjaeseung.morningbees.utils.showToast

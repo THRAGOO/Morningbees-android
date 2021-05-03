@@ -4,12 +4,12 @@ import android.content.Context
 import android.util.Log
 import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.app.GlobalApp
-import com.jasen.kimjaeseung.morningbees.model.error.ErrorResponse
-import com.jasen.kimjaeseung.morningbees.model.joinbee.JoinBeeRequest
-import com.jasen.kimjaeseung.morningbees.model.me.MeResponse
-import com.jasen.kimjaeseung.morningbees.model.namevalidationcheck.NameValidataionCheckResponse
-import com.jasen.kimjaeseung.morningbees.model.signup.SignUpRequest
-import com.jasen.kimjaeseung.morningbees.model.signup.SignUpResponse
+import com.jasen.kimjaeseung.morningbees.model.ErrorResponse
+import com.jasen.kimjaeseung.morningbees.model.JoinBeeRequest
+import com.jasen.kimjaeseung.morningbees.model.MeResponse
+import com.jasen.kimjaeseung.morningbees.model.ValidNicknameResponse
+import com.jasen.kimjaeseung.morningbees.model.SignUpRequest
+import com.jasen.kimjaeseung.morningbees.model.SignUpResponse
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import com.jasen.kimjaeseung.morningbees.utils.Dlog
 import okhttp3.ResponseBody
@@ -22,7 +22,7 @@ import retrofit2.Response
 class SignUpPresenter(context: Context) : SignUpContract.Presenter {
     private var signUpView: SignUpContract.View? = null
     private val service = MorningBeesService.create()
-    var nameValidCheckResponse: NameValidataionCheckResponse? = null
+    var nameValidCheckResponse: ValidNicknameResponse? = null
     var signUpResponse: SignUpResponse? = null
 
     lateinit var mNickname: String
@@ -42,14 +42,14 @@ class SignUpPresenter(context: Context) : SignUpContract.Presenter {
     override fun nameValidMorningbeesServer(nickName: String) {
         val nickName = nickName
         service.nameValidationCheck(nickName)
-            .enqueue(object : Callback<NameValidataionCheckResponse> {
-                override fun onFailure(call: Call<NameValidataionCheckResponse>, t: Throwable) {
+            .enqueue(object : Callback<ValidNicknameResponse> {
+                override fun onFailure(call: Call<ValidNicknameResponse>, t: Throwable) {
                     signUpView!!.showToastView { mContext.resources.getString(R.string.network_error_message) }
                 }
 
                 override fun onResponse(
-                    call: Call<NameValidataionCheckResponse>,
-                    response: Response<NameValidataionCheckResponse>
+                    call: Call<ValidNicknameResponse>,
+                    response: Response<ValidNicknameResponse>
                 ) {
                     Log.d(TAG, response.body().toString())
 
@@ -223,7 +223,12 @@ class SignUpPresenter(context: Context) : SignUpContract.Presenter {
 
     private fun joinBeeServer(userId: Int) {
         val userId = userId
-        val joinBeeRequest = JoinBeeRequest(GlobalApp.prefsBeeInfo.beeId, userId, "")
+        val joinBeeRequest =
+            JoinBeeRequest(
+                GlobalApp.prefsBeeInfo.beeId,
+                userId,
+                ""
+            )
 //        service.joinBee(accessToken, beeId, userId)
         service.joinBee(GlobalApp.prefs.accessToken, joinBeeRequest)
             .enqueue(object : Callback<Void> {

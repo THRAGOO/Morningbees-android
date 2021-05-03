@@ -24,7 +24,7 @@ import com.jasen.kimjaeseung.morningbees.app.GlobalApp
 import com.jasen.kimjaeseung.morningbees.ui.signin.LoginActivity
 import com.jasen.kimjaeseung.morningbees.ui.main.MainActivity
 import com.jasen.kimjaeseung.morningbees.utils.mediascanner.MediaScanner
-import com.jasen.kimjaeseung.morningbees.model.error.ErrorResponse
+import com.jasen.kimjaeseung.morningbees.model.ErrorResponse
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import com.jasen.kimjaeseung.morningbees.utils.Dlog
 import com.jasen.kimjaeseung.morningbees.utils.URIPathHelper
@@ -49,8 +49,8 @@ import java.util.*
 class CreateMissionActivity : AppCompatActivity(), View.OnClickListener {
 
     // Properties
-
-    val service = MorningBeesService.create()
+//
+//    val service = MorningBeesService.create()
     var difficulty: Int = DIFFICULTY_NONE
     var description: String = ""
     private var beeId: Int = 0

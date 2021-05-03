@@ -6,7 +6,6 @@ import android.content.DialogInterface
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,8 +16,8 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.jasen.kimjaeseung.morningbees.R
-import com.jasen.kimjaeseung.morningbees.model.paid.Paid
-import com.jasen.kimjaeseung.morningbees.model.penalty.Penalty
+import com.jasen.kimjaeseung.morningbees.model.Paid
+import com.jasen.kimjaeseung.morningbees.model.Penalty
 import com.jasen.kimjaeseung.morningbees.setting.royaljelly.RoyalJellyActivity
 import kotlinx.android.synthetic.main.fragment_search_penalty_list.*
 
@@ -68,8 +67,19 @@ class SearchPenaltyFragment : BottomSheetDialogFragment(), SearchPenaltyAdapter.
 
     override fun onItemSelected(v: View, position: Int) {
         val printedList = mutableListOf<Penalty>()
-        printedList.add(Penalty(beeList[position].nickname, beeList[position].penalty, beeList[position].userId))
-        (activity as RoyalJellyActivity).setPartPaymentDialog(Paid(beeList[position].penalty, beeList[position].userId))
+        printedList.add(
+            Penalty(
+                beeList[position].nickname,
+                beeList[position].penalty,
+                beeList[position].userId
+            )
+        )
+        (activity as RoyalJellyActivity).setPartPaymentDialog(
+            Paid(
+                beeList[position].penalty,
+                beeList[position].userId
+            )
+        )
         dismiss()
     }
 
@@ -114,7 +124,11 @@ class SearchPenaltyFragment : BottomSheetDialogFragment(), SearchPenaltyAdapter.
         if(keyWord.toString().count() != 0 && keyWord != null){
             for(i in 0 until printedList.size){
                 if (printedList[i].nickname.contains(keyWord, true)){
-                    val item = Penalty(printedList[i].nickname, printedList[i].penalty, printedList[i].userId)
+                    val item = Penalty(
+                        printedList[i].nickname,
+                        printedList[i].penalty,
+                        printedList[i].userId
+                    )
                     beeList.add(item)
                 }
             }

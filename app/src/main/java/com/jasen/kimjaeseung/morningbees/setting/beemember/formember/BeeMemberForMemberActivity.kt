@@ -9,9 +9,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.app.GlobalApp
 import com.jasen.kimjaeseung.morningbees.ui.signin.LoginActivity
-import com.jasen.kimjaeseung.morningbees.model.beemember.BeeMember
-import com.jasen.kimjaeseung.morningbees.model.beemember.BeeMemberResponse
-import com.jasen.kimjaeseung.morningbees.model.error.ErrorResponse
+import com.jasen.kimjaeseung.morningbees.model.BeeMember
+import com.jasen.kimjaeseung.morningbees.model.BeeMemberResponse
+import com.jasen.kimjaeseung.morningbees.model.ErrorResponse
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import com.jasen.kimjaeseung.morningbees.utils.Dlog
 import com.jasen.kimjaeseung.morningbees.utils.showToast
@@ -94,10 +94,11 @@ class BeeMemberForMemberActivity : AppCompatActivity(), View.OnClickListener {
                         } else {
                             for (i in 0 until beeMemberResponse.size()) {
                                 val item = beeMemberResponse.get(i)
-                                val beeMember = BeeMember(
-                                    item.asJsonObject.get("nickname").asString,
-                                    item.asJsonObject.get("profileImage").asString
-                                )
+                                val beeMember =
+                                    BeeMember(
+                                        item.asJsonObject.get("nickname").asString,
+                                        item.asJsonObject.get("profileImage").asString
+                                    )
                                 beeMemberList.add(beeMember)
                             }
                             sortBeeMemberList()

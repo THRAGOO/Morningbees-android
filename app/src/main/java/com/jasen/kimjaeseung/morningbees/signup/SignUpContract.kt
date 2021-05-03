@@ -2,7 +2,7 @@ package com.jasen.kimjaeseung.morningbees.signup
 
 import com.jasen.kimjaeseung.morningbees.mvp.BasePresenter
 import com.jasen.kimjaeseung.morningbees.mvp.BaseView
-import com.jasen.kimjaeseung.morningbees.model.signup.SignUpRequest
+import com.jasen.kimjaeseung.morningbees.model.SignUpRequest
 
 interface SignUpContract {
     interface View : BaseView{
@@ -17,7 +17,8 @@ interface SignUpContract {
     interface Presenter : BasePresenter<View>{
         fun nameValidMorningbeesServer(tempName: String)
         fun signUpMorningbeesServer(
-            signUpRequest: SignUpRequest)
+            signUpRequest: SignUpRequest
+        )
     }
 
 

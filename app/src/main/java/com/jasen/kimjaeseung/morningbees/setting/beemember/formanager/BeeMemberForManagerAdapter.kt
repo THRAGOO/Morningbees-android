@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.app.GlobalApp
-import com.jasen.kimjaeseung.morningbees.model.beemember.BeeMember
+import com.jasen.kimjaeseung.morningbees.model.BeeMember
 import kotlinx.android.synthetic.main.item_bee_member_for_manager.view.*
 
 class BeeMemberForManagerAdapter(

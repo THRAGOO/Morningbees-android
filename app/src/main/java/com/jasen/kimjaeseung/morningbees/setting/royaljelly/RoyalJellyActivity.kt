@@ -9,10 +9,10 @@ import androidx.fragment.app.FragmentActivity
 import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.app.GlobalApp
 import com.jasen.kimjaeseung.morningbees.ui.signin.LoginActivity
-import com.jasen.kimjaeseung.morningbees.model.error.ErrorResponse
-import com.jasen.kimjaeseung.morningbees.model.paid.Paid
+import com.jasen.kimjaeseung.morningbees.model.ErrorResponse
+import com.jasen.kimjaeseung.morningbees.model.Paid
 import com.jasen.kimjaeseung.morningbees.model.paid.PaidRequest
-import com.jasen.kimjaeseung.morningbees.model.penalty.Penalty
+import com.jasen.kimjaeseung.morningbees.model.Penalty
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import com.jasen.kimjaeseung.morningbees.setting.royaljelly.search.SearchPenaltyFragment
 import com.jasen.kimjaeseung.morningbees.setting.royaljelly.total.TotalFragment
@@ -224,7 +224,12 @@ class RoyalJellyActivity : View.OnClickListener, FragmentActivity(),
             try {
                 for (i in 0 until penaltiesList.size) {
                     if (selectedList[i]) {
-                        mutableList.add(Paid(penaltiesList[i].penalty, penaltiesList[i].userId))
+                        mutableList.add(
+                            Paid(
+                                penaltiesList[i].penalty,
+                                penaltiesList[i].userId
+                            )
+                        )
                     }
                 }
                 list = mutableList
@@ -233,7 +238,12 @@ class RoyalJellyActivity : View.OnClickListener, FragmentActivity(),
             }
         } else {
             try {
-                mutableList.add(Paid(GlobalApp.prefsBeeInfo.selectedPartPayment, GlobalApp.prefsBeeInfo.selectedUserId))
+                mutableList.add(
+                    Paid(
+                        GlobalApp.prefsBeeInfo.selectedPartPayment,
+                        GlobalApp.prefsBeeInfo.selectedUserId
+                    )
+                )
                 list = mutableList
             } catch (e: JSONException) {
                 e.printStackTrace()

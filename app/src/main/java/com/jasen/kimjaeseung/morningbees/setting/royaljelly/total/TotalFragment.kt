@@ -8,10 +8,10 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.app.GlobalApp
-import com.jasen.kimjaeseung.morningbees.model.beepenalty.BeePenaltyResponse
-import com.jasen.kimjaeseung.morningbees.model.error.ErrorResponse
-import com.jasen.kimjaeseung.morningbees.model.penalty.Penalty
-import com.jasen.kimjaeseung.morningbees.model.penalty.PenaltyHistory
+import com.jasen.kimjaeseung.morningbees.model.BeePenaltyResponse
+import com.jasen.kimjaeseung.morningbees.model.ErrorResponse
+import com.jasen.kimjaeseung.morningbees.model.Penalty
+import com.jasen.kimjaeseung.morningbees.model.PenaltyHistory
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import com.jasen.kimjaeseung.morningbees.setting.royaljelly.RoyalJellyActivity
 import com.jasen.kimjaeseung.morningbees.utils.Dlog
@@ -86,7 +86,12 @@ class TotalFragment : Fragment() {
                                 if (penaltyHistoriesResponse.size() > 0) {
                                     for (i in 0 until penaltyHistoriesResponse.size()){
                                         val penaltyHistory = penaltyHistoriesResponse[i].asJsonObject
-                                        penaltyHistoryList.add(PenaltyHistory(penaltyHistory.get("status").asInt, penaltyHistory.get("total").asInt))
+                                        penaltyHistoryList.add(
+                                            PenaltyHistory(
+                                                penaltyHistory.get("status").asInt,
+                                                penaltyHistory.get("total").asInt
+                                            )
+                                        )
                                     }
 
                                     GlobalApp.prefsBeeInfo.paidPenalty = 0
@@ -108,7 +113,13 @@ class TotalFragment : Fragment() {
                                         val penalty = penalties.get("penalty").asInt
                                         val userId = penalties.get("userId").asLong
 
-                                        totalList.add(Penalty(nickname, penalty, userId))
+                                        totalList.add(
+                                            Penalty(
+                                                nickname,
+                                                penalty,
+                                                userId
+                                            )
+                                        )
                                     }
                                 }
                             }

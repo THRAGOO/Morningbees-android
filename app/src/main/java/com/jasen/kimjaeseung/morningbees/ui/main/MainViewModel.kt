@@ -1,7 +1,28 @@
 package com.jasen.kimjaeseung.morningbees.ui.main
 
 import androidx.lifecycle.ViewModel
+import com.jasen.kimjaeseung.morningbees.data.MorningBessRepository
+import com.jasen.kimjaeseung.morningbees.model.MainResponse
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import retrofit2.Call
+import kotlin.coroutines.CoroutineContext
 
 class MainViewModel : ViewModel() {
+    private val parentJob = Job()
+    private val coroutineContext : CoroutineContext get() = parentJob + Dispatchers.Default
+    private val scope = CoroutineScope(coroutineContext)
 
+    private val mRepository: MorningBessRepository by lazy {
+        MorningBessRepository()
+    }
+
+    fun requestApi(targetDate : String) {
+        scope.launch {
+            mRepository.requestMeApi()
+            mRepository.requestMainApi(targetDate)
+        }
+    }
 }

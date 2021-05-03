@@ -21,6 +21,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DecodeFormat
@@ -37,19 +38,16 @@ import com.jasen.kimjaeseung.morningbees.createmission.CreateMissionActivity
 import com.jasen.kimjaeseung.morningbees.loadmissionphoto.LoadMissionPhotoActivity
 import com.jasen.kimjaeseung.morningbees.ui.signin.LoginActivity
 import com.jasen.kimjaeseung.morningbees.utils.mediascanner.MediaScanner
-import com.jasen.kimjaeseung.morningbees.model.error.ErrorResponse
-import com.jasen.kimjaeseung.morningbees.model.main.MainResponse
-import com.jasen.kimjaeseung.morningbees.model.me.MeResponse
-import com.jasen.kimjaeseung.morningbees.model.missionurl.MissionUrl
+import com.jasen.kimjaeseung.morningbees.model.ErrorResponse
+import com.jasen.kimjaeseung.morningbees.model.MainResponse
+import com.jasen.kimjaeseung.morningbees.model.MeResponse
+import com.jasen.kimjaeseung.morningbees.model.MissionUrl
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import com.jasen.kimjaeseung.morningbees.network.NetworkModule
 import com.jasen.kimjaeseung.morningbees.participatemission.ParticipateMissionActivity
 import com.jasen.kimjaeseung.morningbees.setting.SettingActivity
 import com.jasen.kimjaeseung.morningbees.setting.royaljelly.RoyalJellyActivity
-import com.jasen.kimjaeseung.morningbees.utils.Dlog
-import com.jasen.kimjaeseung.morningbees.utils.URIPathHelper
-import com.jasen.kimjaeseung.morningbees.utils.getPriceAnnotation
-import com.jasen.kimjaeseung.morningbees.utils.showToast
+import com.jasen.kimjaeseung.morningbees.utils.*
 import jp.wasabeef.glide.transformations.BlurTransformation
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_participate_mission.view.*
@@ -73,7 +71,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,
 
     // Properties
 
-    private val service = NetworkModule.morningBeesService
+//    private val service = NetworkModule.morningBeesService
     private var userAccessToken = ""
     private var beeId = 0
 
@@ -100,6 +98,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,
         )
     }
 
+    private lateinit var mainViewModel : MainViewModel
+
     // Life Cycle for Activity
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -112,7 +112,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,
         initScrollListener()
         initIconColor()
         setTargetDate()
-        requestMeApi()
+
+       val viewModelFactory = mainViewModel.createFactory()
+        mainViewModel = ViewModelProvider(this, viewModelFactory).get(mainViewModel::class.java)
+        mainViewModel.requestApi(targetDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
     }
 
     override fun onResume() {
@@ -513,20 +516,32 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,
             if (missionUrlList.size >= 1) {
                 missionUrlList.add(
                     0,
-                    MissionUrl(MissionUrl.LOAD_MORE_MISSION_BUTTON_TYPE, null, null)
+                    MissionUrl(
+                        MissionUrl.LOAD_MORE_MISSION_BUTTON_TYPE,
+                        null,
+                        null
+                    )
                 )
             }
         } else {
             if (missionUrlList.size >= 1) {
                 missionUrlList.add(
                     0,
-                    MissionUrl(MissionUrl.LOAD_MORE_MISSION_BUTTON_TYPE, null, null)
+                    MissionUrl(
+                        MissionUrl.LOAD_MORE_MISSION_BUTTON_TYPE,
+                        null,
+                        null
+                    )
                 )
             }
             if (targetDate == todayDate && todayBee != myNickname) {
                 missionUrlList.add(
                     missionUrlList.size,
-                    MissionUrl(MissionUrl.MISSION_PARTICIPATE_BUTTON_TYPE, null, null)
+                    MissionUrl(
+                        MissionUrl.MISSION_PARTICIPATE_BUTTON_TYPE,
+                        null,
+                        null
+                    )
                 )
             }
         }

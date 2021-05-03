@@ -12,7 +12,7 @@ import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.beforejoin.BeforeJoinActivity
 import com.jasen.kimjaeseung.morningbees.ui.signin.LoginActivity
 import com.jasen.kimjaeseung.morningbees.ui.main.MainActivity
-import com.jasen.kimjaeseung.morningbees.model.signup.SignUpRequest
+import com.jasen.kimjaeseung.morningbees.model.SignUpRequest
 import com.jasen.kimjaeseung.morningbees.mvp.BaseActivity
 import com.jasen.kimjaeseung.morningbees.utils.showToast
 import kotlinx.android.synthetic.main.activity_signup.*
@@ -106,7 +106,11 @@ class SignUpActivity : BaseActivity(), SignUpContract.View, View.OnClickListener
 
             signUpPresenter.validCheck -> {
                 signUpPresenter.signUpMorningbeesServer(
-                    SignUpRequest(socialAccessToken, provider, signUpPresenter.mNickname)
+                    SignUpRequest(
+                        socialAccessToken,
+                        provider,
+                        signUpPresenter.mNickname
+                    )
                 )
             }
         }
