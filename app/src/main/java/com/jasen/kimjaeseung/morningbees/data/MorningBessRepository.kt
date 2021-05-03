@@ -1,38 +1,61 @@
 package com.jasen.kimjaeseung.morningbees.data
 
+import android.content.SharedPreferences
 import com.jasen.kimjaeseung.morningbees.app.GlobalApp
+import com.jasen.kimjaeseung.morningbees.common.BaseRepository
 import com.jasen.kimjaeseung.morningbees.model.*
-import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
 import com.jasen.kimjaeseung.morningbees.network.NetworkModule
+import retrofit2.Response
 
-class MorningBessRepository() {
+class MorningBessRepository : BaseRepository() {
     private val service = NetworkModule.morningBeesService
 
-    /*
-    * 제네릭을 사용해서 어디까지 repository가 커버해줘야할까?
-    * 1. main api, me api 등등 모든 요청을 따로 suspend로 빼서 만들어준다.
-    * -> 이렇게 해야할거 같은데 ? 왜냐하면 service.main ~ service.me 등 뒤에 오는 함수가 다 다르니까
-    * */
+    //repository에서 accessToken을 가져오는 함수를 사용하면 좋을 듯 -> 이유: SharedPreferences도 하나의 저장 수단.
 
-    //repository에서 accessToken을 가져오는 함수를 사용하면 좋을듯
+    private var accessToken = GlobalApp.prefs.accessToken
+    private var refreshToken = GlobalApp.prefs.refreshToken
 
-    private val accessToken = GlobalApp.prefs.accessToken
-    private val refreshToken = GlobalApp.prefs.refreshToken
+    private var beeId = GlobalApp.prefsBeeInfo.beeId
 
-    private val beeId = GlobalApp.prefsBeeInfo.beeId
+    suspend fun checkAccessToken() : String {
+//        accessToken = GlobalApp.prefs.accessToken
 
-    suspend fun requestMainApi(targetDate : String) =
-        service.main(
-            accessToken,
-            targetDate,
-            beeId)
+        if (accessToken.count() == 0) {
+            val renewalRepository = safeApiCall(
+                call = {service.renewal(accessToken, refreshToken)},
+                error = "error"
+            )
+            renewalRepository?.let {
+                // let 은 지정된 값이 null 이 아닌 경우에 코드를 실행해야 할 때 사용됨
+                accessToken = renewalRepository.accessToken
+                GlobalApp.prefs.accessToken = accessToken
+            }
+        }
 
-    suspend fun requestMeApi() =
-        service.me(accessToken)
+        return accessToken
+    }
 
-    suspend fun requestValidNicknameApi(nickname : String) =
-        service.nameValidationCheck(
-            nickname)
+    suspend fun requestMainApi(targetDate : String) : MainResponse? {
+        return safeApiCall(
+            call = {service.main(accessToken, targetDate, beeId)},
+            error = "Error fetching news"
+        )
+    }
+
+    suspend fun requestMeApi() {
+        val meResponse = safeApiCall(
+            call = {service.me(accessToken)},
+            error = "Error fetching news"
+        )
+
+        meResponse?.let {
+            beeId = meResponse.beeId
+            GlobalApp.prefsBeeInfo.beeId = beeId
+        }
+    }
+
+    suspend fun requestValidNicknameApi(nickname: String) =
+        service.nameValidationCheck(nickname)
 
     suspend fun requestSignInApi(signInRequest: SignInRequest) =
         service.signIn(signInRequest)
@@ -43,7 +66,8 @@ class MorningBessRepository() {
     suspend fun requestCreateBeeApi(createBeeRequest: CreateBeeRequest) =
         service.createBee(
             accessToken,
-            createBeeRequest)
+            createBeeRequest
+        )
 
     suspend fun requestRenewalApi() =
         service.renewal(accessToken, refreshToken)
@@ -51,7 +75,8 @@ class MorningBessRepository() {
     suspend fun requestJoinBeeApi(joinBeeRequest: JoinBeeRequest) =
         service.joinBee(
             accessToken,
-            joinBeeRequest)
+            joinBeeRequest
+        )
 
     suspend fun requestBeeWithdrawalApi() =
         service.beeWithdrawal(accessToken)
@@ -60,7 +85,8 @@ class MorningBessRepository() {
         service.missionInfo(
             accessToken,
             missionInfoRequest.targetDate,
-            beeId)
+            beeId
+        )
 
     suspend fun requestMissionCreate(missionCreateRequest: MissionCreateRequest) =
         service.missionCreate(
@@ -70,23 +96,26 @@ class MorningBessRepository() {
             missionCreateRequest.description,
             missionCreateRequest.type,
             missionCreateRequest.difficulty,
-            missionCreateRequest.targetDate)
+            missionCreateRequest.targetDate
+        )
 
-    suspend fun requestBeeInfoApi(beeInfoRequest : BeeInfoRequest) =
+    suspend fun requestBeeInfoApi(beeInfoRequest: BeeInfoRequest) =
         service.beeInfo(
             accessToken,
-            beeInfoRequest.beeId)
+            beeInfoRequest.beeId
+        )
 
-    suspend fun requestBeePenalty(beePenaltyRequest : BeePenaltyRequest) =
+    suspend fun requestBeePenalty(beePenaltyRequest: BeePenaltyRequest) =
         service.beePenalty(
             accessToken,
             beeId,
-            beePenaltyRequest.status)
+            beePenaltyRequest.status
+        )
 
     suspend fun requestPaidApi(paidRequest: PaidRequest) =
         service.paid(
             accessToken,
             beeId,
-            paidRequest.penalties
+            paidRequest
         )
 }

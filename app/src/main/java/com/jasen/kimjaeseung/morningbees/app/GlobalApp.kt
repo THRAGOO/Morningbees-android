@@ -18,6 +18,8 @@ class GlobalApp : Application() {
     }
 
     override fun onCreate() {
+        // SharedPreferences 클래스는 앱에 있는 다른 Activity 보다 먼저 생성되어야함.
+
         prefs = SharedPreference(applicationContext)
         prefsBeeInfo = BeeInfoManager(applicationContext)
         prefsDeviceInfo = DeviceInfoManager(applicationContext)

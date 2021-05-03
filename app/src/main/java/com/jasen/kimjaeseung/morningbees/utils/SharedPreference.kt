@@ -10,10 +10,10 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class SharedPreference(context: Context) {
+class SharedPreference(val context: Context) {
 //    private val pref = context.getSharedPreferences(fileName, Context.MODE_PRIVATE)
     private val prefs = PreferenceManager.getDefaultSharedPreferences(context)
-    private val service = MorningBeesService.create()
+//    private val service = MorningBeesService.create()
 
     private val fileName = "prefs"
     private val mAccessToken = "AccessToken"
@@ -41,34 +41,4 @@ class SharedPreference(context: Context) {
     var socialAccessToken: String
         get() = prefs.getString(mSocialAccessToken, "").toString()
         set(value) = prefs.edit().putString(mSocialAccessToken, value).apply()
-
-    fun requestRenewalApi() {
-        service.renewal(accessToken, refreshToken).enqueue(object : Callback<RenewalResponse> {
-            override fun onFailure(call: Call<RenewalResponse>, t: Throwable) {
-                Dlog().d(t.toString())
-            }
-
-            override fun onResponse(call: Call<RenewalResponse>, response: Response<RenewalResponse>) {
-                when(response.code()){
-                    200 -> {
-                        val renewalResponse = response.body()
-                        accessToken = renewalResponse!!.accessToken
-//                        socialAccessToken = renewalResponse!!.accessToken
-                    }
-
-                    400 -> {
-                        val jsonObject = JSONObject(response.errorBody()!!.string())
-                        val message = jsonObject.getString("message")
-                        Dlog().d(message)
-                    }
-
-                    500 -> {
-                        val jsonObject = JSONObject(response.errorBody()!!.string())
-                        val message = jsonObject.getString("message")
-                        Dlog().d(message)
-                    }
-                }
-            }
-        })
-    }
 }

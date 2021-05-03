@@ -9,7 +9,7 @@ import retrofit2.converter.scalars.ScalarsConverterFactory
 // object 키워드 사용함으로써 싱글톤 구현
 
 object NetworkModule {
-    private val BASE_URL = "https://api-morningbees.thragoo.com"
+    private const val BASE_URL = "https://api-morningbees.thragoo.com"
 
     private val interceptor = HttpLoggingInterceptor()
         .apply { level = HttpLoggingInterceptor.Level.BODY }

@@ -21,6 +21,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -36,18 +37,17 @@ import com.jasen.kimjaeseung.morningbees.app.GlobalApp
 import com.jasen.kimjaeseung.morningbees.calendar.CalendarDialog
 import com.jasen.kimjaeseung.morningbees.createmission.CreateMissionActivity
 import com.jasen.kimjaeseung.morningbees.loadmissionphoto.LoadMissionPhotoActivity
-import com.jasen.kimjaeseung.morningbees.ui.signin.LoginActivity
-import com.jasen.kimjaeseung.morningbees.utils.mediascanner.MediaScanner
 import com.jasen.kimjaeseung.morningbees.model.ErrorResponse
 import com.jasen.kimjaeseung.morningbees.model.MainResponse
 import com.jasen.kimjaeseung.morningbees.model.MeResponse
 import com.jasen.kimjaeseung.morningbees.model.MissionUrl
 import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
-import com.jasen.kimjaeseung.morningbees.network.NetworkModule
 import com.jasen.kimjaeseung.morningbees.participatemission.ParticipateMissionActivity
 import com.jasen.kimjaeseung.morningbees.setting.SettingActivity
 import com.jasen.kimjaeseung.morningbees.setting.royaljelly.RoyalJellyActivity
+import com.jasen.kimjaeseung.morningbees.ui.signin.LoginActivity
 import com.jasen.kimjaeseung.morningbees.utils.*
+import com.jasen.kimjaeseung.morningbees.utils.mediascanner.MediaScanner
 import jp.wasabeef.glide.transformations.BlurTransformation
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_participate_mission.view.*
@@ -59,12 +59,13 @@ import retrofit2.Converter
 import retrofit2.Response
 import java.io.File
 import java.io.IOException
-import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
+
+출처: https://jwsoft91.tistory.com/103 [혀가 길지 않은 개발자]
 
 class MainActivity : AppCompatActivity(), View.OnClickListener,
     OnItemClick {
@@ -72,7 +73,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,
     // Properties
 
 //    private val service = NetworkModule.morningBeesService
-    private var userAccessToken = ""
+//    private var userAccessToken = ""
     private var beeId = 0
 
     private val todayDate = LocalDate.now()
@@ -106,7 +107,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        userAccessToken = GlobalApp.prefs.accessToken
+//        userAccessToken = GlobalApp.prefs.accessToken
 
         initButtonListeners()
         initScrollListener()
@@ -115,7 +116,18 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,
 
        val viewModelFactory = mainViewModel.createFactory()
         mainViewModel = ViewModelProvider(this, viewModelFactory).get(mainViewModel::class.java)
+        mainViewModel.checkAccessToken()
         mainViewModel.requestApi(targetDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+
+        mainViewModel.mainMissionsLiveData.observe(this, Observer {
+            // mission info update in ui
+            updateMissionInfo()
+        })
+
+        mainViewModel.mainBeeInfoLiveData.observe(this, Observer {
+            // bee info update in ui
+            updateBeeInfo()
+        })
     }
 
     override fun onResume() {
@@ -237,6 +249,14 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,
 
 
     // Request API
+
+    private fun updateMissionInfo(){
+
+    }
+
+    private fun updateBeeInfo(){
+
+    }
 
     private fun requestMainApi() {
         service.main(

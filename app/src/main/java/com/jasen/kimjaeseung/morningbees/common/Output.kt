@@ -1,4 +1,4 @@
-package com.jasen.kimjaeseung.morningbees
+package com.jasen.kimjaeseung.morningbees.common
 
 import java.lang.Exception
 
@@ -9,6 +9,6 @@ import java.lang.Exception
 
 sealed class Output<out T : Any> {
     data class Success<out T : Any>(val output : T) : Output<T>()
-    data class Error<out T : Any>(val exception: Exception) : Output<T>()
-    object InProgress: Output<Nothing>()
+    data class Error(val exception: Exception) : Output<Nothing>()
+//    object InProgress: Output<Nothing>()
 }

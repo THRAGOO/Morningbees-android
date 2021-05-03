@@ -1,22 +1,10 @@
 package com.jasen.kimjaeseung.morningbees.network
 
-import com.jasen.kimjaeseung.morningbees.model.BeeInfoResponse
-import com.jasen.kimjaeseung.morningbees.model.BeeMemberResponse
-import com.jasen.kimjaeseung.morningbees.model.BeePenaltyResponse
-import com.jasen.kimjaeseung.morningbees.model.CreateBeeRequest
-import com.jasen.kimjaeseung.morningbees.model.JoinBeeRequest
-import com.jasen.kimjaeseung.morningbees.model.MainResponse
-import com.jasen.kimjaeseung.morningbees.model.MeResponse
-import com.jasen.kimjaeseung.morningbees.model.Mission
-import com.jasen.kimjaeseung.morningbees.model.ValidNicknameResponse
-import com.jasen.kimjaeseung.morningbees.model.paid.PaidRequest
-import com.jasen.kimjaeseung.morningbees.model.RenewalResponse
-import com.jasen.kimjaeseung.morningbees.model.SignInRequest
-import com.jasen.kimjaeseung.morningbees.model.SignInResponse
-import com.jasen.kimjaeseung.morningbees.model.SignUpRequest
-import com.jasen.kimjaeseung.morningbees.model.SignUpResponse
+import com.jasen.kimjaeseung.morningbees.model.*
+import kotlinx.coroutines.Deferred
 import okhttp3.MultipartBody
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.*
 
 interface MorningBeesService {
@@ -46,12 +34,12 @@ interface MorningBeesService {
     suspend fun renewal(
         @Header("X-BEES-ACCESS-TOKEN") accessToken: String,
         @Header("X-BEES-REFRESH-TOKEN") refreshToken: String
-    ): Call<RenewalResponse>
+    ): Response<RenewalResponse>
 
     @GET("/api/auth/me")
     suspend fun me(
         @Header("X-BEES-ACCESS-TOKEN") accessToken: String
-    ): Call<MeResponse>
+    ): Response<MeResponse>
 
     @POST("/api/bees/join")
     suspend fun joinBee(
@@ -89,7 +77,16 @@ interface MorningBeesService {
         @Header("X-BEES-ACCESS-TOKEN") accessToken: String,
         @Query("targetDate") targetDate: String,
         @Query("beeId") beeId: Int
-    ): Call<MainResponse>
+    ): Response<MainResponse>
+
+    /*
+    .addCallAdapterFactory(CoroutineCallAdapterFactory()) 사용 시,
+    return 타입: Response<MainResponse> -> Deferred<Response<MainResponse>>
+    함수 선언: suspend fun -> fun
+    일 때, API 응답이 올 때까지 기다리게 하려면 main() 호출하는 곳에 main().await() 처럼 뒤에 await() 함수 사용해주면 됨
+
+    그러나, coroutine 속 suspend 함수 사용하면 자동으로 응답 올 때까지 기다림
+    */
 
     @GET("/api/bees/{id}")
     suspend fun beeInfo(
@@ -116,8 +113,4 @@ interface MorningBeesService {
         @Path(value = "beeId", encoded = true) beeId: Int,
         @Body paidRequest : PaidRequest
     ): Call<Void>
-
-    companion object {
-
-    }
 }
