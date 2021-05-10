@@ -31,32 +31,23 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.gson.Gson
+import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.jasen.kimjaeseung.morningbees.R
-import com.jasen.kimjaeseung.morningbees.app.GlobalApp
 import com.jasen.kimjaeseung.morningbees.calendar.CalendarDialog
 import com.jasen.kimjaeseung.morningbees.createmission.CreateMissionActivity
 import com.jasen.kimjaeseung.morningbees.loadmissionphoto.LoadMissionPhotoActivity
-import com.jasen.kimjaeseung.morningbees.model.ErrorResponse
-import com.jasen.kimjaeseung.morningbees.model.MainResponse
-import com.jasen.kimjaeseung.morningbees.model.MeResponse
-import com.jasen.kimjaeseung.morningbees.model.MissionUrl
-import com.jasen.kimjaeseung.morningbees.network.MorningBeesService
+import com.jasen.kimjaeseung.morningbees.model.*
 import com.jasen.kimjaeseung.morningbees.participatemission.ParticipateMissionActivity
 import com.jasen.kimjaeseung.morningbees.setting.SettingActivity
 import com.jasen.kimjaeseung.morningbees.setting.royaljelly.RoyalJellyActivity
-import com.jasen.kimjaeseung.morningbees.ui.signin.LoginActivity
+import com.jasen.kimjaeseung.morningbees.ui.signin.SignInActivity
 import com.jasen.kimjaeseung.morningbees.utils.*
 import com.jasen.kimjaeseung.morningbees.utils.mediascanner.MediaScanner
 import jp.wasabeef.glide.transformations.BlurTransformation
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_participate_mission.view.*
-import okhttp3.ResponseBody
-import org.json.JSONObject
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Converter
-import retrofit2.Response
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -65,15 +56,10 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-출처: https://jwsoft91.tistory.com/103 [혀가 길지 않은 개발자]
-
 class MainActivity : AppCompatActivity(), View.OnClickListener,
     OnItemClick {
 
     // Properties
-
-//    private val service = NetworkModule.morningBeesService
-//    private var userAccessToken = ""
     private var beeId = 0
 
     private val todayDate = LocalDate.now()
@@ -121,18 +107,13 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,
 
         mainViewModel.mainMissionsLiveData.observe(this, Observer {
             // mission info update in ui
-            updateMissionInfo()
+            updateMissionInfo(it)
         })
 
         mainViewModel.mainBeeInfoLiveData.observe(this, Observer {
             // bee info update in ui
-            updateBeeInfo()
+            updateBeeInfo(it)
         })
-    }
-
-    override fun onResume() {
-        super.onResume()
-        requestMainApi()
     }
 
     // Callback Method
@@ -175,7 +156,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,
         } else if (requestCode == GO_TO_PARTICIPATE && resultCode == FINISH) {
             bottomSheetDialog.dismiss()
             missionUrlList = mutableListOf()
-            requestMainApi()
+//            requestMainApi()
         } else if (requestCode == GO_TO_PARTICIPATE && resultCode == RELOAD) {
             bottomSheetDialog.show()
         }
@@ -247,264 +228,108 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,
         }
     }
 
-
     // Request API
 
-    private fun updateMissionInfo(){
-
-    }
-
-    private fun updateBeeInfo(){
-
-    }
-
-    private fun requestMainApi() {
-        service.main(
-            userAccessToken,
-            targetDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
-            GlobalApp.prefsBeeInfo.beeId
-        )
-            .enqueue(object : Callback<MainResponse> {
-                override fun onFailure(call: Call<MainResponse>, t: Throwable) {
-                    Dlog().d(t.toString())
+    private fun updateMissionInfo(missionInfoResponse: JsonArray?){
+        if (missionInfoResponse == null || missionInfoResponse.size() == 0){
+            when {
+                todayDate == targetDate -> {
+                    targetDateMissionText.text = getString(R.string.today_mission_photo)
+                    applyImageUrl(null)
+                    setLayoutToMission(NOT_EXIST_MISSION)
                 }
 
-                override fun onResponse(
-                    call: Call<MainResponse>,
-                    response: Response<MainResponse>
-                ) {
-                    when (response.code()) {
-                        200 -> {
-                            val missionInfoResponse = response.body()?.missions
-                            val beeInfoResponse = response.body()?.beeInfo
-                            missionUrlList = mutableListOf()
-
-                            //beeInfo Response
-
-                            if (beeInfoResponse != null) {
-                                setLayoutToBeeInfo(beeInfoResponse)
-
-                                val manager = beeInfoResponse.get("manager").asJsonObject
-                                val managerId = manager.get("id").asInt
-                                val managerNickname = manager.get("nickname").asString
-                                val managerProfileImage = manager.get("profileImage").asString
-
-                                GlobalApp.prefsBeeInfo.beeManagerNickname = managerNickname
-                            }
-
-                            // missionInfo Response
-
-                            if (missionInfoResponse == null || missionInfoResponse.size() == 0) {
-                                when {
-                                    todayDate == targetDate -> {
-                                        targetDateMissionText.text =
-                                            getString(R.string.today_mission_photo)
-                                        applyImageUrl(null)
-                                        setLayoutToMission(NOT_EXIST_MISSION)
-                                    }
-
-                                    todayDate > targetDate -> {
-                                        targetDateMissionText.text =
-                                            getString(R.string.past_mission_photo)
-                                        setLayoutToMission(NOT_EXIST_PAST_MISSION)
-                                    }
-
-                                    todayDate < targetDate -> {
-                                        targetDateMissionText.text =
-                                            getString(R.string.future_mission_photo)
-                                        setLayoutToMission(NOT_EXIST_FUTURE_MISSION)
-                                    }
-                                }
-                                setRecyclerView()
-                            } else {
-                                var countMissionUrlList = 0
-                                for (i in 0 until missionInfoResponse.size()) {
-                                    val missionItem = missionInfoResponse.get(i).asJsonObject
-
-                                    val missionId = missionItem.get("missionId").asInt
-                                    val imageUrl = missionItem.get("imageUrl").asString
-                                    val type = missionItem.get("type").asInt
-                                    val nickname = missionItem.get("nickname").asString
-                                    val missionTitle = missionItem.get("missionTitle").asString
-
-                                    if (type == 2) {
-                                        Log.d(TAG, "nickname: $nickname myNickname: $myNickname")
-                                        if (nickname == myNickname) {
-                                            isParticipateMission = true
-                                            missionUrlList.add(
-                                                MissionUrl(
-                                                    MissionUrl.MISSION_PARTICIPATE_IMAGE_TYPE,
-                                                    imageUrl,
-                                                    isParticipateMission
-                                                )
-                                            )
-                                        } else {
-                                            if (countMissionUrlList < 2) {
-                                                missionUrlList.add(
-                                                    MissionUrl(
-                                                        MissionUrl.MISSION_PARTICIPATE_IMAGE_TYPE,
-                                                        imageUrl,
-                                                        isParticipateMission
-                                                    )
-                                                )
-                                                countMissionUrlList++
-                                            }
-                                        }
-                                    }
-
-                                    if (type == 1) {
-                                        isExistMission = true
-                                        when {
-                                            todayDate == targetDate -> {
-                                                targetDateMissionText.text =
-                                                    getString(R.string.today_mission_photo)
-                                                missionTargetDateText.text =
-                                                    getString(R.string.today_mission)
-                                                missionDescriptionText.text = missionTitle
-                                                applyImageUrl(imageUrl)
-                                                setLayoutToMission(EXIST_MISSION)
-                                            }
-
-                                            todayDate > targetDate -> {
-                                                targetDateMissionText.text =
-                                                    getString(R.string.past_mission_photo)
-                                                missionTargetDateText.text =
-                                                    getString(R.string.past_mission_photo)
-
-                                                missionDescriptionText.text =
-                                                    missionItem.get("missionTitle").asString
-                                                applyImageUrl(imageUrl)
-                                                setLayoutToMission(EXIST_PAST_MISSION)
-                                            }
-
-                                            todayDate < targetDate -> {
-                                                targetDateMissionText.text =
-                                                    getString(R.string.future_mission_photo)
-                                                missionTargetDateText.text =
-                                                    getString(R.string.future_mission_photo)
-                                                missionDescriptionText.text =
-                                                    getString(R.string.tomorrow_mission_desc_text)
-
-                                                Glide.with(this@MainActivity)
-                                                    .load(imageUrl)
-                                                    .apply(RequestOptions().override(312, 400))
-                                                    .transform(
-                                                        MultiTransformation(
-                                                            CenterCrop(),
-                                                            RoundedCorners(30),
-                                                            BlurTransformation(40)
-                                                        )
-                                                    )
-                                                    .error(R.drawable.not_upload_mission_img_view)
-                                                    .into(missionImage)
-
-                                                setLayoutToMission(EXIST_FUTURE_MISSION)
-                                            }
-                                        }
-                                    }
-                                }
-                                setRecyclerView()
-                            }
-                        }
-
-                        400 -> {
-                            val jsonObject = JSONObject(response.errorBody()?.string())
-                            val message = jsonObject.getString("message")
-
-                            applyImageUrl(null)
-                            setLayoutToMission(NOT_EXIST_MISSION)
-                        }
-
-                        500 -> {
-                            val jsonObject = JSONObject(response.errorBody()!!.string())
-                            val message = jsonObject.getString("message")
-
-                            when {
-                                todayDate == targetDate -> {
-                                    targetDateMissionText.text =
-                                        getString(R.string.today_mission_photo)
-                                    applyImageUrl(null)
-                                    setLayoutToMission(NOT_EXIST_MISSION)
-                                }
-
-                                todayDate > targetDate -> {
-                                    targetDateMissionText.text =
-                                        getString(R.string.past_mission_photo)
-                                    setLayoutToMission(NOT_EXIST_PAST_MISSION)
-                                }
-
-                                todayDate < targetDate -> {
-                                    targetDateMissionText.text =
-                                        getString(R.string.future_mission_photo)
-                                    setLayoutToMission(NOT_EXIST_FUTURE_MISSION)
-                                }
-                            }
-
-                            missionImage.setImageResource(R.drawable.not_upload_mission_img_view)
-                            setLayoutToMission(NOT_EXIST_MISSION)
-                            Log.d(TAG, message)
-                        }
-                    }
+                todayDate > targetDate -> {
+                    targetDateMissionText.text = getString(R.string.past_mission_photo)
+                    setLayoutToMission(NOT_EXIST_PAST_MISSION)
                 }
-            })
-    }
 
-    private fun requestMeApi() {
-        service.me(userAccessToken)
-            .enqueue(object : Callback<MeResponse> {
-                override fun onResponse(call: Call<MeResponse>, response: Response<MeResponse>) {
-                    when (response.code()) {
-                        200 -> {
-                            val meResponse = response.body()
-                            myNickname = meResponse!!.nickname
-                            GlobalApp.prefsBeeInfo.myNickname = myNickname
-                            beeId = meResponse.beeId
-                            GlobalApp.prefsBeeInfo.myEmail = meResponse.email
-                            GlobalApp.prefsBeeInfo.beeId = beeId
-                            requestMainApi()
-                        }
+                todayDate < targetDate -> {
+                    targetDateMissionText.text =
+                        getString(R.string.future_mission_photo)
+                    setLayoutToMission(NOT_EXIST_FUTURE_MISSION)
+                }
+            }
+            setRecyclerView()
+        } else {
+            var countMissionUrlList = 0
+            for (i in 0 until missionInfoResponse.size()) {
+                val missionItem  = Gson().fromJson(missionInfoResponse, Mission::class.java)
 
-                        400 -> {
-                            val converter: Converter<ResponseBody, ErrorResponse> =
-                                MorningBeesService.retrofit.responseBodyConverter<ErrorResponse>(
-                                    ErrorResponse::class.java,
-                                    ErrorResponse::class.java.annotations
+                if (missionItem.type == 2) {
+                    Log.d(TAG, "nickname: ${missionItem.nickname} myNickname: $myNickname")
+                    if (missionItem.nickname == myNickname) {
+                        isParticipateMission = true
+                        missionUrlList.add(
+                            MissionUrl(
+                                MissionUrl.MISSION_PARTICIPATE_IMAGE_TYPE,
+                                missionItem.imageUrl,
+                                isParticipateMission
+                            )
+                        )
+                    } else {
+                        if (countMissionUrlList < 2) {
+                            missionUrlList.add(
+                                MissionUrl(
+                                    MissionUrl.MISSION_PARTICIPATE_IMAGE_TYPE,
+                                    missionItem.imageUrl,
+                                    isParticipateMission
                                 )
-
-                            val errorResponse = converter.convert(response.errorBody())
-
-                            when (errorResponse.code) {
-                                110 -> {
-                                    val oldAccessToken = GlobalApp.prefs.accessToken
-                                    GlobalApp.prefs.requestRenewalApi()
-                                    val renewalAccessToken = GlobalApp.prefs.accessToken
-
-                                    if (oldAccessToken == renewalAccessToken) {
-                                        showToast { "다시 로그인해주세요." }
-                                        gotoLogOut()
-                                    } else
-                                        requestMeApi()
-                                }
-
-                                else -> {
-                                    showToast { errorResponse.message }
-                                    finish()
-                                }
-                            }
-                        }
-
-                        500 -> {
-                            val jsonObject = JSONObject(response.errorBody()?.string())
-                            val message = jsonObject.getString("message")
-                            showToast { message }
+                            )
+                            countMissionUrlList++
                         }
                     }
                 }
 
-                override fun onFailure(call: Call<MeResponse>, t: Throwable) {
-                    Dlog().d(t.toString())
+                if (missionItem.type == 1) {
+                    isExistMission = true
+                    when {
+                        todayDate == targetDate -> {
+                            targetDateMissionText.text = getString(R.string.today_mission_photo)
+                            missionTargetDateText.text = getString(R.string.today_mission)
+                            missionDescriptionText.text = missionItem.missionTitle
+                            applyImageUrl(missionItem.imageUrl)
+                            setLayoutToMission(EXIST_MISSION)
+                        }
+
+                        todayDate > targetDate -> {
+                            targetDateMissionText.text = getString(R.string.past_mission_photo)
+                            missionTargetDateText.text = getString(R.string.past_mission_photo)
+                            missionDescriptionText.text = missionItem.missionTitle
+                            applyImageUrl(missionItem.imageUrl)
+                            setLayoutToMission(EXIST_PAST_MISSION)
+                        }
+
+                        todayDate < targetDate -> {
+                            targetDateMissionText.text = getString(R.string.future_mission_photo)
+                            missionTargetDateText.text = getString(R.string.future_mission_photo)
+                            missionDescriptionText.text = getString(R.string.tomorrow_mission_desc_text)
+
+                            Glide.with(this@MainActivity)
+                                .load(missionItem.imageUrl)
+                                .apply(RequestOptions().override(312, 400))
+                                .transform(
+                                    MultiTransformation(
+                                        CenterCrop(),
+                                        RoundedCorners(30),
+                                        BlurTransformation(40)
+                                    )
+                                )
+                                .error(R.drawable.not_upload_mission_img_view)
+                                .into(missionImage)
+
+                            setLayoutToMission(EXIST_FUTURE_MISSION)
+                        }
+                    }
                 }
-            })
+            }
+            setRecyclerView()
+        }
+    }
+
+    private fun updateBeeInfo(beeInfoResponse: JsonObject){
+        setLayoutToBeeInfo(beeInfoResponse)
+
     }
 
     // View Design about Mission
@@ -569,40 +394,35 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,
 
     // View Design about Bee Info
 
-    private fun setLayoutToBeeInfo(beeInfoResponse: JsonObject) {
+    private fun setLayoutToBeeInfo(response: JsonObject) {
+        val beeInfoResponse = Gson().fromJson(response, BeeInfo::class.java)
+
         missionDifficultyImageWrapLayout.visibility = View.VISIBLE
         wrap_undefine_difficulty_btn.visibility = View.INVISIBLE
 
-        difficulty = if (beeInfoResponse.get("todayDifficulty").isJsonNull)
-            0
-        else
-            beeInfoResponse.get("todayDifficulty").asInt
-
-        setDifficulty(difficulty)
+        setDifficulty(beeInfoResponse.todayDifficulty)
 
         setMissionTimeImage(
-            beeInfoResponse.get("startTime").toString(),
-            beeInfoResponse.get("endTime").toString()
+            beeInfoResponse.startTime.toString(),
+            beeInfoResponse.endTime.toString()
         )
 
-        missionStartTimeText.text = beeInfoResponse.get("startTime").toString()
-        missionEndTimeText.text = beeInfoResponse.get("endTime").toString()
+        missionStartTimeText.text = beeInfoResponse.startTime.toString()
+        missionEndTimeText.text = beeInfoResponse.endTime.toString()
 
-        beeTitle = beeInfoResponse.get("title").toString().replace("\"", "")
+        beeTitleView.text = beeInfoResponse.title.replace("\"", "")
 
-        beeTitleView.text = beeTitle
-        GlobalApp.prefsBeeInfo.beeTitle = beeTitle
 
-        beeTotalMemberView.text = beeInfoResponse.get("memberCounts").toString()
+        beeTotalMemberView.text = beeInfoResponse.memberCounts.toString()
 
-        val totalPenalty = beeInfoResponse.get("totalPenalty").asInt.getPriceAnnotation()
+        val totalPenalty = beeInfoResponse.totalPenalty.getPriceAnnotation()
         totalJelly.text = " ${totalPenalty}원"
 
-        todayBee = beeInfoResponse.get("todayQuestioner").asJsonObject.get("nickname").toString()
+        todayBee = beeInfoResponse.todayQuestioner.get("nickname").toString()
             .replace("\"", "")
         todayQuestionerNickname.text = todayBee
 
-        nextBee = beeInfoResponse.get("nextQuestioner").asJsonObject.get("nickname").toString()
+        nextBee = beeInfoResponse.nextQuestioner.get("nickname").toString()
             .replace("\"", "")
     }
 
@@ -614,15 +434,16 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,
 
         var startTime = _startTime
         var endTime = _endTime
-        if (_startTime == "10")
-            startTime += ":00:00"
-        else
-            startTime = "0$_startTime:00:00"
 
-        if (_endTime == "10")
-            endTime += ":00:00"
-        else
-            endTime = "0$_endTime:00:00"
+        when (_startTime){
+            "10" -> startTime += ":00:00"
+            else -> startTime = "0$_startTime:00:00"
+        }
+
+        when (_endTime){
+            "10" -> endTime += ":00:00"
+            else -> endTime = "0$_endTime:00:00"
+        }
 
         val targetStart =
             targetDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + " $startTime"
@@ -728,6 +549,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,
 
     // TargetDate with Calendar
 
+    // xml 버튼에 main API 요청 onClick 이벤트 달기
     private fun changeTargetDate() {
         val dialogFragment = CalendarDialog()
         dialogFragment.show(supportFragmentManager, "signature")
@@ -738,7 +560,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,
                 targetDate = LocalDate.parse(hyphenTargetDate, DateTimeFormatter.ISO_DATE)
                 targetDateText.text = targetDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
                 missionUrlList = mutableListOf()
-                requestMainApi()
+//                requestMainApi()
             }
         })
     }
@@ -845,7 +667,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,
 
     private fun gotoLogOut() {
         startActivity(
-            Intent(this, LoginActivity::class.java)
+            Intent(this, SignInActivity::class.java)
                 .putExtra("RequestLogOut", "")
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
         )

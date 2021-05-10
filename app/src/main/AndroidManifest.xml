@@ -26,7 +26,7 @@
             android:theme="@style/mainStatusBarTheme">
         </activity>
         <activity
-            android:name=".ui.signin.LoginActivity"
+            android:name=".ui.signin.SignInActivity"
             android:screenOrientation="portrait"
             android:theme="@style/SplashTheme">
             <intent-filter>

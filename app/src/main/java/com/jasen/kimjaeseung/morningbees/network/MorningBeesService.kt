@@ -11,24 +11,24 @@ interface MorningBeesService {
     @GET("/api/auth/valid_nickname")
     suspend fun nameValidationCheck(
         @Query("nickname") nickname: String?
-    ): Call<ValidNicknameResponse>
+    ): Response<ValidNicknameResponse>
 
     @Headers("Content-Type:application/json")
     @POST("/api/auth/sign_in")
     suspend fun signIn(
         @Body signInRequest: SignInRequest
-    ): Call<SignInResponse>
+    ): Response<SignInResponse>
 
     @POST("/api/auth/sign_up")
     suspend fun signUp(
         @Body signUpRequest: SignUpRequest
-    ): Call<SignUpResponse>
+    ): Response<SignUpResponse>
 
     @POST("/api/bees")
     suspend fun createBee(
         @Header("X-BEES-ACCESS-TOKEN") accessToken: String,
         @Body createBeeRequest: CreateBeeRequest
-    ): Call<Void>
+    ): Response<Void>
 
     @POST("/api/auth/renewal")
     suspend fun renewal(
@@ -45,20 +45,20 @@ interface MorningBeesService {
     suspend fun joinBee(
         @Header("X-BEES-ACCESS-TOKEN") accessToken: String,
         @Body joinBeeRequest: JoinBeeRequest
-    ): Call<Void>
+    ): Response<Void>
 
     @Headers("Content-Type:application/json")
     @DELETE("/api/bees/withdrawal")
     suspend fun beeWithdrawal(
         @Header("X-BEES-ACCESS-TOKEN") accessToken: String
-    ): Call<Void>
+    ): Response<Void>
 
     @GET("/api/missions")
     suspend fun missionInfo(
         @Header("X-BEES-ACCESS-TOKEN") accessToken: String,
         @Query("targetDate") targetDate : String,
         @Query("beeId") beeId: Int
-    ): Call<List<Mission>>
+    ): Response<List<Mission>>
 
     @Multipart
     @POST("/api/missions")
@@ -70,7 +70,7 @@ interface MorningBeesService {
         @Part("type") type: Int,
         @Part("difficulty") difficulty: Int,
         @Part("targetDate") targetDate: String
-    ): Call<Void>
+    ): Response<Void>
 
     @GET("/api/main")
     suspend fun main(
@@ -92,25 +92,25 @@ interface MorningBeesService {
     suspend fun beeInfo(
         @Header("X-BEES-ACCESS-TOKEN") accessToken: String,
         @Path(value = "id", encoded = true) beeId: Int
-    ): Call<BeeInfoResponse>
+    ): Response<BeeInfoResponse>
 
     @GET("/api/bees/{id}/members")
     suspend fun beeMember(
         @Header("X-BEES-ACCESS-TOKEN") accessToken: String,
         @Path(value = "id", encoded = true) beeId: Int
-    ): Call<BeeMemberResponse>
+    ): Response<BeeMemberResponse>
 
     @GET("/api/bee_penalties/{beeId}")
     suspend fun beePenalty(
         @Header("X-BEES-ACCESS-TOKEN") accessToken: String,
         @Path(value = "beeId", encoded = true) beeId: Int,
         @Query("status") status: Int
-    ): Call<BeePenaltyResponse>
+    ): Response<BeePenaltyResponse>
 
     @POST("/api/bee_penalties/paid/{beeId}")
     suspend fun paid(
         @Header("X-BEES-ACCESS-TOKEN") accessToken: String,
         @Path(value = "beeId", encoded = true) beeId: Int,
         @Body paidRequest : PaidRequest
-    ): Call<Void>
+    ): Response<Void>
 }

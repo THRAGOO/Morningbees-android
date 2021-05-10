@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.app.GlobalApp
 import com.jasen.kimjaeseung.morningbees.createbee.CreateStep1Activity
-import com.jasen.kimjaeseung.morningbees.ui.signin.LoginActivity
+import com.jasen.kimjaeseung.morningbees.ui.signin.SignInActivity
 import kotlinx.android.synthetic.main.activity_beforejoin.*
 
 class BeforeJoinActivity : AppCompatActivity(), View.OnClickListener {
@@ -39,7 +39,7 @@ class BeforeJoinActivity : AppCompatActivity(), View.OnClickListener {
         GlobalApp.prefs.provider = ""
 
         startActivity(
-            Intent(this, LoginActivity::class.java)
+            Intent(this, SignInActivity::class.java)
                 .putExtra("RequestLogOut", "")
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
         )

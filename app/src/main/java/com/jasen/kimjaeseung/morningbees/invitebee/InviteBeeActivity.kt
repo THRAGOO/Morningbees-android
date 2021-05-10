@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.app.GlobalApp
 import com.jasen.kimjaeseung.morningbees.beforejoin.BeforeJoinActivity
-import com.jasen.kimjaeseung.morningbees.ui.signin.LoginActivity
+import com.jasen.kimjaeseung.morningbees.ui.signin.SignInActivity
 import com.jasen.kimjaeseung.morningbees.ui.main.MainActivity
 import com.jasen.kimjaeseung.morningbees.model.ErrorResponse
 import com.jasen.kimjaeseung.morningbees.model.JoinBeeRequest
@@ -66,7 +66,7 @@ class InviteBeeActivity : AppCompatActivity(), View.OnClickListener{
         Log.d(TAG, "accessToken: ${accessToken}")
         if(GlobalApp.prefs.accessToken == ""){
             startActivity(
-                Intent(this, LoginActivity::class.java)
+                Intent(this, SignInActivity::class.java)
                     .putExtra("RequestJoin", "")
                     .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             )
@@ -226,14 +226,14 @@ class InviteBeeActivity : AppCompatActivity(), View.OnClickListener{
 
     private fun gotoLogOut(){
         startActivity(
-            Intent(this, LoginActivity::class.java)
+            Intent(this, SignInActivity::class.java)
                 .putExtra("RequestLogOut", "")
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)        )
     }
 
     private fun gotoSignIn(){
         startActivity(
-            Intent(this, LoginActivity::class.java)
+            Intent(this, SignInActivity::class.java)
                 .putExtra("RequestSignIn", REQUEST_SIGN_IN)
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
         )
@@ -254,7 +254,7 @@ class InviteBeeActivity : AppCompatActivity(), View.OnClickListener{
         GlobalApp.prefsBeeInfo.beeId = 0
         if(accessToken == ""){
             startActivity(
-                Intent(this, LoginActivity::class.java)
+                Intent(this, SignInActivity::class.java)
                     .putExtra("RequestSignIn", "")
                     .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             )

@@ -6,7 +6,7 @@ import com.jasen.kimjaeseung.morningbees.model.SignInRequest
 import com.jasen.kimjaeseung.morningbees.mvp.BasePresenter
 import com.jasen.kimjaeseung.morningbees.mvp.BaseView
 
-interface LoginContract {
+interface SignInContract {
     interface View : BaseView {
         fun initNaverSignIn()
         fun initGoogleSignIn()

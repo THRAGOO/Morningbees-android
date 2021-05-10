@@ -25,6 +25,17 @@ data class MainResponse(
     var beeInfo: JsonObject
 )
 
+data class BeeInfo (
+    val totalPenalty : Int,
+    val memberCounts : Int,
+    val todayQuestioner : JsonObject,
+    val todayDifficulty : Int,
+    val startTime : Int, // notion에는 int로 되어있음
+    val endTime : Int,
+    val title : String,
+    val nextQuestioner : JsonObject
+)
+
 data class BeePenaltyResponse (
     var penaltyHistories: JsonArray?,
     var penalties: JsonArray?

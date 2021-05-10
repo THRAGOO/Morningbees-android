@@ -10,7 +10,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.beforejoin.BeforeJoinActivity
-import com.jasen.kimjaeseung.morningbees.ui.signin.LoginActivity
+import com.jasen.kimjaeseung.morningbees.ui.signin.SignInActivity
 import com.jasen.kimjaeseung.morningbees.ui.main.MainActivity
 import com.jasen.kimjaeseung.morningbees.model.SignUpRequest
 import com.jasen.kimjaeseung.morningbees.mvp.BaseActivity
@@ -156,7 +156,7 @@ class SignUpActivity : BaseActivity(), SignUpContract.View, View.OnClickListener
 
     override fun gotoLogOut() {
         startActivity(
-            Intent(this, LoginActivity::class.java)
+            Intent(this, SignInActivity::class.java)
                 .putExtra("RequestLogOut", "")
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)        )
     }

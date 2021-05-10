@@ -17,7 +17,7 @@ import com.google.firebase.dynamiclinks.ktx.shortLinkAsync
 import com.google.firebase.ktx.Firebase
 import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.app.GlobalApp
-import com.jasen.kimjaeseung.morningbees.ui.signin.LoginActivity
+import com.jasen.kimjaeseung.morningbees.ui.signin.SignInActivity
 import com.jasen.kimjaeseung.morningbees.model.BeeMember
 import com.jasen.kimjaeseung.morningbees.model.BeeMemberResponse
 import com.jasen.kimjaeseung.morningbees.model.ErrorResponse
@@ -211,7 +211,7 @@ class BeeMemberForManagerActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun gotoLogOut() {
         startActivity(
-            Intent(this, LoginActivity::class.java)
+            Intent(this, SignInActivity::class.java)
                 .putExtra("RequestLogOut", "")
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)        )
     }

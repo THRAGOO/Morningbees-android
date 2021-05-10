@@ -21,7 +21,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.app.GlobalApp
-import com.jasen.kimjaeseung.morningbees.ui.signin.LoginActivity
+import com.jasen.kimjaeseung.morningbees.ui.signin.SignInActivity
 import com.jasen.kimjaeseung.morningbees.ui.main.MainActivity
 import com.jasen.kimjaeseung.morningbees.utils.mediascanner.MediaScanner
 import com.jasen.kimjaeseung.morningbees.model.ErrorResponse
@@ -430,7 +430,7 @@ class CreateMissionActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun gotoLogOut() {
         startActivity(
-            Intent(this, LoginActivity::class.java)
+            Intent(this, SignInActivity::class.java)
                 .putExtra("RequestLogOut", "")
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
         )

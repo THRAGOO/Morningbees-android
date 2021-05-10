@@ -28,7 +28,11 @@ object NetworkModule {
             .build()
     }
 
+    val retrofit: Retrofit by lazy {
+        getInstance()
+    }
+
     val morningBeesService: MorningBeesService by lazy {
-        getInstance().create(MorningBeesService::class.java)
+        retrofit.create(MorningBeesService::class.java)
     }
 }

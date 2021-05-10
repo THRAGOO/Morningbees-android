@@ -44,12 +44,12 @@ import retrofit2.Callback
 import retrofit2.Converter
 import retrofit2.Response
 
-class LoginActivity : BaseActivity(), View.OnClickListener,
-    LoginContract.View {
+class SignInActivity : BaseActivity(), View.OnClickListener,
+    SignInContract.View {
 
     // Properties
 
-    private lateinit var loginPresenter: LoginPresenter
+    private lateinit var signInPresenter: SignInPresenter
 
     private lateinit var mGoogleSignInClient: GoogleSignInClient
     private lateinit var mOAuthLoginModule: OAuthLogin //naver sign in module
@@ -69,7 +69,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener,
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        loginPresenter.takeView(this)
+        signInPresenter.takeView(this)
         initGoogleSignIn()
         initNaverSignIn()
         initButtonListeners()
@@ -100,7 +100,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener,
 
     override fun onDestroy() {
         super.onDestroy()
-        loginPresenter.dropView()
+        signInPresenter.dropView()
     }
 
     override fun onPause() {
@@ -148,8 +148,8 @@ class LoginActivity : BaseActivity(), View.OnClickListener,
     // Init Method
 
     override fun initPresenter() {
-        loginPresenter =
-            LoginPresenter()
+        signInPresenter =
+            SignInPresenter()
     }
 
     private fun initButtonListeners() {
@@ -287,17 +287,17 @@ class LoginActivity : BaseActivity(), View.OnClickListener,
             object : OAuthLoginHandler() {
                 override fun run(success: Boolean) {
                     if (success) {
-                        val accessToken = mOAuthLoginModule.getAccessToken(this@LoginActivity)
-                        val refreshToken = mOAuthLoginModule.getRefreshToken(this@LoginActivity)
-                        val expiresAt = mOAuthLoginModule.getExpiresAt(this@LoginActivity)
-                        val tokenType = mOAuthLoginModule.getTokenType(this@LoginActivity)
+                        val accessToken = mOAuthLoginModule.getAccessToken(this@SignInActivity)
+                        val refreshToken = mOAuthLoginModule.getRefreshToken(this@SignInActivity)
+                        val expiresAt = mOAuthLoginModule.getExpiresAt(this@SignInActivity)
+                        val tokenType = mOAuthLoginModule.getTokenType(this@SignInActivity)
 
                         Dlog().d("naver Login Access Token : $accessToken")
                         Dlog().d("naver Login refresh Token : $refreshToken")
                         Dlog().d("naver Login expiresAt : $expiresAt")
                         Dlog().d("naver Login Token Type : $tokenType")
                         Dlog().i(
-                            "naver Login Module State : " + mOAuthLoginModule.getState(this@LoginActivity)
+                            "naver Login Module State : " + mOAuthLoginModule.getState(this@SignInActivity)
                                 .toString()
                         )
 
@@ -312,8 +312,8 @@ class LoginActivity : BaseActivity(), View.OnClickListener,
                         )
                     } else {
                         val errorCode =
-                            mOAuthLoginModule.getLastErrorCode(this@LoginActivity).code
-                        val errorDesc = mOAuthLoginModule.getLastErrorDesc(this@LoginActivity)
+                            mOAuthLoginModule.getLastErrorCode(this@SignInActivity).code
+                        val errorDesc = mOAuthLoginModule.getLastErrorDesc(this@SignInActivity)
                         Dlog().d("errorCode:$errorCode, errorDesc:$errorDesc")
                     }
                 }
