@@ -105,6 +105,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,
         mainViewModel.checkAccessToken()
         mainViewModel.requestApi(targetDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
 
+        observeLiveData()
+    }
+
+    fun observeLiveData(){
         mainViewModel.mainMissionsLiveData.observe(this, Observer {
             // mission info update in ui
             updateMissionInfo(it)

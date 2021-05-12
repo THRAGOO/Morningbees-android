@@ -6,6 +6,8 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.app.GlobalApp
+import com.jasen.kimjaeseung.morningbees.manager.GoogleLoginManager
+import com.jasen.kimjaeseung.morningbees.manager.NaverLoginManager
 import com.jasen.kimjaeseung.morningbees.ui.signin.SignInActivity
 import com.jasen.kimjaeseung.morningbees.model.BeeInfoResponse
 import com.jasen.kimjaeseung.morningbees.model.ErrorResponse
@@ -209,6 +211,10 @@ class SettingActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun gotoLogOut() {
+        // gotoLogOut 필요없음
+        NaverLoginManager.naverLogout()
+        GoogleLoginManager.googleLogout()
+
         GlobalApp.prefs.socialAccessToken = ""
         GlobalApp.prefs.accessToken = ""
         GlobalApp.prefs.refreshToken = ""

@@ -43,10 +43,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".signup.SignUpActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/whiteStatusBarTheme"/>
-        <activity
             android:name=".beforejoin.BeforeJoinActivity"
             android:screenOrientation="portrait"
             android:theme="@style/whiteStatusBarTheme"/>
