@@ -10,11 +10,9 @@ import com.google.android.gms.tasks.Task
 import com.jasen.kimjaeseung.morningbees.R
 import com.jasen.kimjaeseung.morningbees.app.AppResources
 import com.jasen.kimjaeseung.morningbees.app.GlobalApp
-import com.jasen.kimjaeseung.morningbees.model.SignInRequest
-import com.jasen.kimjaeseung.morningbees.ui.signin.SignInActivity
+import com.jasen.kimjaeseung.morningbees.common.Output
+import com.jasen.kimjaeseung.morningbees.common.TokenStatusCode
 import com.jasen.kimjaeseung.morningbees.utils.Dlog
-import com.nhn.android.naverlogin.OAuthLogin
-import com.nhn.android.naverlogin.data.OAuthLoginState
 
 object GoogleLoginManager {
 
@@ -25,10 +23,10 @@ object GoogleLoginManager {
         .requestEmail()
         .build()
 
-
     private val googleLoginInstance = GoogleSignIn.getClient(appContext, gso)
+    private var token = ""
 
-    fun getTask(data : Intent?){
+    fun getTask(data: Intent?) {
         val task = GoogleSignIn.getSignedInAccountFromIntent(data)
 
         try {
@@ -41,9 +39,18 @@ object GoogleLoginManager {
         }
     }
 
-    fun refreshIdToken() {
+    private fun refreshIdToken(){
         googleLoginInstance.silentSignIn()
-            .addOnCompleteListener{ task -> handleSignInResult(task)}
+            .addOnCompleteListener { task -> handleSignInResult(task) }
+    }
+
+    fun haveNeedGoogleLogin() : Boolean {
+        refreshIdToken()
+
+        return when(token) {
+            TokenStatusCode.HaveNotToken.token -> false
+            else -> true
+        }
     }
 
     private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
@@ -54,12 +61,16 @@ object GoogleLoginManager {
             GlobalApp.prefs.socialAccessToken = idToken.toString()
             GlobalApp.prefs.provider = AppResources.getStringResId(R.string.google)
 
+            //requestSignInApi() 어떻게 넣지 ㅎㅎ..
+            // update ui == requestsigninapi
+            token = idToken.toString()
         } catch (e: ApiException) {
             Dlog().w("handleSignInResult:error $e")
+            token = ""
         }
     }
 
-    fun getGoogleLoginInstance() : GoogleSignInClient {
+    fun getGoogleLoginInstance(): GoogleSignInClient {
         return googleLoginInstance
     }
 
@@ -67,9 +78,5 @@ object GoogleLoginManager {
         googleLoginInstance.signOut().addOnCompleteListener {
             Dlog().d("Google Sign Out")
         }
-    }
-
-    fun getGoogleSignInIntent() : Intent {
-        return googleLoginInstance.signInIntent
     }
 }

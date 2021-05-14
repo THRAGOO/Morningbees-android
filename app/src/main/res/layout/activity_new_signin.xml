@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.jasen.kimjaeseung.morningbees.ui.signin.SignInViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/loginBeeBackground"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:scaleType="fitXY"
+            android:src="@drawable/icon_bg_sign"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <ImageView
+            android:id="@+id/loginBeeImage"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/ic_bee"
+
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/loginWhiteBackground"
+            app:layout_constraintWidth_default="percent"
+            app:layout_constraintWidth_percent="0.55"/>
+
+        <ImageView
+            android:id="@+id/loginWhiteBackground"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="0dp"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            android:src="@drawable/icon_bg_sign_in_white"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <TextView
+            android:id="@+id/signInText"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="85dp"
+
+            android:singleLine="true"
+            android:text="친구들과 함께하는 기상미션"
+            android:textColor="#444444"
+            android:textSize="16dp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/signInLogoTitle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/signInText"
+
+            android:layout_marginTop="13dp"
+            android:layout_width="240dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/signInText"
+            android:layout_centerHorizontal="true"
+            android:adjustViewBounds="true"
+            android:src="@drawable/logo_title" />
+
+        <com.jasen.kimjaeseung.morningbees.ui.signin.custom.SignInSnsButton
+            android:id="@+id/login_naver_sign_in_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/login_google_sign_in_button"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:backgroundSnsButton="@drawable/background_sns_naver_button"
+            app:signInSnsSymbol="@drawable/symbol_naver"
+            app:signInSnsText="Naver로 로그인"
+            app:signInSnsTextColor="@color/signInNaverTextColor"
+            android:onClick="@{() -> viewModel.signInWithNaver()}"/>
+
+        <com.jasen.kimjaeseung.morningbees.ui.signin.custom.SignInSnsButton
+            android:id="@+id/login_google_sign_in_button"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:backgroundSnsButton="@drawable/background_sns_google_button"
+            app:signInSnsSymbol="@drawable/symbol_google"
+            app:signInSnsText="Google로 로그인"
+            app:signInSnsTextColor="@color/signInGoogleTextColor"
+            android:layout_marginTop="12dp"
+            android:paddingBottom="47dp"
+            android:onClick="@{() -> viewModel.signInWithGoogle()}"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
+

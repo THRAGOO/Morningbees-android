@@ -223,7 +223,6 @@ class SettingActivity : AppCompatActivity(), View.OnClickListener {
 
         startActivity(
             Intent(this, SignInActivity::class.java)
-                .putExtra("RequestLogOut", REQUEST_LOGOUT)
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
         )
     }

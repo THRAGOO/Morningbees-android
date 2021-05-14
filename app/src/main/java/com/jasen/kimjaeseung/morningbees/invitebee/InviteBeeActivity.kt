@@ -253,11 +253,12 @@ class InviteBeeActivity : AppCompatActivity(), View.OnClickListener{
     private fun clickCloseInviteButton(){
         GlobalApp.prefsBeeInfo.beeId = 0
         if(accessToken == ""){
-            startActivity(
-                Intent(this, SignInActivity::class.java)
-                    .putExtra("RequestSignIn", "")
-                    .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            )
+//            startActivity(
+//                Intent(this, SignInActivity::class.java)
+//                    .putExtra("RequestSignIn", "")
+//                    .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+//            )
+            gotoSignIn()
         } else {
             gotoBeforeJoin()
         }

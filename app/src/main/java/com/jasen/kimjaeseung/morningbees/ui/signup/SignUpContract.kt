@@ -1,4 +1,4 @@
-package com.jasen.kimjaeseung.morningbees.signup
+package com.jasen.kimjaeseung.morningbees.ui.signup
 
 import com.jasen.kimjaeseung.morningbees.mvp.BasePresenter
 import com.jasen.kimjaeseung.morningbees.mvp.BaseView

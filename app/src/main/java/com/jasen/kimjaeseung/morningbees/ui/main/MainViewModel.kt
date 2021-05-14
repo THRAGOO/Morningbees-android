@@ -1,5 +1,6 @@
 package com.jasen.kimjaeseung.morningbees.ui.main
 
+import android.content.Intent
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.gson.JsonArray
@@ -8,8 +9,12 @@ import com.jasen.kimjaeseung.morningbees.app.GlobalApp
 import com.jasen.kimjaeseung.morningbees.common.ErrorCode
 import com.jasen.kimjaeseung.morningbees.common.Output
 import com.jasen.kimjaeseung.morningbees.data.MorningBessRepository
+import com.jasen.kimjaeseung.morningbees.manager.GoogleLoginManager
+import com.jasen.kimjaeseung.morningbees.manager.NaverLoginManager
 import com.jasen.kimjaeseung.morningbees.model.ErrorResponse
 import com.jasen.kimjaeseung.morningbees.model.MainResponse
+import com.jasen.kimjaeseung.morningbees.setting.SettingActivity
+import com.jasen.kimjaeseung.morningbees.ui.signin.SignInActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -25,8 +30,26 @@ class MainViewModel : ViewModel() {
         MorningBessRepository()
     }
 
-    val mainMissionsLiveData = MutableLiveData<JsonArray?>()
-    val mainBeeInfoLiveData = MutableLiveData<JsonObject>()
+    private val _mainMissionsLiveData = MutableLiveData<JsonArray?>()
+    val mainMissionsLiveData = _mainMissionsLiveData
+
+    private val _mainBeeInfoLiveData = MutableLiveData<JsonObject>()
+    val mainBeeInfoLiveData = _mainBeeInfoLiveData
+
+    private val _missionCreateButton =  MutableLiveData<Unit>()
+    val missionCreateButton = _missionCreateButton
+
+    private val _settingButton =  MutableLiveData<Unit>()
+    val settingButton = _settingButton
+
+    private val _royalButton =  MutableLiveData<Unit>()
+    val royalButton = _royalButton
+
+    private val _targetDateButton =  MutableLiveData<Unit>()
+    val targetDateButton = _targetDateButton
+
+    private val _signOutEvent =  MutableLiveData<Unit>()
+    val signOutEvent = _signOutEvent
 
     private var mTargetDate = ""
 
@@ -57,7 +80,7 @@ class MainViewModel : ViewModel() {
     private fun requestMainApi(){
         scope.launch {
             when (val mainResponse = mRepository.requestMainApi(mTargetDate)) {
-                is Output.Success -> showSuccess(mainResponse.output)
+                is Output.Success -> showMainAPISuccess(mainResponse.output)
                 is Output.NetworkError -> showNetworkError()
                 is Output.Error -> showGenericError(mainResponse.error, MAIN_API)
             }
@@ -80,7 +103,7 @@ class MainViewModel : ViewModel() {
                 }
 
                 is Output.NetworkError -> showNetworkError()
-                is Output.Error -> showGenericError(renewalResponse.error, RENEWAL_API)
+                is Output.Error -> signOut()
             }
         }
     }
@@ -88,30 +111,63 @@ class MainViewModel : ViewModel() {
     private fun showGenericError(errorResponse: ErrorResponse?, typeOfApi : Int){
         errorResponse?.let {
             when (it.code){
-                ErrorCode.expiredToken.errorCode -> {
+                ErrorCode.ExpiredToken.errorCode -> {
                     requestRenewalTokenApi(typeOfApi)
                 }
 
-                ErrorCode.badAccess.errorCode -> {
+                ErrorCode.BadAccess.errorCode -> {
 
                 }
             }
         }
-
     }
 
-    private fun showSuccess(mainResponse: MainResponse){
-        mainMissionsLiveData.postValue(mainResponse.missions)
-        mainBeeInfoLiveData.postValue(mainResponse.beeInfo)
+    private fun signOut(){
+        NaverLoginManager.naverLogout()
+        GoogleLoginManager.googleLogout()
 
+        GlobalApp.prefs.socialAccessToken = ""
+        GlobalApp.prefs.accessToken = ""
+        GlobalApp.prefs.refreshToken = ""
+        GlobalApp.prefs.provider = ""
+        GlobalApp.prefsBeeInfo.beeId = 0
+
+        _signOutEvent.value = Unit
+    }
+
+    private fun showMainAPISuccess(mainResponse: MainResponse){
+        _mainMissionsLiveData.postValue(mainResponse.missions)
+        _mainBeeInfoLiveData.postValue(mainResponse.beeInfo)
+
+        updateUI()
         // beeInfo 객체를 직렬화해서 객체 만들까 생각 중
         GlobalApp.prefsBeeInfo.beeManagerNickname = mainResponse.beeInfo.get("manager").asJsonObject.get("nickname").asString
+    }
+
+    private fun updateUI() {
+
     }
 
     fun checkAccessToken(){
         scope.launch {
             mRepository.requestRenewalApi()
         }
+    }
+
+    fun clickMissionCreateButton(){
+        _missionCreateButton.value = Unit
+    }
+
+    fun clickSettingButton(){
+        _settingButton.value = Unit
+    }
+
+    fun clickRoyalJellyButton(){
+        _royalButton.value = Unit
+    }
+
+    fun clickTargetDateButton(){
+        _targetDateButton.value = Unit
     }
 
     companion object {

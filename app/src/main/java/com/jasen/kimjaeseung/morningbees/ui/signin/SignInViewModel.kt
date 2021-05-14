@@ -4,11 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.firebase.dynamiclinks.ktx.dynamicLinks
-import com.google.firebase.ktx.Firebase
 import com.jasen.kimjaeseung.morningbees.app.GlobalApp
 import com.jasen.kimjaeseung.morningbees.common.ErrorCode
 import com.jasen.kimjaeseung.morningbees.common.Output
+import com.jasen.kimjaeseung.morningbees.common.TokenStatusCode
 import com.jasen.kimjaeseung.morningbees.data.MorningBessRepository
 import com.jasen.kimjaeseung.morningbees.manager.GoogleLoginManager
 import com.jasen.kimjaeseung.morningbees.manager.NaverLoginManager
@@ -27,49 +26,57 @@ class SignInViewModel : ViewModel() {
     private val coroutineContext: CoroutineContext get() = parentJob + Dispatchers.Default
     private val scope = CoroutineScope(coroutineContext)
 
-    private lateinit var mGoogleSignInClient: GoogleSignInClient
-    private lateinit var mOAuthLoginModule: OAuthLogin
+    private lateinit var _mGoogleSignInClient: GoogleSignInClient
+    val mGoogleSignInClient = _mGoogleSignInClient
 
-    private var invitedBeeId = 0
+    private lateinit var _mOAuthLoginModule: OAuthLogin
+    val mOAuthLoginModule = _mOAuthLoginModule
+
+    private var invitedBeeId = GlobalApp.prefsBeeInfo.beeId
 
     private val mRepository: MorningBessRepository by lazy {
         MorningBessRepository()
     }
 
     private val _mainActivityChangeEvent = MutableLiveData<Unit>()
-    val mainActivityChangeEvent : LiveData<Unit> = _mainActivityChangeEvent
+    val mainActivityChangeEvent: LiveData<Unit> = _mainActivityChangeEvent
 
     private val _signUpActivityChangeEvent = MutableLiveData<Unit>()
-    val signUpActivityChangeEvent : LiveData<Unit> = _signUpActivityChangeEvent
+    val signUpActivityChangeEvent: LiveData<Unit> = _signUpActivityChangeEvent
 
     private val _beforeJoinActivityChangeEvent = MutableLiveData<Unit>()
-    val beforeJoinActivityChangeEvent : LiveData<Unit> = _beforeJoinActivityChangeEvent
+    val beforeJoinActivityChangeEvent: LiveData<Unit> = _beforeJoinActivityChangeEvent
+
+    private val _naverLoginActivityChangeEvent = MutableLiveData<Unit>()
+    val naverLoginActivityChangeEvent: LiveData<Unit> = _naverLoginActivityChangeEvent
+
+    private val _googleLoginActivityChangeEvent = MutableLiveData<Unit>()
+    val googleLoginActivityChangeEvent: LiveData<Unit> = _googleLoginActivityChangeEvent
 
     private fun initSignInWithNaver() {
-        mOAuthLoginModule = NaverLoginManager.getNaverLoginInstance()
+        _mOAuthLoginModule = NaverLoginManager.getNaverLoginInstance()
     }
 
     private fun initSignInWithGoogle() {
-        mGoogleSignInClient = GoogleLoginManager.getGoogleLoginInstance()
+        _mGoogleSignInClient = GoogleLoginManager.getGoogleLoginInstance()
     }
 
     fun signInWithNaver() {
-        // 토큰 확인!
         initSignInWithNaver()
 
-        if (NaverLoginManager.haveNeedNaverLogin()){
-
-        } else {
-            mOAuthLoginModule.startOauthLoginActivity(this, NaverLoginManager)
-        }
+        if (NaverLoginManager.haveNeedNaverLogin()) { // 네이버 로그인이 되어있는지 확인
+            _naverLoginActivityChangeEvent.value = Unit
+        } else
+            requestSignInApi()
     }
 
     fun signInWithGoogle() {
-        // 토큰 확인!
         initSignInWithGoogle()
 
-
-
+        if (GoogleLoginManager.haveNeedGoogleLogin()) {
+            _googleLoginActivityChangeEvent.value = Unit
+        } else
+            requestSignInApi()
     }
 
     private fun signOut() {
@@ -103,6 +110,7 @@ class SignInViewModel : ViewModel() {
                             GlobalApp.prefs.refreshToken = signInResponse.output.refreshToken
 
                             // request me api
+                            requestMeApi()
                         }
                     }
                 }
@@ -110,6 +118,19 @@ class SignInViewModel : ViewModel() {
                 is Output.Error -> showGenericError(signInResponse.error, SIGN_IN_API)
 
                 is Output.NetworkError -> showNetworkError()
+            }
+        }
+    }
+
+    fun checkToken() {
+        when (GlobalApp.prefs.socialAccessToken) {
+            TokenStatusCode.HaveNotToken.token -> {
+                initSignInWithGoogle()
+                initSignInWithNaver()
+            }
+
+            else -> { // 토큰이 존재하면 자동 로그인 수행
+                requestSignInApi()
             }
         }
     }
@@ -149,7 +170,6 @@ class SignInViewModel : ViewModel() {
                             else -> {
                                 // request join bee API
                                 GlobalApp.prefs.userId = meResponse.output.userId
-
                             }
                         }
                     }
@@ -159,10 +179,6 @@ class SignInViewModel : ViewModel() {
                 is Output.NetworkError -> showNetworkError()
             }
         }
-    }
-
-    fun refreshIdToken() {
-        GoogleLoginManager.refreshIdToken()
     }
 
     private fun requestRenewalTokenApi(typeOfApi: Int) {
@@ -187,11 +203,11 @@ class SignInViewModel : ViewModel() {
     private fun showGenericError(errorResponse: ErrorResponse?, typeOfApi: Int) {
         errorResponse?.let {
             when (it.code) {
-                ErrorCode.expiredToken.errorCode -> {
+                ErrorCode.ExpiredToken.errorCode -> {
                     requestRenewalTokenApi(typeOfApi)
                 }
 
-                ErrorCode.badAccess.errorCode -> {
+                ErrorCode.BadAccess.errorCode -> {
 
                 }
             }

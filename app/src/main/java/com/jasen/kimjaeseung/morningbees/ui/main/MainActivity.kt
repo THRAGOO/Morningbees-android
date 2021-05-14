@@ -56,7 +56,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-class MainActivity : AppCompatActivity(), View.OnClickListener,
+class MainActivity : AppCompatActivity(),
     OnItemClick {
 
     // Properties
@@ -92,10 +92,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-//        userAccessToken = GlobalApp.prefs.accessToken
-
-        initButtonListeners()
         initScrollListener()
         initIconColor()
         setTargetDate()
@@ -108,7 +104,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,
         observeLiveData()
     }
 
-    fun observeLiveData(){
+    private fun observeLiveData(){
         mainViewModel.mainMissionsLiveData.observe(this, Observer {
             // mission info update in ui
             updateMissionInfo(it)
@@ -117,6 +113,26 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,
         mainViewModel.mainBeeInfoLiveData.observe(this, Observer {
             // bee info update in ui
             updateBeeInfo(it)
+        })
+
+        mainViewModel.missionCreateButton.observe(this, Observer {
+            gotoMissionCreateActivity()
+        })
+
+        mainViewModel.royalButton.observe(this, Observer {
+            gotoRoyalJellyActivity()
+        })
+
+        mainViewModel.targetDateButton.observe(this, Observer {
+            changeTargetDate()
+        })
+
+        mainViewModel.settingButton.observe(this, Observer {
+            gotoSettingActivity()
+        })
+
+        mainViewModel.signOutEvent.observe(this, Observer {
+            gotoSignInActivity()
         })
     }
 
@@ -127,15 +143,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,
         finish()
     }
 
-    override fun onClick(v: View) {
-        when (v.id) {
-            R.id.goMissionCreateButton -> gotoMissionCreate()
-            R.id.changeTargetDateButton -> changeTargetDate()
-            R.id.goToSettingButton -> gotoSetting()
-            R.id.royalJellyCheckButton -> gotoRoyalJelly()
-        }
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -143,14 +150,14 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,
             data.data?.let { photoUri ->
                 currentPhotoPath = URIPathHelper().getPath(this, photoUri).toString()
             }
-            gotoMissionParticipate(currentPhotoPath,
+            gotoMissionParticipateActivity(currentPhotoPath,
                 PICK_FROM_ALBUM
             )
         } else if (requestCode == PICK_FROM_CAMERA && resultCode == Activity.RESULT_OK) {
             val mediaScanner = MediaScanner.newInstance(this)
             try {
                 mediaScanner.mediaScanning(currentPhotoPath)
-                gotoMissionParticipate(currentPhotoPath,
+                gotoMissionParticipateActivity(currentPhotoPath,
                     PICK_FROM_CAMERA
                 )
             } catch (e: Exception) {
@@ -160,7 +167,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,
         } else if (requestCode == GO_TO_PARTICIPATE && resultCode == FINISH) {
             bottomSheetDialog.dismiss()
             missionUrlList = mutableListOf()
-//            requestMainApi()
         } else if (requestCode == GO_TO_PARTICIPATE && resultCode == RELOAD) {
             bottomSheetDialog.show()
         }
@@ -182,13 +188,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,
     }
 
     // Init Method
-
-    private fun initButtonListeners() {
-        goMissionCreateButton.setOnClickListener(this)
-        changeTargetDateButton.setOnClickListener(this)
-        goToSettingButton.setOnClickListener(this)
-        royalJellyCheckButton.setOnClickListener(this)
-    }
 
     private fun initScrollListener() {
         val window = window
@@ -669,15 +668,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,
 
     // Change Activity
 
-    private fun gotoLogOut() {
-        startActivity(
-            Intent(this, SignInActivity::class.java)
-                .putExtra("RequestLogOut", "")
-                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-        )
-    }
-
-    private fun gotoMissionParticipate(path: String?, state: Int) {
+    private fun gotoMissionParticipateActivity(path: String?, state: Int) {
         startActivityForResult(
             Intent(this, ParticipateMissionActivity::class.java)
                 .putExtra("photoPath", path)
@@ -690,27 +681,23 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,
         )
     }
 
-    private fun gotoRoyalJelly() {
+    private fun gotoRoyalJellyActivity() {
         startActivity(
             Intent(this, RoyalJellyActivity::class.java)
         )
     }
 
-    private fun gotoMissionCreate() {
-        if (beeId == 0) {
-            showToast { getString(R.string.no_registered_bee) }
-        } else {
-            startActivityForResult(
-                Intent(this, CreateMissionActivity::class.java)
-                    .putExtra(
-                        "targetDate",
-                        targetDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-                    )
-                    .putExtra("difficulty", difficulty)
-                ,
-                GO_TO_PARTICIPATE
-            )
-        }
+    private fun gotoMissionCreateActivity() {
+        startActivityForResult(
+            Intent(this, CreateMissionActivity::class.java)
+                .putExtra(
+                    "targetDate",
+                    targetDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                )
+                .putExtra("difficulty", difficulty)
+            ,
+            GO_TO_PARTICIPATE
+        )
     }
 
     private fun gotoLoadMissionPhoto() {
@@ -723,7 +710,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,
         )
     }
 
-    private fun gotoSetting() {
+    private fun gotoSettingActivity() {
         startActivity(
             Intent(this, SettingActivity::class.java)
         )
@@ -734,6 +721,13 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,
         intent.type = "image/*"
         startActivityForResult(intent,
             PICK_FROM_ALBUM
+        )
+    }
+
+    private fun gotoSignInActivity(){
+        startActivity(
+            Intent(this, SignInActivity::class.java)
+                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
         )
     }
 

@@ -1,4 +1,4 @@
-package com.jasen.kimjaeseung.morningbees.signup
+package com.jasen.kimjaeseung.morningbees.ui.signup
 
 import android.content.Context
 import android.util.Log

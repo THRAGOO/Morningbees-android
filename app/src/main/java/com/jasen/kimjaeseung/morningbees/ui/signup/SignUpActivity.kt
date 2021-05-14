@@ -1,4 +1,4 @@
-package com.jasen.kimjaeseung.morningbees.signup
+package com.jasen.kimjaeseung.morningbees.ui.signup
 
 import android.content.Context
 import android.content.Intent
@@ -9,24 +9,19 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import com.jasen.kimjaeseung.morningbees.R
+import com.jasen.kimjaeseung.morningbees.app.GlobalApp
+import com.jasen.kimjaeseung.morningbees.architecture.BaseActivity
 import com.jasen.kimjaeseung.morningbees.beforejoin.BeforeJoinActivity
 import com.jasen.kimjaeseung.morningbees.ui.signin.SignInActivity
 import com.jasen.kimjaeseung.morningbees.ui.main.MainActivity
 import com.jasen.kimjaeseung.morningbees.model.SignUpRequest
-import com.jasen.kimjaeseung.morningbees.mvp.BaseActivity
 import com.jasen.kimjaeseung.morningbees.utils.showToast
 import kotlinx.android.synthetic.main.activity_signup.*
 import java.util.regex.Pattern
 
-class SignUpActivity : BaseActivity(), SignUpContract.View, View.OnClickListener {
+class SignUpActivity : BaseActivity(){
 
     // Properties
-
-    private lateinit var signUpPresenter: SignUpPresenter
-
-    private var socialAccessToken: String = ""
-    private var provider: String = ""
-
     // Life Cycle
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,11 +30,12 @@ class SignUpActivity : BaseActivity(), SignUpContract.View, View.OnClickListener
 
         setContentView(R.layout.activity_signup)
 
-        socialAccessToken = intent.getStringExtra("socialAccessToken").toString()
-        provider = intent.getStringExtra("provider").toString()
+//        socialAccessToken = intent.getStringExtra("socialAccessToken").toString()
+//        provider = intent.getStringExtra("provider").toString()
 
         initButtonListeners()
-        signUpPresenter.takeView(this)
+//        signUpPresenter.takeView(this)
+
     }
 
     override fun onStart() {
@@ -65,7 +61,7 @@ class SignUpActivity : BaseActivity(), SignUpContract.View, View.OnClickListener
 
     // Callback Method
 
-    override fun onClick(v: View) {
+    fun onClick(v: View) {
         when (v.id) {
             R.id.nicknameCheckSignUpButton -> nicknameCheck()
             R.id.gotoCreateBeeFromSignUpButton -> signUpStart()
@@ -84,7 +80,7 @@ class SignUpActivity : BaseActivity(), SignUpContract.View, View.OnClickListener
         }
     }
 
-    override fun nicknameValidCheck(i: Int) {
+    fun nicknameValidCheck(i: Int) {
         if (i == 1) {
             gotoCreateBeeFromSignUpButton.isEnabled = true
             gotoCreateBeeFromSignUpButton.background = applicationContext.getDrawable(R.color.active_button)
@@ -107,8 +103,8 @@ class SignUpActivity : BaseActivity(), SignUpContract.View, View.OnClickListener
             signUpPresenter.validCheck -> {
                 signUpPresenter.signUpMorningbeesServer(
                     SignUpRequest(
-                        socialAccessToken,
-                        provider,
+                        GlobalApp.prefs.socialAccessToken,
+                        GlobalApp.prefs.provider,
                         signUpPresenter.mNickname
                     )
                 )
